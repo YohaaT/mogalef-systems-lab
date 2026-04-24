@@ -1,0 +1,34 @@
+{
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "FDAX",
+  "timeframe": "15m",
+  "phase": "2a",
+  "stpmt_smooth_h": 5,
+  "stpmt_smooth_b": 4,
+  "stpmt_distance_max_h": 75,
+  "stpmt_distance_max_l": 25,
+  "horaire_profile_id": 5,
+  "horaire_label": "NY_morning_9_12",
+  "horaire_allowed_hours_utc": [
+    9,
+    10,
+    11,
+    12
+  ],
+  "robustness": 3.255,
+  "phase_a_pf": 0.7813,
+  "phase_b_pf": 2.5432,
+  "phase_a_trades": 58,
+  "phase_b_trades": 31,
+  "robustness_pass": true,
+  "min_trades_pass": true,
+  "mogalef_comparison": {
+    "winner_empirical": "NY_morning_9_12",
+    "winner_rob": 3.255,
+    "best_mogalef": "Mogalef_V2_CET_19_21",
+    "best_mogalef_rob": 1.9792,
+    "coincide": false,
+    "baseline_24h_rob": 1.0918,
+    "improvement_vs_24h": 2.1632
+  }
+}

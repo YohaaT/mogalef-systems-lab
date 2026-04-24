@@ -1,0 +1,34 @@
+{
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "ES",
+  "timeframe": "10m",
+  "phase": "2a",
+  "stpmt_smooth_h": 1,
+  "stpmt_smooth_b": 5,
+  "stpmt_distance_max_h": 25,
+  "stpmt_distance_max_l": 25,
+  "horaire_profile_id": 5,
+  "horaire_label": "NY_morning_9_12",
+  "horaire_allowed_hours_utc": [
+    9,
+    10,
+    11,
+    12
+  ],
+  "robustness": 1.5339,
+  "phase_a_pf": 0.7842,
+  "phase_b_pf": 1.2029,
+  "phase_a_trades": 124,
+  "phase_b_trades": 56,
+  "robustness_pass": true,
+  "min_trades_pass": true,
+  "mogalef_comparison": {
+    "winner_empirical": "NY_morning_9_12",
+    "winner_rob": 1.5339,
+    "best_mogalef": "Mogalef_V1_CEST_7_15",
+    "best_mogalef_rob": 1.1997,
+    "coincide": false,
+    "baseline_24h_rob": 1.1731,
+    "improvement_vs_24h": 0.3608
+  }
+}
