@@ -1,0 +1,82 @@
+Express EL_Indice_de_force_v2024
+
+Vars
+
+Input $Longueur(3,50,10);
+input $Compare_Study(0,2,0);
+
+numeric i;
+
+series haut1,bas1,haut2,bas2;
+series Force,Force2;
+series null,CP,CP2,N,N2;
+series CLO2(Study1.close),HI2(Study1.high),LO2(Study1.low);
+
+Calculation
+CalculateAtEveryTick(false);
+
+if IsFirstBar() then   // boucle de calcul pour fixer les séries dont on se servira plus tard et ne les calculer qu'une seule fois
+begin
+  for i= 0 to FinalBarIndex()  //Boucle de la dernière barre à la première
+  begin
+    N[-i]=(h[-i]+l[-i]+c[-i])/3;  // la série N est le calcul du cours pondéré: la série doit être calculée en boucle AVANT la fonction complexe.
+    N2[-i]=(hi2[-i]+lo2[-i]+clo2[-i])/3;
+  end
+  ExpMovingAverage(N,CP,3);
+  ExpMovingAverage(N2,cp2,3);
+end
+
+Haut1=Highest(h,$longueur);
+Bas1=Lowest(l,$longueur);
+
+if(haut1=bas1) then haut1=(haut1+ ticksize());
+
+if (CurrentBarIndex() > (5 + $Longueur)) then
+begin
+  Force=( ((cp-haut1[5])+(cp-bas1[5])) / (haut1[5]-bas1[5])  ) 
+      + ( ((cp-haut1[5+($longueur/2)])+(cp-bas1[5+($longueur/2)])) / (haut1[5+($longueur/2)]-bas1[5+($longueur/2)]) )
+      + ( ((cp-haut1[5+$longueur])+(cp-bas1[5+$longueur])) / (haut1[5+$longueur]-bas1[5+$longueur]) )  ;
+end
+
+If $compare_study =1 then 
+begin
+   haut2=Highest(HI2,$longueur);
+   bas2=Lowest(LO2,$longueur);
+
+   if(haut2=bas2) then haut2=(haut2+ ticksize() );
+
+  if (CurrentBarIndex() > (5 + $Longueur)) then
+  begin
+    Force2=((cp2-haut2[5]) / (haut2[5]-bas2[5])) + ((cp2-bas2[5]) / (haut2[5]-bas2[5])) 
+      + ((cp2-haut2[5+($longueur/2)]) / (haut2[5+($longueur/2)]-bas2[5+($longueur/2)])) + ((cp2-bas2[5+($longueur/2)]) / (haut2[5+($longueur/2)]-bas2[5+($longueur/2)]))
+      + ((cp2-haut2[5+$longueur]) / (haut2[5+$longueur]-bas2[5+$longueur])) + ((cp2-bas2[5+$longueur]) / (haut2[5+$longueur]-bas2[5+$longueur]))  ;
+  end
+end
+If $compare_study >1 then 
+begin
+   haut2=Highest(HI2,$longueur);
+   bas2=Lowest(LO2,$longueur);
+
+   if(haut2=bas2) then haut2=(haut2+ ticksize() );
+
+  if (CurrentBarIndex() > (5 + $Longueur)) then
+  begin
+    Force2=((cp2-haut2[5]) / (haut2[5]-bas2[5])) + ((cp2-bas2[5]) / (haut2[5]-bas2[5])) 
+      + ((cp2-haut2[5+($longueur/2)]) / (haut2[5+($longueur/2)]-bas2[5+($longueur/2)])) + ((cp2-bas2[5+($longueur/2)]) / (haut2[5+($longueur/2)]-bas2[5+($longueur/2)]))
+      + ((cp2-haut2[5+$longueur]) / (haut2[5+$longueur]-bas2[5+$longueur])) + ((cp2-bas2[5+$longueur]) / (haut2[5+$longueur]-bas2[5+$longueur]))  ;
+  end
+Force = Force-Force2;
+Force2=0;
+end
+
+Interpretation
+begin
+if (force<(force2 )) then sentiment=00;
+if (force>(force2 )) then sentiment=100;
+
+
+end
+
+Plot (Force2,red,1);
+Plot (Force,black,2);
+Plot (null,black,1);//@@@cs:994354-3833502-796144_cs@@@

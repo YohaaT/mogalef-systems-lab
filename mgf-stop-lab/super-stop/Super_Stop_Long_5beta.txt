@@ -1,0 +1,148 @@
+Express stop Super_Stop_Long_5beta
+// Conception Eric Lefort pour Mogalef et WHSelfinvest. 2023-01-16
+
+Vars
+
+series 
+lineL, 
+lineS,
+priceL, 
+senti(50),
+Courbe_Regression, 
+VolatL, 
+periodRL,
+coefVolatLL, 
+coefXVolatLL, 
+ecartBuyL, 
+//flaglong,
+TrailingStopLevel,
+warning,
+flag,
+
+
+Taille;
+
+numeric i, sumX, sumX2, sumXY, sumY, a, b, r;
+
+input 
+$Type("StopLoss;TrailingStop",1),
+$priceL("Open;Close;High;Low;CloseLow;CloseHigh",1),
+$LongRegLin(2, 100, 15),
+$Coef_VolatL_Long(-1.00,10.00,1.5,0.1,2),
+$Use_Stop_Long("Yes;No",0);
+
+Calculation
+
+// ****** On met à jour la variable flaglong pour test de position ou de position antérieure à la bougie présente***
+//if MarketPosition() = 1 then flaglong=1; // flag pour test de position antérieure
+//if MarketPosition() = -1 then flaglong=-1; // flag pour test de position antérieure
+
+If ($Use_Stop_Long=0)  then begin
+
+
+//----------------------------------- Pour le stop long --------------------------------------------------------
+
+// on transforme en série le coef VolatL long et la RegLin période VolatL long
+periodRL=$LongRegLin;
+coefVolatLL=$coef_VolatL_Long;
+// Valeur minimum données
+If $LongRegLin<2 then periodRL=2;
+//If $coef_VolatL_Long<1 then coefVolatLL=1;
+
+
+if IsFirstBar() then 
+begin
+//********************************** 
+  CalculateAtEveryTick(false);
+  SetYscaleFormat(GetpriceFormat());
+  
+  
+  for i = 0 to FinalBarIndex()						// calcul du prix de base et de la taille des bougies
+  begin
+    if $priceL = 5 then priceL[-i] = ((h[-i]+c[-i]) /2);
+    else
+    if $priceL = 4 then priceL[-i] = ((l[-i]+c[-i]) /2);
+    else  
+    if $priceL = 3 then priceL[-i] = l[-i];
+    else
+    if $priceL = 2 then priceL[-i] = h[-i];
+    else
+    if $priceL = 1 then priceL[-i] = c[-i];
+    else
+    if $priceL = 0 then priceL[-i] = o[-i]; 
+    
+    Taille[-i]=h[-i]-l[-i];							// calcul de H-L
+   
+  end
+//**********************************
+MovingAverage(Taille,VolatL,periodRL);	// Taille moyenne de H-L
+end
+
+	if Isfinalbar() then begin 		
+																
+	for i = FinalBarIndex() downto 0
+	begin
+	 	ecartBuyL[i]=((coefVolatLL[i])) * VolatL[i]; // Calcul de l'écart du à la VolatLilité et au coef
+	 	lineL[i] = (Courbe_Regression[i])-(ecartBuyL[i]) ;
+	end
+	
+	end
+
+
+//**********************************Regression linéaire
+Courbe_Regression = void;
+if ($LongRegLin - 1) <= CurrentBarIndex() then
+begin
+    sumx = 0;
+    sumy = 0;
+    sumx2 = 0;
+    sumxy = 0;
+    for i = 0 to ($LongRegLin - 1)  
+    begin
+      r = i - 1;
+      sumx = sumx + r  ;
+      sumy = sumy + priceL[i];
+      sumx2 = sumx2 + r * r;
+      sumxy = sumxy + r * priceL[i];
+    end   
+    b = (($LongRegLin * sumXY) - (sumX * sumY)) / (($LongRegLin * sumX2) - (sumX * sumX));
+    a = (sumY - (b * sumX)) /$LongRegLin;
+    Courbe_Regression = a - b;
+end		//****************************Regression linéaire fin
+
+
+// ********************************calcul de l'écart final  
+  
+    
+ // Si le stop (LineL) est inférieur au close on le ramène à close - ecartBuyL.
+ 
+
+// Si on entre en position longue, position de départ
+If (BarsSinceEntry()=0) and (marketposition()=1) then begin // n'est éxécuté que si on est sur la bougie d'entrée
+  TrailingStopLevel=(LineL);
+  if (c-EcartBuyL)<LineL then begin // si LineL supérieur à c-EcartBuyL 
+  //TrailingStopLevel=(c-EcartBuyL);
+  end
+SetStopPrice(TrailingStopLevel);
+					// on est passé ici, donc le calcul de LineL ne doit pas changer.
+end								// Line L reste fixe.
+	
+// Si on veut un stop loss simple
+if ($Type=0) and (BarsSinceEntry()>0) and (MarketPosition()=1) then begin
+	SetStopPrice(TrailingStopLevel[BarsSinceEntry()]);
+end
+
+  
+// Si on veut un stop suiveur (et on est rentré lors d'une bougie antérieure)
+//
+if $Type=1 and (BarsSinceEntry()>0)and (marketposition()=1) then begin
+TrailingStopLevel=LineL;
+end
+
+If MarketPosition()=0 then TrailingStopLevel=void;
+
+// cas où le close est trop haut, c'est à dire au-dessus du stop)
+if (TrailingStopLevel<TrailingStopLevel[1])  and (marketposition()=1) then TrailingStopLevel=TrailingStopLevel[1];
+
+SetStopPrice(TrailingStopLevel); // le stop suiveur ne doit pas descendre
+end//@@@cs:1430844-4111592-1194439_cs@@@

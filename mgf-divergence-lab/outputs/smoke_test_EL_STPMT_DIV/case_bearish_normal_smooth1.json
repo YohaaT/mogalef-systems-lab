@@ -1,0 +1,7 @@
+{
+  "case": "case_bearish_normal_smooth1",
+  "divb_at_10": -3.0,
+  "pose_at_10": -1,
+  "sentiment_at_10": 0,
+  "result": "PASS"
+}

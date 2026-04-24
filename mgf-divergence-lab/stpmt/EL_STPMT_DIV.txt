@@ -1,0 +1,363 @@
+Express EL_STPMT_DIV
+// Author Eric Lefort for MOGALEF 
+// ATTENTION ! VERSION REGARDANT LES HIGH ET LOW POUR INDIC DE TYPE STO
+
+// version du 28 mai 2014
+// Optim ok
+
+Vars
+input $StartTime(0,2359,0),$EndTime(0,2359,2359),$MessageBox(0,1,0),$PlaySound(0,1,0),$SendEmail(0,1,0);
+input $SmoothH(1,10,2);
+//input $SmoothHmax(0,10,10); 
+input $SmoothB(1,10,2);
+input $ONone1Normals2Inverses3All(0,3,1);
+input $decalentry(0,10,0); 
+input $DistanceMaxH(5,200,200); 
+input $DistancemaxL(5,200,200);
+input $Visualise("yes;No",0);
+
+//series StoA(WHSSTPMT.StoA),StoB(WHSSTPMT.StoB),StoC(WHSSTPMT.StoC),StoD(WHSSTPMT.StoD); //INDIC(WHSSTPMT.main),
+series DH,DCH; 
+series AH,ACH; 
+series DB,DCB; 
+series AB,ACB; 
+series DIVB,DIVH,DIVHI,DIVBI;  
+series compteurB,ZB,ZBI,ZH,ZHI,compteurH;  
+series temp1,temp3; 
+series temp4,temp6,pose;
+series PH1,PB1,PH2,PB2,PH3,PB3,PH4,PB4,Stok1,Stok2,Stok3,Stok4,Stod1,Stod2,Stod3,Stod4;
+series NumK1,DenoK1,NumK2,DenoK2,NumK3,DenoK3,NumK4,DenoK4,STPMTe,MA;
+//series ph,pb;
+
+series Indic,k,kk;
+
+numeric a,b,temp5,temp2,i,j; 
+
+
+Calculation
+
+K=40;
+kk=52;
+
+if IsFirstBar() then begin 
+CalculateAtEveryTick(false);
+
+//calcul de PH (plus haut) et PB (plus bas) pour la STPMT ++++++++++++++
+  for i=0 to finalbarindex() begin
+    for j = 0 to 4 begin
+      if j=0 then begin
+        PH1[-i]=h[-i];
+        PB1[-i]=l[-i];
+      end
+      if h[j-i]>PH1[-i] then PH1[-i]=h[j-i];
+      if l[j-i]<PB1[-i] then PB1[-i]=l[j-i];
+    end
+    for j = 0 to 13 begin
+      if j=0 then begin
+        PH2[-i]=h[-i];
+        PB2[-i]=l[-i];
+      end
+      if h[j-i]>PH2[-i] then PH2[-i]=h[j-i];
+      if l[j-i]<PB2[-i] then PB2[-i]=l[j-i];
+    end
+    for j = 0 to 44 begin
+      if j=0 then begin
+        PH3[-i]=h[-i];
+        PB3[-i]=l[-i];
+      end
+      if h[j-i]>PH3[-i] then PH3[-i]=h[j-i];
+      if l[j-i]<PB3[-i] then PB3[-i]=l[j-i];
+    end
+    for j = 0 to 74 begin
+      if j=0 then begin
+        PH4[-i]=h[-i];
+        PB4[-i]=l[-i];
+      end
+      if h[j-i]>PH4[-i] then PH4[-i]=h[j-i];
+      if l[j-i]<PB4[-i] then PB4[-i]=l[j-i];
+    end
+  end
+// Fin +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+end
+
+
+
+
+//Calcul de la STO K et des k de la stpmt
+If isfirstbar() then  begin// ***************
+    for i= 0 to FinalBarIndex() begin//=========
+      NumK1[-i]=(PH1[-i]-c[-i]);  // la stpmt
+      DenoK1[-i]=(PH1[-i]-PB1[-i]); 
+      If DenoK1[-i]=0 then begin 
+        StoK1[-i]=100;
+      end
+      else begin
+        StoK1[-i]= 100-((NumK1[-i]/DenoK1[-i])*100);
+      end 
+      NumK2[-i]=(PH2[-i]-c[-i]);  // la stpmt
+      DenoK2[-i]=(PH2[-i]-PB2[-i]);     
+      If DenoK2[-i]=0 then begin 
+        StoK2[-i]=100;
+      end
+      else begin
+        StoK2[-i]= 100-((NumK2[-i]/DenoK2[-i])*100);
+      end
+      NumK3[-i]=(PH3[-i]-c[-i]);  // la stpmt
+      DenoK3[-i]=(PH3[-i]-PB3[-i]); 
+      If DenoK3[-i]=0 then begin 
+        StoK3[-i]=100;
+      end
+      else begin
+        StoK3[-i]= 100-((NumK3[-i]/DenoK3[-i])*100);
+      end
+      NumK4[-i]=(PH4[-i]-c[-i]);  // la stpmt
+      DenoK4[-i]=(PH4[-i]-PB4[-i]); 
+      If DenoK4[-i]=0 then begin 
+        StoK4[-i]=100;
+      end
+      else begin
+        StoK4[-i]= 100-((NumK4[-i]/DenoK4[-i])*100);
+      end
+    end
+end
+
+//Calcul des Stos de la STPMT
+If isfirstbar() then  begin// ********************
+MovingAverage(stok1,stod1,3);
+MovingAverage(stok2,stod2,3);
+MovingAverage(stok3,stod3,14);
+MovingAverage(stok4,stod4,20);
+  for i=0 to FinalBarIndex() begin//=========calcul STPMT
+    STPMTe[-i]=((4.1*Stod1[-i])+(2.5*Stod2[-i])+(Stod3[-i])+(4*Stod4[-i]))/11.6;
+  end                                  //=========
+MovingAverage(stpmte,MA,9);
+end                        // ********************
+
+
+// Début du tronc commun du programme de divergence =======================================
+If isfirstbar() then begin
+  for i= 0 to FinalBarIndex() begin
+    Indic[-i]=STPMTe[-i];
+  end
+end
+// ========================================================================================
+
+temp1= Highest(INDIC,($SmoothH +1));
+//If isfirstbar() then begin
+//  for i=0 to finalbarindex() begin // calcul de temp1 = plus haut de l'indic sur $smoothH + 1 périodes
+//    for j = 0 to $SmoothH begin
+//      if j=0 then begin
+//        PH[-i]=Indic[-i];
+//      end
+//      if Indic[j-i]>PH[-i] then PH[-i]=Indic[j-i];
+//      end
+//  end
+//end
+
+
+
+temp3= Highest(h,3); 
+
+temp2= temp1[$SmoothH];
+
+if ($SmoothH>1) then begin 
+if ((INDIC[$SmoothH] = temp1) and (INDIC[$SmoothH] = temp2)) then 
+begin
+DH = INDIC[$SmoothH];
+DCH = Highest(h,( ($SmoothH*2) +1) );  
+compteurB = $SmoothH;
+end
+else begin
+DH = DH[1];
+DCH = DCH[1];
+compteurB = compteurB[1]+1 ;
+end
+end
+else begin 
+if ((INDIC[3] = temp1[2]) and (INDIC[3] = temp1[3])) then 
+begin
+DH = INDIC[3];
+DCH = temp3[2]; 
+compteurB = 3;
+end
+else begin
+DH = DH[1];
+DCH = DCH[1];
+compteurB = compteurB[1]+1 ;
+end 
+end
+
+if (date<01_01_2030) then begin
+//   
+if ( ((h<=h[1])or (h<=h[2])) and (INDIC < INDIC[1]) and (INDIC[1]=temp1[1]) and (compteurB < $DistanceMaxH)    ) then begin 
+AH = INDIC[1];
+ACH = Highest(h,($SmoothH +2)); 
+end
+else begin
+AH = AH[1];
+ACH = ACH[1];
+end
+if ($ONone1Normals2Inverses3All=1) or ($ONone1Normals2Inverses3All>2) then begin 
+if( (AH<>AH[1]) and (DH>AH) and (DCH<ACH) ) then begin
+DIVB= -3;
+end
+else begin
+DIVB = 0;
+ZH = void;
+end
+if DIVB = -3 then begin 
+a= AH;
+b= ((DH-AH) / (compteurB -1));
+for i = 1 to compteurB 
+begin
+ZH[i] = a + b*(i-1); 
+end
+ZH = void;
+end
+end
+if $ONone1Normals2Inverses3All>1 then begin
+if( (AH<>AH[1]) and (DH<AH) and (DCH>ACH) ) then begin
+DIVBI= -2;
+end
+else begin
+DIVBI = 0;
+ZHI = void;
+end
+if DIVBI = -2 then begin 
+a= AH;
+b= ((DH-AH) / (compteurB -1));
+for i = 1 to compteurB 
+begin
+ZHI[i] = a + b*(i-1); 
+end
+ZHI = void;
+end
+end
+temp4= Lowest(INDIC,($SmoothB +1));
+temp5= temp4[$SmoothB];
+temp6= Lowest(l,3); 
+if ($SmoothB>1) then begin 
+if ((INDIC[$SmoothB] = temp4) and (INDIC[$SmoothB] = temp5)) then 
+begin
+DB = INDIC[$SmoothB];
+DCB = Lowest(l,( ($SmoothB*2) +1) );  
+compteurH = $SmoothB;
+end
+else begin
+DB = DB[1];
+DCB = DCB[1];
+compteurH = compteurH[1]+1 ;
+end
+end
+else begin 
+if ((INDIC[3] = temp4[2]) and (INDIC[3] = temp4[3])) then 
+begin
+DB = INDIC[3];
+DCB = temp6[2]; 
+compteurH = 3;
+end
+else begin
+DB = DB[1];
+DCB = DCB[1];
+compteurH = compteurH[1]+1 ;
+end  
+end
+if ( ((l>=l[1])or(l>=l[2])) and (INDIC > INDIC[1]) and (INDIC[1]=temp4[1]) and (compteurH < $DistancemaxL)   ) then begin 
+AB = INDIC[1];
+ACB = Lowest(l,($SmoothB +2)); 
+end
+else begin
+AB = AB[1];
+ACB = ACB[1];
+end
+if ($ONone1Normals2Inverses3All=1) or ($ONone1Normals2Inverses3All>2) then begin 
+if( (AB<>AB[1]) and (DB<AB) and (DCB>ACB) ) then begin
+DIVH= 3;
+end
+else begin
+DIVH = 0;
+ZB = void;
+end
+if DIVH = 3 then begin 
+a= AB;
+b= ((DB-AB) / (compteurH -1));
+for i = 1 to compteurH 
+begin
+ZB[i] = a + b*(i-1); 
+end
+ZB = void;
+end
+end
+if ($ONone1Normals2Inverses3All>1) then begin
+if( (AB<>AB[1]) and (DB>AB) and (DCB<ACB) ) then begin
+DIVHI= 2;
+end
+else begin
+DIVHI = 0;
+ZBI = void;
+end
+if DIVHI = 2 then begin // 
+a= AB;
+b= ((DB-AB) / (compteurH -1));
+for i = 1 to compteurH 
+begin
+ZBI[i] = a + b*(i-1); 
+end
+ZBI = void;
+end
+end
+end
+
+if (DIVH[$decalentry]>0) then pose=1;
+if (DIVB[$decalentry]<0) then pose=-1;
+if (DIVHI[$decalentry]>0) then pose=1;
+if (DIVBI[$decalentry]<0) then pose=-1;
+
+
+
+
+
+
+interpretation
+begin
+if (TimeToNumeric(timeopen) >= $StartTime) and (TimeToNumeric(timeopen) <= $EndTime) 
+      and (IsBarCompleted()) then begin
+ If (Pose=1) then 
+  begin
+    Sentiment=100;
+    If $Visualise = 0 then  Highlight("slot","lightgreen");
+    if ($SendEmail = 1) then SendEmail("Buy signal","Buy signal: STPMT DIV " + SymbolName()); 
+    if ($PlaySound = 1) then Playsound("ring");
+    if ($MessageBox = 1) then MessageBox("Buy signal: STPMT DIV " + SymbolName());
+  end
+  else
+  begin
+    If (Pose=-1) 
+        and (IsBarCompleted()) then 
+    begin
+      Sentiment=0;
+      If $Visualise = 0 then  Highlight("slot","lightred");
+      if ($SendEmail = 1) then SendEmail("Sell signal","Sell signal: STPMT DIV " + SymbolName()); 
+      if ($PlaySound = 1) then Playsound("ring");
+      if ($MessageBox = 1) then MessageBox("Sell signal: STPMT DIV " + SymbolName());
+    end
+  end
+end
+end
+
+PLOT (kk,black,1);
+PLOT (k,black,1);
+plot (INDIC,red,2); 
+plot (DIVH,green,1);
+plot (ZB,green,2);
+plot (DIVB,green,1);
+plot (ZH,red,2);
+plot (ZHI,red,1);
+plot (ZBI,green,1);
+plot (DIVHI,green,1);
+plot (DIVBI,green,1);
+plot (Stod1,green,1);
+plot (Stod2,red,1);
+plot (Stod3,blue,1);
+plot (Stod4,yellow,1);
+plot(MA,blue,2);//@@@cs:2837643-4832002-2515837_cs@@@

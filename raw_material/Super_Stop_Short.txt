@@ -1,0 +1,146 @@
+Express stop Super_Stop_Short
+// Conception Eric Lefort pour Mogalef et WHSelfinvest. 2023-01-16
+
+Vars
+
+series 
+
+lineS,
+priceS, 
+senti(50),
+Courbe_RegressionS, 
+VolatS, 
+periodRS,
+coefVolatSS, 
+coefXVolatSS, 
+ecartShort, 
+//flaglong,
+TrailingStopLevelS,
+//warning,
+//flag,
+
+
+TailleS;
+
+numeric i, sumX, sumX2, sumXY, sumY, a, b, r;
+
+input 
+$Type_s("StopLoss;TrailingStop",1),
+$priceS("Open;Close;High;Low;CloseLow;CloseHigh",1),
+$ShortRegLin(2, 100, 15),
+$Coef_VolatS_Short(-1.00,10.00,1.5,0.1,2),
+$Use_Stop_s("Yes;No",0);
+
+Calculation
+
+
+// ****** On met à jour la variable flaglong pour test de position ou de position antérieure à la bougie présente***
+//if MarketPosition() = 1 then flaglong=1; // flag pour test de position antérieure
+//if MarketPosition() = -1 then flaglong=-1; // flag pour test de position antérieure
+
+If $Use_Stop_s=0 then begin
+
+//----------------------------------- Pour le stop Short --------------------------------------------------------
+
+// on transforme en série le coef VolatS  et la RegLin période VolatS long
+periodRS=$ShortRegLin;
+coefVolatSS=$Coef_VolatS_Short;
+// Valeur minimum données
+If $ShortRegLin<2 then periodRS=2;
+//If $Coef_VolatS_Short<1 then coefVolatSS=1;
+
+
+if IsFirstBar() then 
+begin
+//********************************** 
+  CalculateAtEveryTick(false);
+  SetYscaleFormat(GetpriceFormat());
+  
+  
+  for i = 0 to FinalBarIndex()						// calcul du prix de base et de la Taille des bougies
+  begin
+    if $priceS = 5 then priceS[-i] = ((h[-i]+c[-i]) /2);
+    else
+    if $priceS = 4 then priceS[-i] = ((l[-i]+c[-i]) /2);
+    else  
+    if $priceS = 3 then priceS[-i] = l[-i];
+    else
+    if $priceS = 2 then priceS[-i] = h[-i];
+    else
+    if $priceS = 1 then priceS[-i] = c[-i];
+    else
+    if $priceS = 0 then priceS[-i] = o[-i]; 
+    
+    TailleS[-i]=h[-i]-l[-i];							// calcul de H-L
+   
+  end
+//**********************************
+MovingAverage(TailleS,VolatS,periodRS);	// TailleS moyenne de H-L
+end
+
+
+
+
+	if Isfinalbar() then begin 		
+																
+	for i = FinalBarIndex() downto 0
+	begin
+	 	ecartShort[i]=((coefVolatSS[i])) * VolatS[i]; // Calcul de l'écart du à la VolatSilité et au coef
+	 	lineS[i] = (Courbe_RegressionS[i])+(ecartShort[i]) ;
+	end
+	
+	end
+
+
+//**********************************Regression linéaire
+Courbe_RegressionS = void;
+if ($ShortRegLin - 1) <= CurrentBarIndex() then
+begin
+    sumx = 0;
+    sumy = 0;
+    sumx2 = 0;
+    sumxy = 0;
+    for i = 0 to ($ShortRegLin - 1)  
+    begin
+      r = i - 1;
+      sumx = sumx + r  ;
+      sumy = sumy + priceS[i];
+      sumx2 = sumx2 + r * r;
+      sumxy = sumxy + r * priceS[i];
+    end   
+    b = (($ShortRegLin * sumXY) - (sumX * sumY)) / (($ShortRegLin * sumX2) - (sumX * sumX));
+    a = (sumY - (b * sumX)) /$ShortRegLin;
+    Courbe_RegressionS = a - b;
+end		//****************************Regression linéaire fin
+
+
+ 
+
+// Si on entre en position courte, position de départ
+If (BarsSinceEntry()=0) and (marketposition()=-1)  then begin // n'est éxécuté que si on est sur la bougie d'entrée
+  TrailingStopLevelS=(lineS);
+  if (c+ecartShort)>lineS then begin // si lineS supérieur à c-ecartShort 
+  TrailingStopLevelS=(c+ecartShort);
+  end
+SetStopPrice(TrailingStopLevelS);
+					// on est passé ici, donc le calcul de lineS ne doit pas changer.
+end								// Line L reste fixe.
+	
+// Si on veut un stop loss simple
+if ($Type_s=0) and (BarsSinceEntry()>0) and (MarketPosition()<0) then begin
+	SetStopPrice(TrailingStopLevelS[BarsSinceEntry()]);
+end
+
+  
+// Si on veut un stop suiveur (et on est rentré lors d'une bougie antérieure)
+//
+if ($Type_s=1) and (BarsSinceEntry()>0) and (marketposition()=-1) then begin
+TrailingStopLevelS=lineS;
+end
+
+If MarketPosition()=0 then TrailingStopLevelS=void;
+
+if (TrailingStopLevelS>TrailingStopLevelS[1]) then TrailingStopLevelS=TrailingStopLevelS[1];
+SetStopPrice(TrailingStopLevelS); // le stop suiveur ne doit pas monter
+
+End//@@@cs:1361224-4054867-1145238_cs@@@

@@ -1,0 +1,265 @@
+Express EL_CCI_DIV
+// Author Eric Lefort for MOGALEF 
+// ATTENTION ! VERSION REGARDANT LE CLOSE POUR INDIC DE TYPE MACD
+// Version avec RSI intégré
+// 
+
+Vars
+input $StartTime(0,2359,0),$EndTime(0,2359,2359),$MessageBox(0,1,0),$PlaySound(0,1,0),$SendEmail(0,1,0);
+input $CCIperiod(2,40,20);
+input $smothH(1,10,2);  
+input $smothB(1,10,2);
+input $ORien1Normales2Inverses3Toutes(0,3,1);
+input $DifferEntry(0,10,0); 
+input $Visualise("yes;No",0);
+//input $DistanceMaxH(5,200,200); 
+//input $DistancemaxB(5,200,200); 
+series INDIC;//(RSI.main); 
+series DH,DCH; 
+series AH,ACH; 
+series DB,DCB; 
+series AB,ACB; 
+series DIVB,DIVH,DIVHI,DIVBI;  
+series compteurB,ZB,ZBI,ZH,ZHI,compteurH; 
+numeric a,b,temp2,temp5;
+series temp1,temp3,Pose; 
+series temp4,temp6;
+numeric i; 
+
+series SG,SP,SmaDev,tempcci,temprsi,z1,z2;
+numeric j,dev;
+series TP,SMATP,MD;
+
+Calculation
+ z1=100;
+ z2=-100;
+// Calcul de l'indicateur *********************************
+if isfirstbar() then 
+begin
+ CalculateAtEveryTick(false);
+
+ for i = 0 to (FinalBarIndex()) // Calcul du TP Typique Price
+ begin
+  TP[-i]= (c[-i]+h[-i]+l[-i])/3;
+ End // Fin de calcul du TP 
+
+ // Calcul de la MM simple
+  MovingAverage(TP,SMATP,$CCIperiod);
+ // Fin de calcul de la MM simple
+
+ for i = 0 to (FinalBarIndex()) // Calcul de la déviation standard et du CCI
+ begin
+  For j=0 to ($CCIperiod -1)
+    begin
+      dev = SMATP[-i] - TP[-i+j];// déviation
+      dev=AbsValue(dev);
+      smadev[-i]=smadev[-i]+dev;// somme des déviations
+    end
+  smadev[-i]= (smadev[-i] / $CCIperiod); // moyenne déviation
+
+  Indic[-i]= (TP[-i] - SMATP[-i]) / (0.015 * SmaDev[-i]); // CCI
+ End // Fin de calcul de la déviation standard et du CCI
+
+
+end
+// FIN Calcul de l'indicateur ***************************** 
+
+temp1= Highest(INDIC,($smothH +1));
+temp2= temp1[$smothH];
+temp3= Highest(h,3); 
+if ($smothH>1) then begin 
+if ((INDIC[$smothH] = temp1) and (INDIC[$smothH] = temp2)) then 
+begin
+DH = INDIC[$smothH];
+DCH = Highest(h,( ($smothH*2) +1) ); 
+compteurB = $smothH;
+end
+else begin
+DH = DH[1];
+DCH = DCH[1];
+compteurB = compteurB[1]+1 ;
+end
+end
+else begin 
+if ((INDIC[3] = temp1[2]) and (INDIC[3] = temp1[3])) then 
+begin
+DH = INDIC[3];
+DCH = temp3[2];
+compteurB = 3;
+end
+else begin
+DH = DH[1];
+DCH = DCH[1];
+compteurB = compteurB[1]+1 ;
+end  
+end
+if (date<27_04_2050) then begin  // ****************** DATE ********************************************
+//   
+if ( ((h<=h[1])or (h<=h[2])) and (INDIC < INDIC[1]) and (INDIC[1]=temp1[1])  ) then begin 
+AH = INDIC[1];
+ACH = Highest(h,($smothH +2)); 
+end
+else begin
+AH = AH[1];
+ACH = ACH[1];
+end
+if ($ORien1Normales2Inverses3Toutes=1) or ($ORien1Normales2Inverses3Toutes>2) then begin 
+if( (AH<>AH[1]) and (DH>AH) and (DCH<ACH) ) then begin
+DIVB= -30;
+end
+else begin
+DIVB = 0;
+ZH = void;
+end
+if DIVB = -30 then begin 
+a= AH;
+b= ((DH-AH) / (compteurB -1));
+for i = 1 to compteurB 
+begin
+ZH[i] = a + b*(i-1); 
+end
+ZH = void;
+end
+end
+if $ORien1Normales2Inverses3Toutes>1 then begin
+if( (AH<>AH[1]) and (DH<AH) and (DCH>ACH) ) then begin
+DIVBI= -20;
+end
+else begin
+DIVBI = 0;
+ZHI = void;
+end 
+if DIVBI = -20 then begin 
+a= AH;
+b= ((DH-AH) / (compteurB -1));
+for i = 1 to compteurB 
+begin
+ZHI[i] = a + b*(i-1); 
+end
+ZHI = void;
+end
+end
+temp4= Lowest(INDIC,($smothB +1));
+temp5= temp4[$smothB];
+temp6= Lowest(l,3); 
+if ($smothB>1) then begin 
+if ((INDIC[$smothB] = temp4) and (INDIC[$smothB] = temp5)) then 
+begin
+DB = INDIC[$smothB];
+DCB = Lowest(l,( ($smothB*2) +1) );  
+compteurH = $smothB;
+end
+else begin
+DB = DB[1];
+DCB = DCB[1];
+compteurH = compteurH[1]+1 ;
+end
+end
+else begin 
+if ((INDIC[3] = temp4[2]) and (INDIC[3] = temp4[3])) then 
+begin
+DB = INDIC[3];
+DCB = temp6[2]; 
+compteurH = 3;
+end
+else begin
+DB = DB[1];
+DCB = DCB[1];
+compteurH = compteurH[1]+1 ;
+end  
+end
+if ( ((l>=l[1])or(l>=l[2])) and (INDIC > INDIC[1]) and (INDIC[1]=temp4[1])   ) then begin 
+AB = INDIC[1];
+ACB = Lowest(l,($smothB +2)); 
+end
+else begin
+AB = AB[1];
+ACB = ACB[1];
+end
+if ($ORien1Normales2Inverses3Toutes=1) or ($ORien1Normales2Inverses3Toutes>2) then begin 
+if( (AB<>AB[1]) and (DB<AB) and (DCB>ACB) ) then begin
+DIVH= 30;
+end
+else begin
+DIVH = 0;
+ZB = void;
+end
+if DIVH = 30 then begin 
+a= AB;
+b= ((DB-AB) / (compteurH -1));
+for i = 1 to compteurH 
+  begin
+  ZB[i] = a + b*(i-1); 
+  end
+ZB = void;
+end
+end
+  if ($ORien1Normales2Inverses3Toutes>1) then begin
+    if( (AB<>AB[1]) and (DB>AB) and (DCB<ACB) ) then begin
+    DIVHI= 20;
+    end
+  else begin
+    DIVHI = 0;
+    ZBI = void;
+    end
+  if DIVHI = 20 then begin // 
+    a= AB;
+    b= ((DB-AB) / (compteurH -1));
+    for i = 1 to compteurH 
+      begin
+      ZBI[i] = a + b*(i-1); 
+      end
+    ZBI = void;
+    end
+  end
+end
+
+if (DIVH[$DifferEntry]>0) then pose=1;
+if (DIVB[$DifferEntry]<0) then pose=-1;
+if (DIVHI[$DifferEntry]>0) then pose=1;
+if (DIVBI[$DifferEntry]<0) then pose=-1;
+
+interpretation
+begin
+
+if (TimeToNumeric(timeopen) >= $StartTime) and (TimeToNumeric(timeopen) <= $EndTime) then begin
+  If (Pose=1)
+      and (IsBarCompleted()) then 
+    begin
+    Sentiment=100;
+    if ($SendEmail = 1) then SendEmail("Buy signal","Buy signal: RSI DIV " + SymbolName()); 
+    if ($PlaySound = 1) then Playsound("ring");
+    if ($MessageBox = 1) then MessageBox("Buy signal: RSI DIV " + SymbolName());
+    end
+  else
+    begin
+    If (Pose=-1)
+        and (IsBarCompleted()) then 
+      begin
+      Sentiment=0;
+      if ($SendEmail = 1) then SendEmail("Sell signal","Sell signal: RSI DIV " + SymbolName()); 
+      if ($PlaySound = 1) then Playsound("ring");
+      if ($MessageBox = 1) then MessageBox("Sell signal: RSI DIV " + SymbolName());
+        end
+    end
+  end
+  If $Visualise = 0 then begin
+    if (divh>0) then Highlight("slot","lightgreen");
+    if (divb<0) then Highlight("slot","lightred");
+    end
+end
+
+
+plot (INDIC,black,2); 
+plot (DIVH,green,1);
+plot (ZB,green,2);
+plot (DIVB,red,1);
+plot (ZH,red,2);
+plot (ZHI,red,1);
+plot (ZBI,green,1);
+plot (DIVHI,green,1);
+plot (DIVBI,green,1);
+plot (z1,lightblue,1);
+plot (z2,lightblue,1);
+
+//plot (smadev,blue,2);//@@@cs:2026182-4392323-1802112_cs@@@

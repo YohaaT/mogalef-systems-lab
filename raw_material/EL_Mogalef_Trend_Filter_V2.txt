@@ -1,0 +1,218 @@
+Express Blocker EL_Mogalef_Trend_Filter_V2
+// Version 3 du 29/09/ 2018
+// correction méthode de calcul des repulses
+// Author Eric Lefort for MOGALEF
+// A la base, essayer les repulses 1,90,150 par exemple.
+//********************************************************
+Vars
+series INDIC5; // Repulse 5
+series INDIC1; // Repulse
+series INDIC15; // Repulse 15
+// ********************************************************
+
+input $BlockCase1(0,1,0);
+input $BlockCase2(0,1,0);
+input $BlockCase3(0,1,0);
+input $BlockCase4(0,1,0);
+input $BlockCase5(0,1,0);
+input $BlockCase6(0,1,0);
+input $BlockCase7(0,1,0);
+input $BlockCase8(0,1,0);
+input $R1(1,100,1);
+input $R2(50,400,90);
+input $R3(100,800,150);
+input $TradeOnlyThisCASE(0,8,0);
+input $OffOn(0,1,1);
+Series sensR1,sensR5,SensR15;// -1, 0 ou 1 suivant descend, indifférent ou monte
+Series CAS;
+numeric Length1,Length2,Length3,i,j;
+Series PousH1,PousB1;
+Series PousH,PousB;
+Series bas,haut;
+Series PousH2,PousB2;
+Series PousHH,PousBB;
+Series bas2,haut2;
+Series PousH3,PousB3;
+Series PousHHH,PousBBB;
+Series bas3,haut3;
+
+Calculation
+// ================calcul autonome du Repulse 1 =================
+if isfirstbar() then begin
+  CalculateAtEveryTick(false);
+  Length1=$R1; // valeur de base du Repulse 1
+
+
+  for i = 0 to FinalBarIndex() begin  // calcul du lowest low
+    bas[-i]=l[-i];
+    haut[-i]=h[-i];
+    for j =1 to (length1-1)
+      begin
+      if l[j-i]<=bas[-i] then bas[-i]=l[j-i];  
+      if h[j-i]>=haut[-i] then haut[-i]=h[j-i];
+      end
+ end
+
+
+  for i = 0 to FinalBarIndex() begin
+    PousH[-i]= (( (3*C[-i]) - (2*Bas[-i]) - O[Length1-i-1] ) * 100) /C[-i]; 
+    PousB[-i]=( (O[Length1-i-1] - (3*C[-i]) + (2*haut[-i]) )*100) / C[-i] ;
+  end
+  ExpMovingAverage(PousH,PousH1,Length1 *5);
+  ExpMovingAverage(PousB,PousB1,Length1 *5);
+  for i = 0 to FinalBarIndex() begin  
+    INDIC1[-i]=PousH1[-i]-PousB1[-i]; // c'est le R1
+  end
+
+end
+// =============Fin de calcul autonome du Repulse 1 ==============
+// ===============Calcul autonome du Repulse 2 ===================
+if isfirstbar() then begin
+  CalculateAtEveryTick(false);
+  Length2=$R2; // valeur de base du Repulse 5
+
+  for i = 0 to FinalBarIndex() begin  // calcul du lowest low
+    bas2[-i]=l[-i];
+    for j =1 to (length2-1)
+      if l[j-i]<=bas2[-i] then bas2[-i]=l[j-i];  
+  end
+  for i = 0 to FinalBarIndex() begin  // calcul du highest high
+    haut2[-i]=h[-i];
+    for j =1 to (length2-1)
+      if h[j-i]>=haut2[-i] then haut2[-i]=h[j-i];   
+  end
+
+  
+  for i = 0 to FinalBarIndex() begin
+    PousHH[-i]= ( (3*C[-i]) - (2*Bas2[-i]) - O[Length2-i-1] ) / C[-i] * 100 ; // calcul préalable 
+    PousBB[-i]=( O[Length2-i-1] - (3*C[-i]) + (2*haut2[-i]) ) / C[-i] * 100;
+  end
+  ExpMovingAverage(PousHH,PousH2,Length2 *5);
+  ExpMovingAverage(PousBB,PousB2,Length2 *5);
+  for i = 0 to FinalBarIndex() begin  
+    INDIC5[-i]=PousH2[-i]-PousB2[-i]; // c'est le R2
+  end
+
+end
+// =============Fin de calcul autonome du Repulse 2 ==============
+// ===============Calcul autonome du Repulse 3 ===================
+if isfirstbar() then begin
+  CalculateAtEveryTick(false);
+  Length3=$R3; // valeur de base du Repulse 15
+
+  for i = 0 to FinalBarIndex() begin  // calcul du lowest low
+    bas3[-i]=l[-i];
+    for j =1 to (length3-1)
+      if l[j-i]<=bas3[-i] then bas3[-i]=l[j-i];  
+  end
+  for i = 0 to FinalBarIndex() begin  // calcul du highest high
+    haut3[-i]=h[-i];
+    for j =1 to (length3-1)
+      if h[j-i]>=haut3[-i] then haut3[-i]=h[j-i];   
+  end
+  for i = 0 to FinalBarIndex() begin
+    PousHHH[-i]= ( (3*C[-i]) - (2*Bas3[-i]) - O[Length3-i-1] ) / C[-i] * 100 ; // calcul préalable 
+    PousBBB[-i]=( O[Length3-i-1] - (3*C[-i]) + (2*haut3[-i]) ) / C[-i] * 100;
+  end
+  ExpMovingAverage(PousHHH,PousH3,Length3 *5);
+  ExpMovingAverage(PousBBB,PousB3,Length3 *5);
+  for i = 0 to FinalBarIndex() begin  
+    INDIC15[-i]=PousH3[-i]-PousB3[-i]; // c'est le R3
+  end
+
+end
+// =============Fin de calcul autonome du Repulse 3 ==============
+
+
+
+
+If isfirstbar() then  begin// ***************
+  CalculateAtEveryTick(false);
+for i=0 to finalbarindex() begin//=========
+
+if (Indic1[-i]>Indic1[1-i]) then //----------------
+  begin
+    sensR1[-i]=1;
+  end
+  else begin
+    SensR1[-i]=-1;
+  end
+if (Indic5[-i]>Indic5[1-i]) then 
+  begin
+    sensR5[-i]=1;
+  end
+  else begin
+    SensR5[-i]=-1;
+  end
+if (Indic15[-i]>Indic15[1-i]) then 
+  begin
+    sensR15[-i]=1;
+  end
+  else begin
+    SensR15[-i]=-1;
+  end // -------------------------------------
+end //========================================
+
+// Les cas sont ensuite numérotés 
+If (isfirstbar()) then  begin// ***************
+for i=0 to finalbarindex() begin//=========
+
+If (SensR15[-i]=1) then begin
+  If SensR5[-i]=1 then begin
+    If sensR1[-i]=1 then
+      CAS[-i]=8;
+      else 
+      cas[-i]=7;
+      end
+    else 
+    If sensR1[-i]=1 then
+      CAS[-i]=6;
+      else 
+      cas[-i]=5;
+      end    
+  else 
+  If SensR5[-i]=1 then begin
+    If sensR1[-i]=1 then
+      CAS[-i]=4;
+      else 
+      cas[-i]=3;
+      end
+    else 
+    If sensR1[-i]=1 then
+      CAS[-i]=2;
+      else
+      cas[-i]=1;
+  end // -------------------------------------
+end //========================================
+end // ***************************************
+
+if (date>05_12_2030) then cas=0;
+if (CurrentBarIndex()<($R3*5)) then cas=void;
+
+
+Interpretation 
+Begin
+
+If $OffOn=1 then begin
+if ($TradeOnlyThisCASE<>0) then begin
+    if (cas<>$TradeOnlyThisCASE) then sentiment=senti_block;
+      else sentiment=senti_pass;
+  end
+else begin
+  if ($BlockCase1<>0)and(cas=1)then sentiment=senti_block;
+  if ($BlockCase2<>0)and(cas=2)then sentiment=senti_block;
+  if ($BlockCase3<>0)and(cas=3)then sentiment=senti_block;
+  if ($BlockCase4<>0)and(cas=4)then sentiment=senti_block;
+  if ($BlockCase5<>0)and(cas=5)then sentiment=senti_block;
+  if ($BlockCase6<>0)and(cas=6)then sentiment=senti_block;
+  if ($BlockCase7<>0)and(cas=7)then sentiment=senti_block;
+  if ($BlockCase8<>0)and(cas=8)then sentiment=senti_block;
+  end
+end
+if (cas=void) then sentiment=senti_block;
+
+end
+
+Plot (CAS,black,1);
+//plot (bas2,green,1);
+//plot (haut2,red,1);//@@@cs:2040642-4403713-1705107_cs@@@

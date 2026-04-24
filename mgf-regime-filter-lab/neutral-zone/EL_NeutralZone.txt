@@ -1,0 +1,70 @@
+Express EL_NeutralZone
+
+
+Vars
+
+series 
+line,
+price,
+senti(50);
+series 
+ret90,haut,bas,Ret;
+series milieu,
+band,
+marqueurRET, // marque le dernier sens du RET
+marqueurMME;
+
+numeric i;
+
+input 
+$period (1, 200,150),
+
+$RET(90,540,90);
+
+Calculation
+if IsFirstBar() then
+begin
+  CalculateAtEveryTick(false);
+  SetYscaleFormat(GetPriceFormat());
+  ExpMovingAverage(c, line, $period);
+end
+
+haut=Highest(h,$RET);
+bas=Lowest(l,$RET);
+RET=(haut+bas)/2; 
+ 
+
+if isfinalbar() then
+begin
+  for i=currentbarindex() downto 0
+  begin
+    marqueurRET[i]=marqueurRET[i+1];
+    milieu[i]=(ret[i]+line[i])/2;
+    band[i]=milieu[i];
+    if ret[i]>ret[i+1] then marqueurRET[i]=1; // le RET monte
+    if ret[i]<ret[i+1] then marqueurRET[i]=-1; // le RET descend
+    if line[i]>=line[i+1] then marqueurMME[i]=1; // la MME monte
+    if line[i]<line[i+1] then marqueurMME[i]=-1; // la MME descend
+    if (marqueurRET[i]=1) and (marqueurMME[i]=1) then begin
+      band[i]=milieu[i]+(ticksize()*10);
+      senti=100;
+    end
+    senti=50;
+    if (marqueurRET[i]=-1) and (marqueurMME[i]=-1) then begin
+      band[i]=milieu[i]-(ticksize()*10);
+      senti=0;
+    end
+  end
+end
+  
+ 
+interpretation
+begin
+  Sentiment=senti;
+end
+
+plot (line, lightblue, 2);
+Plot (RET,green,2);
+//plot (milieu,black,1);
+//plot (band,lightyellow,2);
+plotcrossinglines (band,"white",0,milieu,"black",1,"lightgreen","lightred");//@@@cs:571292-3586795-403813_cs@@@

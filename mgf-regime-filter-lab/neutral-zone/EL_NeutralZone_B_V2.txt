@@ -1,0 +1,109 @@
+Express EL_NeutralZone_B_V2
+// 2022-07-23
+// Affiche la MME et le RET de la zone neutre
+// Affiche le sens de la tendance au milieu de la zone neutre
+// Permet le changement de sens Achat-Vente
+
+
+Vars
+
+series 
+line,
+price,
+senti(50);
+series 
+ret90,haut,bas,Ret;
+series milieu,
+band,
+marqueurRET, // marque le dernier sens du RET
+marqueurMME;
+
+numeric i;
+
+input 
+$UseAs("signal;filter",1),
+$MMEperiod (1, 200,150),    // Période de la MME
+$RET(90,540,90),            // Longueur du RET
+$TrendIndicSize(1,100,15),  // Taille en nombre de ticks de la bande indiquant le sens de la tendance
+$VueTrend("Yes;No",0),      // Affiche ou n'affiche pas la bande de tendance
+$Sens("Normal;Inverse",0);				// Permet de passer en achat ou en vente sur le signal
+
+Calculation
+if IsFirstBar() then
+begin
+  CalculateAtEveryTick(false);
+  SetYscaleFormat(GetPriceFormat());
+  ExpMovingAverage(c, line, $MMEperiod);
+end
+
+haut=Highest(h,$RET); // je n'arrive pas à mettre ça dans une boucle car la Nano n'accepte pas : haut=Highest(h[i],$RET)
+bas=Lowest(l,$RET);
+ 
+
+if isfinalbar() then
+begin
+  for i=currentbarindex() downto 0
+  begin
+    senti[i]=50;
+    RET[i]=(haut[i]+bas[i])/2;
+    marqueurRET[i]=marqueurRET[i+1];
+    if $VueTrend=0 then 
+    begin
+      milieu[i]=(ret[i]+line[i])/2;
+    end
+    else begin
+      Milieu[i]=void;
+    end
+    band[i]=milieu[i];
+    if ret[i]>ret[i+1] then marqueurRET[i]=1; // le RET monte
+    if ret[i]<ret[i+1] then marqueurRET[i]=-1; // le RET descend
+    if line[i]>=line[i+1] then marqueurMME[i]=1; // la MME monte
+    if line[i]<line[i+1] then marqueurMME[i]=-1; // la MME descend
+    if (marqueurRET[i]=1) and (marqueurMME[i]=1) then 
+    begin
+      band[i]=milieu[i]+(ticksize()*$TrendIndicSize);
+      if $Sens=0 then senti[i]=100; // si on utilise en FILTRE				change
+      if $Sens=1 then senti[i]=0;   // si on utilise en FILTRE				+
+
+      if( $UseAs=0) then  // si on utilise en SIGNAL
+      begin
+        senti[i]=50;
+        if (marqueurRet[i+1]=-1) or (marqueurMME[i+1]=-1) then
+        begin
+          if $Sens=0 then senti[i]=100;															//change
+          if $Sens=1 then senti[i]=0;																//  +
+        end 
+      end
+    end
+    if (marqueurRET[i]=-1) and (marqueurMME[i]=-1) then 
+    begin
+      band[i]=milieu[i]-(ticksize()*$TrendIndicSize);
+      if $Sens=0 then senti[i]=0;																			//
+      if $Sens=1 then senti[i]=100;																	//
+
+      if( $UseAs=0) then  // si on utilise en SIGNAL
+      begin
+        senti[i]=50;
+        if (marqueurRet[i+1]=1) or (marqueurMME[i+1]=1) then
+        begin
+          if $Sens=0 then senti[i]=0;																//
+          if $Sens=1 then senti[i]=100;
+        end 
+      end
+
+    end
+  end
+end
+  
+  
+ 
+interpretation
+begin
+  Sentiment=senti;
+end
+
+plot (line, blue, 2);
+Plot (RET,green,2);
+//plot (marqueurRet,black,1);
+//plot (marqueurMME,lightyellow,2);
+plotcrossinglines (band,"white",0,milieu,"black",1,"lightgreen","lightred");//@@@cs:1089092-3869667-879846_cs@@@

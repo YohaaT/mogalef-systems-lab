@@ -1,0 +1,54 @@
+express stop EL_Triangle_STOP_Long
+// Version 2020
+
+vars
+input $UseStop("No;Yes",1);  //0=pas de stop  1=Stop sur prolongation de ligne opposée
+input $StopEOP("No;Yes",0); 
+input $LongAddDistance(-100,100,0); 
+
+series bBstop(ELTriangleLongexpress.bBsuite), bHstop(ELTriangleLongexpress.bHsuite), ZHstop(ELTriangleLongexpress.ZHsuite), ZBstop(ELTriangleLongexpress.ZBsuite), TracerSuite(ELTriangleLongexpress.Tracersuite);
+      
+
+Series ZHsuite,ZBsuite,bH,bB;
+numeric LongAddDistance, MP;
+
+
+
+
+
+calculation
+
+if IsFirstBar() then CalculateAtEveryTick(false); 
+LongAddDistance=$LongAddDistance *TickSize();
+
+
+MP= marketposition();
+
+if ($UseStop=1) then begin // ====================================
+
+
+if (ZHstop<>void) and (ZHstop[1]=void)  then begin // si un triangle est tracé on stocke la premiere valeur des suites de triangle et les pentes
+  bH=bHstop;          // pente du haut
+  bB=bBstop;          // pente du bas
+  ZHsuite=ZHstop+bH;     // position du haut en [1]
+  ZBsuite=ZBstop+bB;     // position du bas en [1]
+  end
+  Else begin 
+    bH=BH[1];
+    bB=bB[1];
+    ZHsuite = ZHsuite[1];
+    ZBsuite = ZBsuite[1];
+    end
+
+ZHsuite=ZHsuite-bH;       // puis mise à jour des niveaux des obliques
+ZBsuite=ZBsuite-bB;
+                             
+  if $StopEOP=0 then begin // pas EOP
+    if (MP=1) then setstopprice (ZBsuite-LongAddDistance);
+  //  if (MP=-1) then setstopprice (ZHsuite+ShortAddDistance);
+    end // pas EOP
+  Else begin //EOP
+    if (MP=1) and (c<(ZBsuite-LongAddDistance)) then setstopprice (c);
+   //   if (MP=-1) and (c>(ZHsuite+ShortAddDistance)) then setstopprice (c);
+    end  //EOP
+  end//@@@cs:645383-3611713-513748_cs@@@

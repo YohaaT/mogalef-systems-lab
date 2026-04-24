@@ -1,0 +1,118 @@
+Express blocker EL_Block_Hours_2019_b
+// 2019-03 : ajout d'un interrupteur général
+// Version 2018 avec test et bocage possible heure par heure sur 24h
+
+Vars
+input $Filter("On;Off",0);
+input $Hour_00_01 ("Pass;Block",0);
+input $Hour_01_02 ("Pass;Block",0);
+input $Hour_02_03 ("Pass;Block",0);
+input $Hour_03_04 ("Pass;Block",0);
+input $Hour_04_05 ("Pass;Block",0);
+input $Hour_05_06 ("Pass;Block",0);
+input $Hour_06_07 ("Pass;Block",0);
+input $Hour_07_08 ("Pass;Block",0);
+input $Hour_08_09 ("Pass;Block",0);
+input $Hour_09_10 ("Pass;Block",0);
+input $Hour_10_11 ("Pass;Block",0);
+input $Hour_11_12 ("Pass;Block",0);
+input $Hour_12_13 ("Pass;Block",0);
+input $Hour_13_14 ("Pass;Block",0);
+input $Hour_14_15 ("Pass;Block",0);
+input $Hour_15_16 ("Pass;Block",0);
+input $Hour_16_17 ("Pass;Block",0);
+input $Hour_17_18 ("Pass;Block",0);
+input $Hour_18_19 ("Pass;Block",0);
+input $Hour_19_20 ("Pass;Block",0);
+input $Hour_20_21 ("Pass;Block",0);
+input $Hour_21_22 ("Pass;Block",0);
+input $Hour_22_23 ("Pass;Block",0);
+input $Hour_23_24 ("Pass;Block",0);
+input $TradeOnlyHour (0,24,24);
+
+series senti,hh,TradeOnlyHour,
+temp1,temp2,temp3,temp4,temp5,temp6,temp7,temp8,temp9,temp10,temp11,temp12,temp13,temp14,temp15,temp16,temp17,temp18,temp19,temp20,temp21,temp22,temp23,temp24;
+numeric i;
+
+Calculation
+CalculateAtEveryTick(false); 
+
+if isfirstbar() then 
+begin
+  for i=0 to finalbarindex()
+  begin
+    TradeOnlyHour[-i]=($TradeOnlyHour*100);
+    if TradeOnlyHour[-i]>2359 then TradeOnlyHour[-i]=2400;
+    hh[-i]=TimeTonumeric(time[-i]); //valeur en minutes, c'est la minute de la FIN de période en cours 
+ 
+    if $Filter=0 then
+    begin
+      if $Hour_00_01 = 1 then temp1[-i]=059;
+      if $Hour_01_02 = 1 then temp2[-i]=159;
+      if $Hour_02_03 = 1 then temp3[-i]=259;
+      if $Hour_03_04 = 1 then temp4[-i]=359;
+      if $Hour_04_05 = 1 then temp5[-i]=459;
+      if $Hour_05_06 = 1 then temp6[-i]=559;
+      if $Hour_06_07 = 1 then temp7[-i]=659;
+      if $Hour_07_08 = 1 then temp8[-i]=759;
+      if $Hour_08_09 = 1 then temp9[-i]=859;
+      if $Hour_09_10 = 1 then temp10[-i]=959;
+      if $Hour_10_11 = 1 then temp11[-i]=1059;
+      if $Hour_11_12 = 1 then temp12[-i]=1159;
+      if $Hour_12_13 = 1 then temp13[-i]=1259;
+      if $Hour_13_14 = 1 then temp14[-i]=1359;
+      if $Hour_14_15 = 1 then temp15[-i]=1459;
+      if $Hour_15_16 = 1 then temp16[-i]=1559;
+      if $Hour_16_17 = 1 then temp17[-i]=1659;
+      if $Hour_17_18 = 1 then temp18[-i]=1759;
+      if $Hour_18_19 = 1 then temp19[-i]=1859;
+      if $Hour_19_20 = 1 then temp20[-i]=1959;
+      if $Hour_20_21 = 1 then temp21[-i]=2059;
+      if $Hour_21_22 = 1 then temp22[-i]=2159;
+      if $Hour_22_23 = 1 then temp23[-i]=2259;
+      if $Hour_23_24 = 1 then temp24[-i]=2359;
+  If TradeOnlyHour=2400 then 
+  begin              // si pas d'heure sélectionnée
+    if ((hh[-i] <= temp1[-i]) and (hh[-i]>((temp1[-i])-60)) and temp1[-i]=059)    // si l'heure actuelle est comprise entre 799 et 859 et est bloquée
+      or ((hh[-i] <= temp2[-i])  and (hh[-i]>((temp2[-i])-60))and temp2[-i]=159) 
+      or ((hh[-i] <= temp3[-i])  and (hh[-i]>((temp3[-i])-60))and temp3[-i]=259) 
+      or ((hh[-i] <= temp4[-i])  and (hh[-i]>((temp4[-i])-60))and temp4[-i]=359) 
+      or ((hh[-i] <= temp5[-i])  and (hh[-i]>((temp5[-i])-60))and temp5[-i]=459) 
+      or ((hh[-i] <= temp6[-i])  and (hh[-i]>((temp6[-i])-60))and temp6[-i]=559) 
+      or ((hh[-i] <= temp7[-i])  and (hh[-i]>((temp7[-i])-60))and temp7[-i]=659) 
+      or ((hh[-i] <= temp8[-i])  and (hh[-i]>((temp8[-i])-60))and temp8[-i]=759) 
+      or ((hh[-i] <= temp9[-i])  and (hh[-i]>((temp9[-i])-60))and temp9[-i]=859) 
+      or ((hh[-i] <= temp10[-i])  and (hh[-i]>((temp10[-i])-60))and temp10[-i]=959) 
+      or ((hh[-i] <= temp11[-i])  and (hh[-i]>((temp11[-i])-60))and temp11[-i]=1059)
+      or ((hh[-i] <= temp12[-i])  and (hh[-i]>((temp12[-i])-60))and temp12[-i]=1159)
+      or ((hh[-i] <= temp13[-i])  and (hh[-i]>((temp13[-i])-60))and temp13[-i]=1259)
+      or ((hh[-i] <= temp14[-i])  and (hh[-i]>((temp14[-i])-60))and temp14[-i]=1359)
+      or ((hh[-i] <= temp15[-i])  and (hh[-i]>((temp15[-i])-60))and temp15[-i]=1459)
+      or ((hh[-i] <= temp16[-i])  and (hh[-i]>((temp16[-i])-60))and temp16[-i]=1559)
+      or ((hh[-i] <= temp17[-i])  and (hh[-i]>((temp17[-i])-60))and temp17[-i]=1659)
+      or ((hh[-i] <= temp18[-i])  and (hh[-i]>((temp18[-i])-60))and temp18[-i]=1759)
+      or ((hh[-i] <= temp19[-i])  and (hh[-i]>((temp19[-i])-60))and temp19[-i]=1859)
+      or ((hh[-i] <= temp20[-i])  and (hh[-i]>((temp20[-i])-60))and temp20[-i]=1959)
+      or ((hh[-i] <= temp21[-i])  and (hh[-i]>((temp21[-i])-60))and temp21[-i]=2059)
+      or ((hh[-i] <= temp22[-i])  and (hh[-i]>((temp22[-i])-60))and temp22[-i]=2159)
+      or ((hh[-i] <= temp23[-i])  and (hh[-i]>((temp23[-i])-60))and temp23[-i]=2259)
+      or ((hh[-i] <= temp24[-i])  and (hh[-i]>((temp24[-i])-60))and temp24[-i]=2359)
+      then senti[-i] = senti_block;             // on bloque les signaux
+    end
+  else begin // si une heure est sélectionnée
+    if (hh[-i]<TradeOnlyHour[-i]) or (hh[-i]>(TradeOnlyHour[-i]+60)) then senti[-i]=senti_block; // si l'heure actuelle est < à l'heure sélectionnée ou > heure Select +60 On bloque les signaux
+    if (TradeOnlyHour[-i]>2359) then senti[-i]=senti_pass;
+  end
+    end
+  end
+end
+
+
+interpretation
+begin
+  Sentiment=senti;
+end
+
+//plot(hh,black,1);
+//plot(temp9,green,1);
+//plot(senti,red,2);//@@@cs:1857970-4331734-1558085_cs@@@

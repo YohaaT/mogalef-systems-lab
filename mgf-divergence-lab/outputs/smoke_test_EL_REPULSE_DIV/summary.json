@@ -1,0 +1,19 @@
+{
+  "component": "EL_REPULSE_DIV",
+  "phase": 3,
+  "checks": [
+    {
+      "case": "case_warmup_generic",
+      "result": "PASS"
+    },
+    {
+      "case": "case_bearish_short_horizon",
+      "result": "PASS"
+    },
+    {
+      "case": "case_bullish_short_horizon",
+      "result": "PASS"
+    }
+  ],
+  "result": "PASS"
+}

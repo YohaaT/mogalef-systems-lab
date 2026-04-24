@@ -1,0 +1,8 @@
+{
+  "case": "case_bearish_short_horizon",
+  "index": 77,
+  "divbm_at_index": -0.4,
+  "pose_at_index": -1,
+  "sentiment_at_index": 0,
+  "result": "PASS"
+}

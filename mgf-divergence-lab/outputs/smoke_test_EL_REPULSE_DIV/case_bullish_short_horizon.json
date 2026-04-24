@@ -1,0 +1,8 @@
+{
+  "case": "case_bullish_short_horizon",
+  "index": 153,
+  "divhm_at_index": 0.4,
+  "pose_at_index": 1,
+  "sentiment_at_index": 100,
+  "result": "PASS"
+}

@@ -1,0 +1,4 @@
+case,check,result,details
+case_long_monotonic.json,long_stop_monotonic,PASS,active_stop_count=4
+case_wait_long.json,wait_for_xtrem_freeze_long,PASS,hh0_next=14,stop_idx=5.0,stop_next=5.0
+case_short_monotonic.json,short_stop_monotonic,PASS,active_stop_count=4

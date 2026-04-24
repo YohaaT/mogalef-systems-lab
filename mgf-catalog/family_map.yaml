@@ -1,0 +1,166 @@
+99-unclassified:
+  Bandes_Mogalef_premiers_principes_de_trading:
+    subfamily: videos
+    role: unknown
+  EL_ATR_Min_Max_v2:
+    subfamily: duplicates
+    role: blocker
+  EL_Indice_de_force_v2024:
+    subfamily: duplicates
+    role: indicator
+  EL_Intelligent_Scalping_Target:
+    subfamily: duplicates
+    role: target
+  EL_MACD_DIV:
+    subfamily: duplicates
+    role: signal
+  EL_MOGALEF_Bands_2023_JM1:
+    subfamily: duplicates
+    role: indicator
+  E_XLB_indicator:
+    subfamily: duplicates
+    role: indicator
+  E_XLB_signal:
+    subfamily: duplicates
+    role: signal
+  E_XLB_signal_directional:
+    subfamily: duplicates
+    role: signal
+  Integrer_les_bandes_Mogalef_au_trading:
+    subfamily: videos
+    role: unknown
+  Webis_serie_1:
+    subfamily: manual-review
+    role: unknown
+  org:
+    subfamily: manual-review
+    role: unknown
+mgf-bands-lab:
+  EL_MOGALEF_Bands:
+    subfamily: base
+    role: indicator
+  EL_MOGALEF_Bands_2023_JM1:
+    subfamily: base
+    role: indicator
+mgf-breakout-lab:
+  EL_AutoAdaptBreakout:
+    subfamily: research-tools
+    role: research_tool
+  EL_Bearish_Breakout:
+    subfamily: structural-breakouts
+    role: signal
+  EL_Bullish_Breakout2:
+    subfamily: structural-breakouts
+    role: signal
+  EL_Triangle_Long:
+    subfamily: geometric
+    role: signal
+  EL_Triangle_Short:
+    subfamily: geometric
+    role: signal
+  EL_Wedge_Falling:
+    subfamily: geometric
+    role: signal
+  EL_Wedge_Rising:
+    subfamily: geometric
+    role: signal
+  E_XLB_filter:
+    subfamily: line-break
+    role: filter
+  E_XLB_indicator:
+    subfamily: line-break
+    role: indicator
+  E_XLB_signal:
+    subfamily: line-break
+    role: signal
+  E_XLB_signal_directional:
+    subfamily: line-break
+    role: signal
+mgf-divergence-lab:
+  EL_CCI_DIV:
+    subfamily: cci
+    role: signal
+  EL_MACD_DIV:
+    subfamily: macd
+    role: signal
+  EL_REPULSE_DIV:
+    subfamily: repulse
+    role: signal
+  EL_STOCH_DIV:
+    subfamily: stoch
+    role: signal
+  EL_STPMT_DIV:
+    subfamily: stpmt
+    role: signal
+mgf-regime-filter-lab:
+  EL_ATR_Min_Max_v2:
+    subfamily: volatility-blockers
+    role: blocker
+  EL_Block_Day_2019:
+    subfamily: calendar-blockers
+    role: blocker
+  EL_Block_Hours_2019_b:
+    subfamily: calendar-blockers
+    role: blocker
+  EL_Indice_de_force_v2024:
+    subfamily: market-strength
+    role: indicator
+  EL_Mogalef_Trend_Filter:
+    subfamily: trend-overlays
+    role: filter
+  EL_Mogalef_Trend_Filter_V2:
+    subfamily: trend-overlays
+    role: filter
+  EL_Mogalef_Trend_Indicator:
+    subfamily: trend-overlays
+    role: indicator
+  EL_NeutralZone:
+    subfamily: neutral-zone
+    role: filter
+  EL_NeutralZone_B_V2:
+    subfamily: neutral-zone
+    role: filter
+  EL_Supertrend_05:
+    subfamily: trend-overlays
+    role: indicator
+mgf-risk-lab:
+  Mogalef_Money_Management:
+    subfamily: money-management
+    role: risk
+mgf-stop-lab:
+  EL_Intelligent_Scalping_Target:
+    subfamily: intelligent-family
+    role: target
+  EL_MOGALEF_STOP:
+    subfamily: mogalef-bands-family
+    role: stop
+  EL_Stop_Intel_v2_live:
+    subfamily: intelligent-family
+    role: stop
+  EL_Stop_Intelligent:
+    subfamily: intelligent-family
+    role: stop
+  EL_Stop_Intelligent_target:
+    subfamily: intelligent-family
+    role: target
+  EL_Stop_Keltner:
+    subfamily: keltner
+    role: stop
+  EL_Triangle_STOP_Long:
+    subfamily: triangle-family
+    role: stop
+  EL_Triangle_STOP_Short:
+    subfamily: triangle-family
+    role: stop
+  Super_Stop_Long:
+    subfamily: super-stop
+    role: stop
+  Super_Stop_Long_5beta:
+    subfamily: super-stop
+    role: stop
+  Super_Stop_Short:
+    subfamily: super-stop
+    role: stop
+  Super_Stop_Short_5beta:
+    subfamily: super-stop
+    role: stop

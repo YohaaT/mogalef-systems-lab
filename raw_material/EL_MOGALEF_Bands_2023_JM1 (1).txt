@@ -1,0 +1,158 @@
+express EL_MOGALEF_Bands_2023_JM1
+
+
+vars
+input $N(2,10,3),$ET(5,15,7),$coef(1,7,2),$Visualisation("yes;No",0);
+input $UseWhenTrading("Yes;No",1);
+series X,Y,MogRegLin,MogH,MogB,MogM,etyp,MogMA;
+series mh,mb,mm;
+series chgb, hh, bb,hhh,bbb;
+numeric j,SumXY,SumX2,SumY,SumX,AvgX,AvgY,b,a,SSumXY;
+series MogStopL,MogStopS,senti(50);
+
+calculation
+
+// Le programme s'exécute à la clôture de chaque barre et non à chaque tick
+
+if IsFirstBar() then 
+begin
+  CalculateAtEveryTick(false);
+
+end
+
+// Calcul du cours pondéré Mogalef exprimé en ticks: 
+// Y étant un entier, on évite ainsi les risques d'erreurs dus aux arrondis  
+
+Y = round(((h+l+o+c+c)/5/TickSize()),0);
+X = CurrentBarIndex(); // Indice de la barre
+
+
+// Calcul des paramètres a et b de la régression linéaire 
+// b = Somme[(X - AvgX)(Y - AvgY)]/Somme[(X - AvgX)^2] pour les N dernières barres
+// On définit les variables numériques suivantes: SumX = somme[X], SumY = somme[Y], AvgX = moyenne[X], AvgY = moyenne[Y]
+// SumX2 = Somme[(X - AvgX)^2], SumXY = Somme[(X - AvgX)(Y - AvgY)] calculés sur les N dernières barres
+
+if (X <= ($N-1)) then 
+begin
+  SumX = SumX + X; 
+  SumY = SumY + Y; 
+  MogRegLin = close;
+
+// Calcul de SumX2 à la N ième barre
+
+  if (X = ($N-1)) then  
+  begin 
+    SumX2 = $N*(Power($N,2)-1)/12; // Il s'avère que le résultat est une constante dépendant de N
+
+// Calcul de SumXY, a, b, MogRegLin à la N ième barre
+
+    for j = 0 to ($N-1)
+    begin
+      SSumXY = SSumXY + ($N*X[j] - SumX)*($N*Y[j] - SumY); 
+    end
+    SumXY = SSumXY/power($N,2);
+    AvgX = SumX/$N; 
+    AvgY = SumY/$N; 
+    b = SumXY/SumX2;
+    a = AvgY - b*AvgX;
+    MogRegLin = (a + b*X)*TickSize(); //Le résultat est multilpié par la taille d'un tick
+  end
+end
+else
+
+// Calcul de SumXY, a, b, MogRegLin après la N ième barre
+
+begin
+
+// On exploite les relations qui existent entre variables d'une barre à la suivante
+// pour éliminer les itérations et augmenter la vitesse de calcul  
+
+  SumX = SumX + X - X[$N]; 
+  SumY = SumY + Y - Y[$N];
+  SSumXY = SSumXY + ($N*X - SumX)*($N*Y - SumY)-($N*X[$N] - SumX)*($N*Y[$N] - SumY) + $N*(X - X[$N])*(Y - Y[$N]);
+  SumXY = SSumXY/power($N,2);
+  AvgX = SumX/$N;
+  AvgY = SumY/$N;
+  b = SumXY/SumX2;
+  a = AvgY - b*AvgX;
+  MogRegLin = (a + b*X)*TickSize();
+end
+
+if IsFinalBar() then 
+begin
+
+// On est à la dernière barre et la série MogRegLin est entièrement calculée
+// On calcule la série etyp qui est l'écart type de MogRegLin
+// Sans l'instruction IsFinalBar, on calculerait autant de fois l'écart type qu'il y a de barres
+// ce qui ralentirait considérablement la plateforme 
+
+  StdDev(MogRegLin,etyp,$ET); 
+
+// Calcul des bandes de Mogalef MogMA, MogH et MogB
+
+  for j = CurrentBarIndex() downto 0
+  begin
+
+
+// Pas de décallage si la RegLine est à l'intérieur des anciennes bandes
+
+    If (MogRegLin[j] < MogH[j+1]) and (MogRegLin[j] > MogB[j+1]) then
+    begin
+      MogH[j] = MogH[j+1];
+      MogB[j] = MogB[j+1];
+      MogM[j] = MogM[j+1];
+      MogMA[j] = MogMA[j+1];
+      MogStopS[j] = MogStopS[j+1];
+      MogStopL[j] = MogStopL[j+1];
+    end
+    else
+
+// Si décallage tracé des nouvelles bandes
+
+    begin
+      MogH[j] = (MogRegLin[j] + (etyp[j]*$Coef));
+      MogB[j] = (MogRegLin[j] - (etyp[j]*$Coef));
+      MogM[j] = MogRegLin[j];
+      MogMA[j] = MogM[j+1];
+
+    
+    
+
+      end
+mh[j]=void;
+mb[j]=void;
+mm[j]=void;
+
+
+if $UseWhenTrading=0 then begin
+//********************************************************
+// INTERPRETATION  // 
+if (MogM[j] > MogM[j+1])  then senti[j] = 100;
+if (MogM[j] < MogM[j+1])  then senti[j] = 0;
+
+//******************************************************** 
+end
+
+
+if $Visualisation=0 then begin
+  mh[j]=MogH[j];
+  mb[j]=mogB[j];
+  mm[j]=MogM[j];
+end
+
+	
+  end 
+end
+
+
+
+
+interpretation 
+begin  
+ sentiment=50;
+ sentiment=senti; 
+ senti=100*senti;
+end 
+
+plotband (MH,"darkgreen",2,MM,"blue",1,"lightgreen");
+plotband (MM,"Blue",1,MB,"darkred",2,"lightred");//@@@cs:1425633-4036398-1152396_cs@@@

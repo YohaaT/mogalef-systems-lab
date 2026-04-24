@@ -1,0 +1,17 @@
+{
+  "checks": [
+    {
+      "case": "case_history_gate",
+      "result": "PASS"
+    },
+    {
+      "case": "case_blocked",
+      "result": "PASS"
+    },
+    {
+      "case": "case_date_kill",
+      "result": "PASS"
+    }
+  ],
+  "result": "PASS"
+}

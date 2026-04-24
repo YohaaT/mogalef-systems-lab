@@ -1,0 +1,876 @@
+express E_XLB_signal
+// C'est un Three Line Break mais posssible non seulement en 3, mais aussi de 4 à 8.
+//Adaptation Eric Lefort
+// Programme original WH Selfinvest
+
+
+vars
+series trend,OP,CL,LL,HH,u,ux,senti;
+numeric xtrend,xu,xu1,xu2,xu3,xu4,xu5,xu6,xu7,xu8,XX;
+input $StartTime(0,2359,0),$EndTime(0,2359,2359);
+input $SendEmail(0,1,0),$PlaySound(0,1,0),$MessageBox(0,1,0);
+input $X(3,8,3);
+
+calculation
+
+CalculateAtEveryTick(false);
+SetYscaleFormat (GetPriceFormat());
+
+if ($X<2) then 
+  begin
+     XX=2;
+  end
+  else begin
+  if ($X>8) then 
+    begin
+      XX=8;
+    end
+    else begin
+    XX=$X;
+  end
+  end
+
+If XX=2 then begin
+if close[1] = void then 
+begin
+  if (close >= open) then 
+  begin
+    xtrend = 1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+
+    CL = xu;
+    OP = xu1;
+    LL = OP;
+    HH = CL;
+  end
+  else
+  begin
+    xtrend = -1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+
+    CL = xu;
+    OP = xu1; 
+    LL = CL;
+    HH = OP;
+  end
+end
+else
+begin
+  if (xtrend = 1) then   // xtrend=1 donc xu est au-dessus de la bande verte
+  begin
+    if (close > xu) then // si close > haut de bande, on décale la bande vers le haut.
+    begin
+
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else                // si close < OU EGAL haut de bande 
+    if (close < xu2) then // et close < bas de bande ... 
+    begin                 // on passe en rouge et on reset les xu 
+      xtrend = -1;
+      xu = close;
+      xu2 = xu1;
+
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else                  // mais si close pas < au bas de bande (donc close est dans la bande verte)
+    begin                 // on ne change rien
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end
+  else                // xtrend=-1 donc xu est en dessous de la bande rouge
+  begin
+    if (close > xu2) then 
+    begin
+      xtrend = 1;
+      xu = close;
+      xu2 = xu1;
+
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu) then 
+    begin
+
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end    
+end
+trend = xtrend;
+u = xu;
+ux = xu2;
+end
+
+//******************************
+
+If XX=3 then begin
+if close[1] = void then 
+begin
+  if (close >= open) then 
+  begin
+    xtrend = 1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    CL = xu;
+    OP = xu1;
+    LL = OP;
+    HH = CL;
+  end
+  else
+  begin
+    xtrend = -1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    CL = xu;
+    OP = xu1; 
+    LL = CL;
+    HH = OP;
+  end
+end
+else
+begin
+  if (xtrend = 1) then   // xtrend=1 donc xu est au-dessus de la bande verte
+  begin
+    if (close > xu) then // si close > haut de bande, on décale la bande vers le haut.
+    begin
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else                // si close < OU EGAL haut de bande 
+    if (close < xu3) then // et close < bas de bande ... 
+    begin                 // on passe en rouge et on reset les xu 
+      xtrend = -1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else                  // mais si close pas < au bas de bande (donc close est dans la bande verte)
+    begin                 // on ne change rien
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end
+  else                // xtrend=-1 donc xu est en dessous de la bande rouge
+  begin
+    if (close > xu3) then 
+    begin
+      xtrend = 1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu) then 
+    begin
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end    
+end
+trend = xtrend;
+u = xu;
+ux = xu3;
+end
+
+//******************************
+If XX=4 then begin
+if close[1] = void then 
+begin
+  if (close >= open) then 
+  begin
+    xtrend = 1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    xu4 = open;
+    CL = xu;
+    OP = xu1;
+    LL = OP;
+    HH = CL;
+  end
+  else
+  begin
+    xtrend = -1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    xu4 = open;
+    CL = xu;
+    OP = xu1; 
+    LL = CL;
+    HH = OP;
+  end
+end
+else
+begin
+  if (xtrend = 1) then 
+  begin
+    if (close > xu) then 
+    begin
+      xu4 = xu3;
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu4) then 
+    begin
+      xtrend = -1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      xu4 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end
+  else
+  begin
+    if (close > xu4) then 
+    begin
+      xtrend = 1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      xu4 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu) then 
+    begin
+      xu4 = xu3;
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end    
+end
+trend = xtrend;
+u = xu;
+ux = xu4;
+end
+//******************************
+
+//******************************
+If XX=5 then begin
+if close[1] = void then 
+begin
+  if (close >= open) then 
+  begin
+    xtrend = 1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    xu4 = open;
+    xu5 = open;
+    CL = xu;
+    OP = xu1;
+    LL = OP;
+    HH = CL;
+  end
+  else
+  begin
+    xtrend = -1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    xu4 = open;
+    xu5 = open;
+    CL = xu;
+    OP = xu1; 
+    LL = CL;
+    HH = OP;
+  end
+end
+else
+begin
+  if (xtrend = 1) then 
+  begin
+    if (close > xu) then 
+    begin
+      xu5 = xu4;
+      xu4 = xu3;
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu5) then 
+    begin
+      xtrend = -1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      xu4 = xu1;
+      xu5 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end
+  else
+  begin
+    if (close > xu5) then 
+    begin
+      xtrend = 1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      xu4 = xu1;
+      xu5 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu) then 
+    begin
+      xu5 = xu4;
+      xu4 = xu3;
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end    
+end
+trend = xtrend;
+u = xu;
+ux = xu5;
+end
+//******************************
+//******************************
+If XX=6 then begin
+if close[1] = void then 
+begin
+  if (close >= open) then 
+  begin
+    xtrend = 1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    xu4 = open;
+    xu5 = open;
+    xu6 = open;
+    CL = xu;
+    OP = xu1;
+    LL = OP;
+    HH = CL;
+  end
+  else
+  begin
+    xtrend = -1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    xu4 = open;
+    xu5 = open;
+    xu6 = open;
+    CL = xu;
+    OP = xu1; 
+    LL = CL;
+    HH = OP;
+  end
+end
+else
+begin
+  if (xtrend = 1) then 
+  begin
+    if (close > xu) then 
+    begin
+      xu6 = xu5;
+      xu5 = xu4;
+      xu4 = xu3;
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu6) then 
+    begin
+      xtrend = -1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      xu4 = xu1;
+      xu5 = xu1;
+      xu6 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end
+  else
+  begin
+    if (close > xu6) then 
+    begin
+      xtrend = 1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      xu4 = xu1;
+      xu5 = xu1;
+      xu6 = xu5;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu) then 
+    begin
+      xu6 = xu5;
+      xu5 = xu4;
+      xu4 = xu3;
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end    
+end
+trend = xtrend;
+u = xu;
+ux = xu6;
+end
+//******************************
+//******************************
+If XX=7 then begin
+if close[1] = void then 
+begin
+  if (close >= open) then 
+  begin
+    xtrend = 1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    xu4 = open;
+    xu5 = open;
+    xu6 = open;
+    xu7 = open;
+    CL = xu;
+    OP = xu1;
+    LL = OP;
+    HH = CL;
+  end
+  else
+  begin
+    xtrend = -1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    xu4 = open;
+    xu5 = open;
+    xu6 = open;
+    xu7 = open;
+    CL = xu;
+    OP = xu1; 
+    LL = CL;
+    HH = OP;
+  end
+end
+else
+begin
+  if (xtrend = 1) then 
+  begin
+    if (close > xu) then 
+    begin
+      xu7 = xu6;
+      xu6 = xu5;
+      xu5 = xu4;
+      xu4 = xu3;
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu7) then 
+    begin
+      xtrend = -1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      xu4 = xu1;
+      xu5 = xu1;
+      xu6 = xu1;
+      xu7 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end
+  else
+  begin
+    if (close > xu7) then 
+    begin
+      xtrend = 1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      xu4 = xu1;
+      xu5 = xu1;
+      xu6 = xu1;
+      xu7 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu) then 
+    begin
+      xu7 = xu6;
+      xu6 = xu5;
+      xu5 = xu4;
+      xu4 = xu3;
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end    
+end
+trend = xtrend;
+u = xu;
+ux = xu7;
+end
+//******************************
+//******************************
+If XX=8 then begin
+if close[1] = void then 
+begin
+  if (close >= open) then 
+  begin
+    xtrend = 1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    xu4 = open;
+    xu5 = open;
+    xu6 = open;
+    xu7 = open;
+    xu8 = open;
+    CL = xu;
+    OP = xu1;
+    LL = OP;
+    HH = CL;
+  end
+  else
+  begin
+    xtrend = -1;
+    xu = close;
+    xu1 = open;
+    xu2 = open;
+    xu3 = open;
+    xu4 = open;
+    xu5 = open;
+    xu6 = open;
+    xu7 = open;
+    xu8 = open;
+    CL = xu;
+    OP = xu1; 
+    LL = CL;
+    HH = OP;
+  end
+end
+else
+begin
+  if (xtrend = 1) then 
+  begin
+    if (close > xu) then 
+    begin
+      xu8 = xu7;
+      xu7 = xu6;
+      xu6 = xu5;
+      xu5 = xu4;
+      xu4 = xu3;
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu8) then 
+    begin
+      xtrend = -1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      xu4 = xu1;
+      xu5 = xu1;
+      xu6 = xu1;
+      xu7 = xu1;
+      xu8 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end
+  else
+  begin
+    if (close > xu8) then 
+    begin
+      xtrend = 1;
+      xu = close;
+      xu2 = xu1;
+      xu3 = xu1;
+      xu4 = xu1;
+      xu5 = xu1;
+      xu6 = xu1;
+      xu7 = xu1;
+      xu8 = xu1;
+      CL = xu;
+      OP = xu1;
+      LL = OP;
+      HH = CL;
+    end
+    else
+    if (close < xu) then 
+    begin
+      xu8 = xu7;
+      xu7 = xu6;
+      xu6 = xu5;
+      xu5 = xu4;
+      xu4 = xu3;
+      xu3 = xu2;
+      xu2 = xu1;
+      xu1 = xu;
+      xu = close;
+      CL = xu;
+      OP = xu1;
+      LL = CL;
+      HH = OP;
+    end
+    else
+    begin
+      CL = CL[1];
+      OP = OP[1];
+      LL = LL[1];
+      HH = HH[1];
+    end
+  end    
+end
+trend = xtrend;
+u = xu;
+ux = xu8;
+end
+//******************************
+
+senti=50;
+if (TimeToNumeric(timeopen) >= $StartTime) and (TimeToNumeric(timeopen) <= $EndTime) then begin
+  if  (trend >= 0) and (trend[1]<=0) and IsBarCompleted() then
+  begin
+    senti = 100;
+    if ($SendEmail = 1) then SendEmail("Buy signal","XLB Buy signal: " + SymbolName()); 
+    if ($PlaySound = 1) then Playsound("ring");
+    if ($MessageBox = 1) then MessageBox("XLB Buy signal: " + SymbolName());
+    //highlight("slot","grey");
+  end
+  else
+  begin
+    if  (trend < 0) and (trend[1]>0) and IsBarCompleted() then 
+    begin
+      senti = 0;
+    if ($SendEmail = 1) then SendEmail("Sell signal","XLB Sell signal: " + SymbolName()); 
+    if ($PlaySound = 1) then Playsound("ring");
+    if ($MessageBox = 1) then MessageBox("XLB Sell signal: " + SymbolName());
+     // highlight("slot","grey");
+    end
+  end
+end
+
+
+interpretation 
+begin
+  Sentiment=senti;
+end
+
+plotcrossinglines(ux, "green", 0, u, "blue", 0, "lightred", "lightgreen");
+Plot(ux,black,1);//@@@cs:4739578-5867192-4674041_cs@@@

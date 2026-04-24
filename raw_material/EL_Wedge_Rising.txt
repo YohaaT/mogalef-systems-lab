@@ -1,0 +1,1135 @@
+Express EL_Wedge_Rising
+
+
+Vars
+input $Sound(0,1,0);
+input $Smooth(1,3,1); // importance des hauts et des bas servant aux points du triangle
+input $Mini(4,30,7);    // Dernier haut et dernier bas doivent etre détectés dans cette limite pour valider le triangle
+input $Maxi(5,60,21);   // Longueur maxi de tracé de chaque coté du triangle
+input $Prolong(3,20,5); // Longueur maxi du tracé de la prolongation d'un triangle une fois détecté et tracé.
+                        // ET empeche le tracé d'un nouveau triangle tant que >0.
+input $MaxHighInclination(0,500,500); // Pente maxi de la résistance                      
+input $MinHighInclination(0,500,0);
+input $MaxLowInclination(0,500,500); // Pente maxi du support                             
+input $MinLowInclination(0,500,0);
+input $LastImpact_A_H_L(0,2,0); // permet de sélectionner uniquement les triangles repoussés par le haut ou par le bas. Mettre 0 pour les 2.
+input $FirstImpact_A_H_L(0,2,0); // permet de sélectionner les triangles en fonction du premier impact 
+input $UseActualLow(0,1,0); // utiliser ou pas le bas actuel comme éventuelle base du triangle 0=non  1=oui
+input $UseActualHigh(0,1,0); // utiliser ou pas le haut actuel comme éventuelle sommet du triangle 0=non  1=oui
+
+// ********
+input $EntryStrategy(0,2,1);//Détermine la stratégie d'entrée.
+                                //0=pas d'entrée,  1=Entrée si cassure en clôture , 2=Entrée en clôture si cassure en cours de bougie 
+input $Constriction(0,5,0);   // Critère de resserrement des cours : haut et bas récents ($mini) doivent etre inclus dans 
+                                                  // haut et bas anciens ($maxi) depuis au moins $Resert périodes
+input $DifferEntry(0,5,0); // diffère l'entrée de x bougies par rapport au signal
+
+
+
+numeric Hautdansmini,Hautdansmaxi,Basdansmini,Basdansmaxi;
+Series HDMA; 
+Series BDMA;   
+Numeric Haut,bas; 
+Numeric x,y,xx,yy; 
+Series CompteurRessert,CBI; 
+Series H1,H2,H3,H4,H5,CBIH1,CBIH2,CBIH3,CBIH4,CBIH5;
+Series B1,B2,B3,B4,B5,CBIB1,CBIB2,CBIB3,CBIB4,CBIB5; 
+Series ZB,ZH; 
+Series ZHtemp,ZBtemp; 
+series ZBsuite,ZHsuite;
+Numeric aH,bH,aB,bB; 
+Numeric Hlongueur,Blongueur; 
+
+Numeric zz; 
+Series TracerSuite; 
+Series bHsuite,bBsuite;
+Numeric a; 
+Numeric b; 
+Numeric i;
+Series EntreeLong,Entreecourt; 
+Numeric bHStop,bBStop,ZHStop,ZBStop; 
+ 
+Calculation
+if IsFirstBar() then 
+begin
+  CalculateAtEveryTick(false);
+end
+CBI= CurrentBarIndex();
+Hautdansmini= Highest(h,$Mini);
+y= (IndexOfHighest(h,$Mini)-CBI);
+HDMA= Highest(h,($Maxi - $Mini));
+x= (IndexOfHighest(h,$Mini)-CBI);
+Hautdansmaxi= HDMA[$Mini];
+
+Basdansmini= Lowest(l,$Mini);
+yy= (IndexOfLowest(l,$Mini)-CBI);
+BDMA= Lowest(l,($Maxi - $Mini));
+xx= (IndexOfLowest(l,$Mini)-CBI);
+Basdansmaxi= BDMA[$Mini];
+
+haut=0;
+bas=0;
+if $Smooth=1 then begin
+  if  ((h<h[1]) and (h[1]>h[2])) or ( (h<h[1]) and (h[1]>=h[2]) and (h[2]>h[3]) ) then haut=1;
+  if ((l>l[1]) and (l[1]<l[2])) or ((l>l[1]) and (l[1]<=l[2]) and (l[2]<l[3])) then bas=1;
+  end
+  else begin
+    if ( ($Smooth=2) and (h<h[2]) and (h[1]<h[2]) and (h[3]<=h[2]) and (h[2]>h[4]) ) then haut=2;
+    if ( ($Smooth=2) and (l>l[2]) and (l[1]>l[2]) and (l[3]>=l[2]) and (l[4]>=l[2]) ) then bas=2;
+    if ( ($Smooth=3) and (h<h[3]) and (h[1]<h[3]) and (h[2]<=h[3]) and (h[3]>=h[4]) and (h[3]>=h[5]) and (h[3]>=h[6]) ) then haut=3;
+    if ( ($Smooth=3) and (l>l[3]) and (l[1]>l[3]) and (l[2]>=l[3]) and (l[3]<=l[4]) and (l[3]<=l[5]) and (l[3]<=l[6]) ) then bas=3;     
+  end
+ 
+if ( haut>0 ) then begin 
+  H5=H4[1];
+  CBIH5=CBIH4[1];
+  H4=H3[1];
+  CBIH4=CBIH3[1];
+  H3=H2[1];      
+  CBIH3=CBIH2[1];
+  H2=H1[1];
+  CBIH2=CBIH1[1]; 
+  H1=h[$Smooth];
+  CBIH1=CBI[$Smooth];
+  end
+  else begin 
+  H5=H5[1];
+  CBIH5=CBIH5[1];
+  H4=H4[1];
+  CBIH4=CBIH4[1];
+  H3=H3[1];
+  CBIH3=CBIH3[1];
+  H2=H2[1];
+  CBIH2=CBIH2[1]; 
+  H1=H1[1];
+  CBIH1=CBIH1[1];  
+  end
+ 
+if ( bas>0 ) then begin 
+  B5=B4[1];
+  CBIB5=CBIB4[1];
+  B4=B3[1];
+  CBIB4=CBIB3[1]; 
+  B3=B2[1];
+  CBIB3=CBIB2[1]; 
+  B2=B1[1];
+  CBIB2=CBIB1[1]; 
+  B1=L[$Smooth];
+  CBIB1=CBI[$Smooth];
+  end
+  else begin 
+  B5=B5[1];
+  CBIB5=CBIB5[1];
+  B4=B4[1];
+  CBIB4=CBIB4[1];
+  B3=B3[1];
+  CBIB3=CBIB3[1];
+  B2=B2[1];
+  CBIB2=CBIB2[1]; 
+  B1=B1[1];
+  CBIB1=CBIB1[1];  
+  end
+if( (Basdansmini>Basdansmaxi ) and (Hautdansmini<Hautdansmaxi) ) then begin
+  CompteurRessert=CompteurRessert[1]+1;
+  end
+  else begin
+  CompteurRessert=0;
+  end
+if( ((CompteurRessert>=$Constriction) or ($Constriction=0))and (CBI-CBIH1 <($Mini*$Smooth)) and (CBI-CBIB1<($Mini*$Smooth)) and ( ((CBI-CBIH1)=$Smooth) or ((CBI-CBIB1)=$Smooth) ) and (CBI>$Mini*$Smooth)  
+   and (Tracersuite[1]=0) and (ZH[$Mini +1] =void) and (ZB[$Mini +1] = void)  ) then begin 
+  if((CBI-CBIH1)=$Smooth) and (TracerSuite[1]=0) and (($LastImpact_A_H_L=0) or ($LastImpact_A_H_L=1)) then begin 
+  a=1; 
+if( (H2>=H1) and ((CBIH1-CBIH2)>=($Mini-$Smooth)) and ((CBIH1-CBIH2+$Smooth)<=$Maxi) ) then begin  
+      bH=( (H2-H1) / (CBIH1-CBIH2) );
+      aH=H1;
+      for i= 0 to (CBI-CBIH2+$Smooth) 
+        begin                                                           
+          ZHtemp[i]=aH + bH*(i-$Smooth);   
+  end
+      a=0;
+      for i= 0 to (CBI-CBIH2+$Smooth)
+        begin
+          if (ZHtemp[i]<h[i])  then begin
+          a=1;
+          end
+        end 
+      if ( ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) ) then begin     
+        a=1;
+        end
+      If(a=1) then begin
+        for i= 0 to (CBI-CBIH2+$Smooth)
+        begin
+          ZHtemp[i]=void;
+          end
+       end
+                if (a=0) then begin
+                  Hlongueur= ((CBI-CBIH2+$Smooth));
+                  zz=1;
+                  end         
+        ZHtemp=void;
+      end 
+ 
+         else begin  
+            if( (H3<=H1) and (a=1) and ((CBIH1-CBIH3)>($Mini-$Smooth)) and ((CBIH1-CBIH3+$Smooth)<=$Maxi) ) then begin 
+              bH=( (H3-H1) / (CBIH1-CBIH3) );
+              aH=H1;
+             for i= 0 to (CBI-CBIH3+$Smooth)
+                begin
+                  ZHtemp[i]=aH + bH*(i-$Smooth);
+                end
+
+              a=0;
+              for i= 0 to (CBI-CBIH3+$Smooth)
+                begin
+                  if (ZHtemp[i]<h[i])  then begin
+                  a=1;
+                  end
+                end 
+
+            if ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) then begin
+             a=1;
+             end
+              If(a=1) then begin
+                for i= 0 to (CBI-CBIH3+$Smooth)
+                begin
+                  ZHtemp[i]=void;
+                  end
+                end
+                if (a=0) then begin
+                  Hlongueur= ((CBI-CBIH3+$Smooth));          
+                  zz=1;
+                  end         
+              ZHtemp=void; 
+            end  
+            else begin
+
+             if( (H4<=H1) and (a=1) and ((CBIH1-CBIH4)>($Mini-$Smooth))and ((CBIH1-CBIH4+$Smooth)<=$Maxi) ) then begin 
+              bH=( (H4-H1) / (CBIH1-CBIH4) );
+              aH=H1;
+               for i= 0 to (CBI-CBIH4+$Smooth)
+                begin
+                  ZHtemp[i]=aH + bH*(i-$Smooth); 
+                end
+
+              a=0;
+              for i= 0 to (CBI-CBIH4+$Smooth)
+                begin
+                  if (ZHtemp[i]<h[i]) then begin
+                  a=1;
+                  end
+                end 
+
+            if ( ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) ) then begin
+             a=1;
+             end
+
+              If(a=1) then begin
+                for i= 0 to (CBI-CBIH4+$Smooth)
+                begin
+                  ZHtemp[i]=void;
+                  end
+                end
+                if (a=0) then begin
+                  Hlongueur= ((CBI-CBIH4+$Smooth));
+                  zz=1;
+                  end         
+              ZHtemp=void;                       
+            end 
+
+            else begin 
+                if( (H3<=H2) and (a=1) and ((CBI-CBIH3)>($Mini))and ((CBIH1-CBIH3+$Smooth)<=$Maxi) ) then begin 
+                bH=( (H3-H2) / (CBIH2-CBIH3) );
+                aH=H2;
+                for i= 0 to (CBI-CBIH3+$Smooth)
+                  begin
+                    ZHtemp[i]=aH + bH*(i-$Smooth);   
+                  end
+ 
+                a=0;
+                for i= 0 to (CBI-CBIH3+$Smooth)
+                  begin
+                    if (ZHtemp[i]<h[i]) then begin
+                    a=1;
+                    end
+                  end 
+   
+            if ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) then begin
+             a=1;
+             end
+   
+                If(a=1) then begin
+                  for i= 0 to (CBI-CBIH3+$Smooth)
+                  begin
+                    ZHtemp[i]=void;
+                    end
+                  end
+                if (a=0) then begin
+                  Hlongueur= ((CBI-CBIH3+$Smooth));                              
+                  zz=1;
+                  end         
+                ZHtemp=void; 
+                end 
+
+            else begin 
+                if( (H4<=H2) and (a=1) and ((CBI-CBIH4)>($Mini)) and ((CBIH1-CBIH4+$Smooth)<=$Maxi) ) then begin 
+                bH=( (H4-H2) / (CBIH2-CBIH4) );
+                aH=H2;
+                  for i= 0 to (CBI-CBIH4+$Smooth)
+                   begin
+                     ZHtemp[i]=aH + bH*(i-$Smooth);   
+                   end
+                 a=0;
+                 for i= 0 to (CBI-CBIH4+$Smooth)
+                   begin
+                    if (ZHtemp[i]<h[i])  then begin
+                    a=1;
+                    end
+                   end 
+
+            if ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) then begin
+             a=1;
+             end
+
+                If (a=1) then begin 
+                  for i= 0 to (CBI-CBIH4+$Smooth)
+                    begin
+                    ZHtemp[i]=void;
+                    end
+                  end
+                if (a=0) then begin
+                  Hlongueur= ((CBI-CBIH4+$Smooth)); 
+                  zz=1;
+                  end
+                ZHtemp=void; 
+                end
+
+
+                end 
+              end 
+            end 
+      end  
+  if(zz=1) then begin 
+
+  b=1;       
+    if( (B2<=B1) and ((CBIB1-CBIB2)>=($Mini/2)) and ((CBIH1-CBIB2+$Smooth)<$Maxi) ) then begin   
+      bB=( (B2-B1) / (CBIB1-CBIB2) ); 
+      aB=B1-((CBIH1-CBIB1)*bB );
+      for i= 0 to (CBI-CBIB2+$Smooth)  
+        begin
+          ZBtemp[i]=aB + bB*(i-$Smooth);   
+        end
+
+      b=0;
+      for i= 0 to (CBI-CBIB2+$Smooth)
+        begin
+          if (ZBtemp[i]>l[i]) then begin
+          b=1;
+          end
+        end
+
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) or (bH<=bB) then begin  
+            b=1;
+            end
+         
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIB2+$Smooth)
+        begin
+          ZBtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Blongueur=((CBI-CBIB2)+$Smooth);
+                  ZBtemp=void;                          
+                  end         
+
+      end  
+
+ if( (B3<=B1) and (b=1) and ((CBIB1-CBIB3)>=($Mini/3)) and ((CBIH1-CBIB3+$Smooth)<$Maxi) ) then begin  
+      bB=( (B3-B1) / (CBIB1-CBIB3) );                         
+      aB=B1-((CBIH1-CBIB1)*bB );
+      for i= (0) to ((CBI-CBIB3)+$Smooth)
+        begin
+          ZBtemp[i]=aB + bB*(i-$Smooth); 
+        end
+
+      b=0;
+      for i= 0 to (CBI-CBIB3+$Smooth)
+        begin
+          if ( (ZBtemp[i]>l[i])  )   then begin
+          b=1;
+          end
+        end 
+
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) or (bH<=bB) then begin
+            b=1;
+            end
+        
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIB3+$Smooth)
+        begin
+          ZBtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Blongueur=(CBI-CBIB3+$Smooth);
+                  ZBtemp=void; 
+                  end         
+
+      end      
+
+if( (B4<=B1) and (b=1) and ((CBIB1-CBIB4)>=($Mini/2))and ((CBIH1-CBIB4)<=$Maxi) ) then begin  
+      bB=( (B4-B1) / (CBIB1-CBIB4) );                         
+      aB=B1-((CBIH1-CBIB1)*bB );
+      for i= 0 to (CBI-CBIB4+$Smooth)
+        begin
+          ZBtemp[i]=aB + bB*(i-$Smooth);    
+        end
+      b=0;
+      for i= 0 to (CBI-CBIB4+$Smooth)
+        begin
+          if (ZBtemp[i]>l[i]) then begin
+          b=1;
+          end 
+
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) or (bH<=bB) then begin
+            b=1;
+            end
+          
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIB4+$Smooth)
+          ZBtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1; 
+                  Blongueur=(CBI-CBIB4+$Smooth);
+                  ZBtemp=void;                 
+                  end         
+
+      end 
+
+
+
+ if( (B3<=B2) and (b=1) and ((CBIH1-CBIB3+$Smooth)<=$Maxi) ) then begin  
+      bB=( (B3-B2) / (CBIB2-CBIB3) );                        
+      aB=B2-((CBIH1-CBIB2)*bB );   
+      for i= (0) to ((CBI-CBIB3)+$Smooth) 
+        begin
+          ZBtemp[i]=aB + bB*(i-$Smooth);    
+        end
+ 
+      b=0;
+      for i= 0 to (CBI-CBIB3+$Smooth)
+        begin
+          if (ZBtemp[i]>l[i]) then begin
+          b=1;
+          end
+        end 
+ 
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) or (bH<=bB) then begin
+            b=1;
+            end
+         
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIB3+$Smooth)
+        begin
+          ZBtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Blongueur=(CBI-CBIB3+$Smooth);
+                  ZBtemp=void; 
+                  end         
+
+      end            
+
+
+
+
+ if( (B4<=B2) and (b=1) and ((CBIH1-CBIB4+$Smooth)<=$Maxi) ) then begin  
+      bB=( (B4-B2) / (CBIB2-CBIB4) );                        
+      aB=B2-((CBIH1-CBIB2)*bB );   
+      for i= (0) to ((CBI-CBIB4)+$Smooth) 
+        begin
+          ZBtemp[i]=aB + bB*(i-$Smooth);   
+        end
+   
+      b=0;
+      for i= 0 to (CBI-CBIB4+$Smooth)
+        begin
+          if (ZBtemp[i]>l[i]) then begin
+          b=1;
+          end
+        end 
+  
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) or (bH<=bB) then begin
+            b=1;
+            end
+          
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIB4+$Smooth)
+        begin
+          ZBtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Blongueur=(CBI-CBIB4+$Smooth);
+                  ZBtemp=void; 
+                  end         
+
+      end              
+
+
+if $UseActualLow=1 then begin
+    if( (l<=B1) and (l<=B2) and (l>=B3) and (b=1) and ((CBIB1-CBIB3)>=($Mini/2))and ((CBIH1-CBIB3+$Smooth)<=$Maxi) ) then begin
+      bB=( (B3-l) / (CBI-CBIB3) );                         
+      aB=l+bB;
+      for i= 0 to (CBI-CBIB3+$Smooth)
+        begin
+          ZBtemp[i]=aB + bB*(i-$Smooth);    
+        end
+ 
+      b=0;
+      for i= 0 to (CBI-CBIB3+$Smooth)
+        begin
+          if (ZBtemp[i]>l[i])  then begin  
+          b=1;
+          end
+        end 
+   
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) or (bH<=bB) then begin   //  ..............................................     BISEAU :  -bB ainsi que   or (bH<=bB)
+            b=1;
+            end
+          
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIB3+$Smooth)
+        begin
+          ZBtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Blongueur=(CBI-CBIB3+$Smooth);
+                  ZBtemp=void; // remise à "rien" de ZBtemp après traçage sur les barres précédentes.                     
+                  end         
+
+      end         
+    if( (l<=B1) and (l>=B4) and (b=1) and ((CBIB1-CBIB4)>=($Mini))and ((CBIH1-CBIB4+$Smooth)<=$Maxi) ) then begin
+      bB=( (B4-l) / (CBI-CBIB4) );                         
+      aB=l+bB;
+      for i= 0 to (CBI-CBIB4+$Smooth)
+        begin
+          ZBtemp[i]=aB + bB*(i-$Smooth);    
+        end
+  
+      b=0;
+
+      for i= 0 to (CBI-CBIB4+$Smooth)
+        begin
+          if (ZBtemp[i]>l[i])  then begin
+          b=1;
+          end
+        end 
+       
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) or (bH<=bB) then begin
+            b=1;
+            end
+         
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIB4+$Smooth)
+        begin
+          ZBtemp[i]=void;
+          end
+       end
+                if (b=0) then begin                    
+                  zz=zz+1;
+                  Blongueur=(CBI-CBIB4+$Smooth);
+                  ZBtemp=void;             
+                  end         
+
+      end         
+    if( (l<=B1)  and (l>=B5) and (l<B4) and (b=1) and ((CBIB1-CBIB5)>=($Mini))and ((CBIH1-CBIB5+$Smooth)<=$Maxi) ) 
+then begin//
+      bB=( (B5-l) / (CBI-CBIB5) );                         
+      aB=l+bB;
+      for i= 0 to (CBI-CBIB5+$Smooth)
+        begin
+          ZBtemp[i]=aB + bB*(i-$Smooth);  
+        end
+ 
+      b=0;
+
+      for i= 0 to (CBI-CBIB5+$Smooth)
+        begin
+          if (ZBtemp[i]>l[i])  then begin
+          b=1;
+          end
+        end 
+
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) or (bH<=bB) then begin
+            b=1;
+            end
+         
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIB5+$Smooth)
+        begin
+          ZBtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Blongueur=(CBI-CBIB5+$Smooth);
+                  ZBtemp=void;                     
+                  end         
+
+      end         
+
+end 
+  If (zz=2) and ( ($FirstImpact_A_H_L=0) or ((($FirstImpact_A_H_L=1)and(Hlongueur>Blongueur))or(($FirstImpact_A_H_L=2)and(Hlongueur<Blongueur))) )  then begin
+          
+    For i= 0 to Hlongueur
+      begin
+      ZH[i]=ZHtemp[i];
+      end
+    For i=0 to Blongueur
+      begin
+      ZB[i]=ZBtemp[i];
+      end
+
+    TracerSuite[1]=$Prolong+1;
+    bHSuite=bH;
+    bBSuite=bB;
+    end   
+    else begin 
+     for i= 0 to Hlongueur
+        begin
+          ZHtemp[i]=void;
+        end
+    end
+
+    end 
+
+
+    end 
+
+if (TracerSuite[1]=0) and ((CBI-CBIB1)=$Smooth) and (($LastImpact_A_H_L=0) or ($LastImpact_A_H_L=2)) then begin // Si et seulement si il n'y a pas de tracersuite en cours  --------------------------Bb
+  a=1; 
+  zz=0;  
+
+    if( (B2<=B1) and ((CBIB1-CBIB2)>=($Mini-$Smooth)) and ((CBIB1-CBIB2+$Smooth)<=$Maxi) ) then begin  // calcul de tracé de ligne des Bas entre B2 et B1 si B2<=B1  ----------- C      BISEAU asc  : (B2<=B1)
+      bB=( (B2-B1) / (CBIB1-CBIB2) );
+      aB=B1;
+      for i= 0 to (CBI-CBIB2+$Smooth) 
+        begin                                                           
+          ZBtemp[i]=aB + bB*(i-$Smooth);     // a + bx
+        end
+      // vérification qu'aucun bas ne dépasse 
+      a=0;
+      for i= 0 to (CBI-CBIB2+$Smooth)
+        begin
+          if (ZBtemp[i]>l[i])  then begin
+          a=1;
+          end
+        end 
+      // validation de la pente
+     if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) then begin              //............................................................. BISEAU asc : -bB 
+        a=1;
+        end
+      // validation ou invalidation de la droite
+      If(a=1) then begin
+        for i= 0 to (CBI-CBIB2+$Smooth)
+        begin
+          ZBtemp[i]=void;
+          end
+       end
+                if (a=0) then begin
+                  Blongueur= ((CBI-CBIB2)+$Smooth); //si c'est bon, on stocke la longueur du bas tracé.
+                  zz=1;
+                  end         
+        ZBtemp=void; 
+
+      end         
+
+         else begin              // si on a pas validé B2->B1 on voit si B3>B1 ------------------------------------------------------------- C
+            if( (B3<=B1) and (a=1) and ((CBIB1-CBIB3)>($Mini-$Smooth)) and ((CBIB1-CBIB3+$Smooth)<=$Maxi) ) then begin // si on a p on voit si B3>B1 ---------------------D
+              bB=( (B3-B1) / (CBIB1-CBIB3) );
+              aB=B1;
+             for i= 0 to (CBI-CBIB3+$Smooth)
+                begin
+                  ZBtemp[i]=aB + bB*(i-$Smooth);    
+                end
+              // vérification qu'aucun bas ne dépasse 
+              a=0;
+              for i= 0 to (CBI-CBIB3+$Smooth)
+                begin
+                  if (ZBtemp[i]>l[i])  then begin
+                  a=1;
+                  end
+                end 
+            // validation de la pente
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) then begin
+             a=1;
+             end
+              // validation ou invalidation de la droite
+              If(a=1) then begin
+                for i= 0 to (CBI-CBIB3+$Smooth)
+                begin
+                  ZBtemp[i]=void;
+                  end
+                end
+                if (a=0) then begin
+                  Blongueur= ((CBI-CBIB3+$Smooth)); //si c'est bon, on stocke la longueur du bas tracé.         
+                  zz=1;
+                  end         
+              ZBtemp=void; // remise à "rien" de ZBtemp après traçage sur les barres précédentes.
+            end         //------------------------------------------------- D
+
+            else begin  
+
+             if( (B4<=B1) and (a=1) and ((CBIB1-CBIB4)>($Mini-$Smooth))and ((CBIB1-CBIB4+$Smooth)<=$Maxi) ) then begin // si on a pas validvoit si B4>B1 ---------------------E
+              bB=( (B4-B1) / (CBIB1-CBIB4) );
+              aB=B1;
+
+               for i= 0 to (CBI-CBIB4+$Smooth)
+                begin
+                  ZBtemp[i]=aB + bB*(i-$Smooth);   
+                end
+              // vérification qu'aucun bas ne dépasse 
+              a=0;
+              for i= 0 to (CBI-CBIB4+$Smooth)
+                begin
+                  if (ZBtemp[i]>l[i]) then begin
+                  a=1;
+                  end
+                end 
+
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) then begin
+             a=1;
+             end
+              // validation ou invalidation
+              If(a=1) then begin
+                for i= 0 to (CBI-CBIB4+$Smooth)
+                begin
+                  ZBtemp[i]=void;
+                  end
+                end
+                if (a=0) then begin
+                  Blongueur= ((CBI-CBIB4+$Smooth)); 
+                  zz=1;
+                  end         
+              ZBtemp=void; // remise à "rien" de ZBtemp après traçage sur les barres précédentes.                      
+            end         //--------------------------------------------
+            else begin 
+                if( (B3<=B2) and (a=1) and ((CBI-CBIB3)>($Mini))and ((CBIB1-CBIB3+$Smooth)<=$Maxi) ) then begin // ---------------------F
+                bB=( (B3-B2) / (CBIB2-CBIB3) );
+                aB=B2;
+                for i= 0 to (CBI-CBIB3+$Smooth)
+                  begin
+                    ZBtemp[i]=aB + bB*(i-$Smooth);    
+                  end
+ 
+                a=0;
+                for i= 0 to (CBI-CBIB3+$Smooth)
+                  begin
+                    if (ZBtemp[i]>l[i]) then begin
+                    a=1;
+                    end
+                  end 
+            // validation de la pente
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) then begin
+             a=1;
+             end
+                // validation ou invalidation de la droite
+                If(a=1) then begin
+                  for i= 0 to (CBI-CBIB3+$Smooth)
+                  begin
+                    ZBtemp[i]=void;
+                    end
+                  end
+                if (a=0) then begin
+                  Blongueur= ((CBI-CBIB3+$Smooth)); //si c'est bon, on stocke la longueur du bas tracé.                              
+                  zz=1;
+                  end         
+                ZBtemp=void; // remise à "rien" de ZBtemp après traçage sur les barres précédentes.
+               end         //------------------------------------------------- F
+
+            else begin  //si on n'a pas validé B2->B3 on voit B2->B4     -------F
+                if( (B4<=B2) and (a=1) and ((CBI-CBIB4)>($Mini)) and ((CBIB1-CBIB4+$Smooth)<=$Maxi) ) then begin // si on a pas validé B2->B3 on voit si B2->B4 ---------------------G
+                bB=( (B4-B2) / (CBIB2-CBIB4) );
+                aB=B2;
+                  for i= 0 to (CBI-CBIB4+$Smooth)
+                   begin
+                     ZBtemp[i]=aB + bB*(i-$Smooth);     // a + bx
+                   end
+                // vérification qu'aucun bas ne dépasse 
+                 a=0;
+                 for i= 0 to (CBI-CBIB4+$Smooth)
+                   begin
+                    if (ZBtemp[i]>l[i])  then begin
+                    a=1;
+                    end
+                   end
+ 
+            // validation de la pente
+            if ( (((-bB*100000)/c)>=$MaxLowInclination) or (((-bB*100000)/c)<$MinLowInclination) ) then begin
+             a=1;
+             end
+
+                If (a=1) then begin 
+                  for i= 0 to (CBI-CBIB4+$Smooth)
+                    begin
+                    ZBtemp[i]=void;
+                    end
+                  end
+                if (a=0) then begin
+                  Blongueur= ((CBI-CBIB4+$Smooth)); //si c'est bon, on stocke la longueur du bas tracé.
+                  zz=1;
+                  end
+                ZBtemp=void; // remise à "rien" de ZBtemp après traçage sur les barres précédentes.
+                end         //---------------------------------
+                end  //--------------------------------------------------------------
+              end  //---------------------------------------------------------------
+            end    //--------------------------------------------------------------
+      end  //-------------------------------------------------------------------------------------------------------------
+ 
+
+  if(zz=1) then begin 
+                                                                                                                                                          //                       et mettre -bH
+  b=1;       
+    if( (H2<=H1) and ((CBIH1-CBIH2)>=($Mini/3)) and ((CBIB1-CBIH2+$Smooth)<$Maxi) ) then begin  
+      bH=( (H2-H1) / (CBIH1-CBIH2) );                       
+      aH=H1-((CBIB1-CBIH1)*bH ); 
+ 
+      for i= 0 to (CBI-CBIH2+$Smooth)     //   ATTENTION : pour ce test on pourrait aussi regarder sur toute la longueur du tracé bas !!!   !!!!!!!!!!!!!!!!!!!
+        begin
+          ZHtemp[i]=aH + bH*(i-$Smooth);     // a + bx
+        end
+      // vérification qu'aucun haut ne dépasse 
+      b=0;
+      for i= 0 to (CBI-CBIH2+$Smooth)
+        begin
+          if (ZHtemp[i]<h[i]) then begin
+          b=1;
+          end
+        end
+   
+            if ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) or (bH<=bB)   then begin 
+            b=1;
+            end
+           
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIH2+$Smooth)
+        begin
+          ZHtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Hlongueur= (CBI-CBIH2+$Smooth);
+                  ZHtemp=void;                          
+ end         
+      end  
+ if( (H3<=H1) and (b=1) and ((CBIH1-CBIH3)>=($Mini/3)) and ((CBIB1-CBIH3+$Smooth)<$Maxi) ) then begin  
+      bH=( (H3-H1) / (CBIH1-CBIH3) );                         
+      aH=H1-((CBIB1-CBIH1)*bH );
+      for i= (0) to ((CBI-CBIH3)+$Smooth)     
+        begin
+          ZHtemp[i]=aH + bH*(i-$Smooth);   
+        end
+
+      b=0;
+      for i= 0 to (CBI-CBIH3+$Smooth)
+        begin
+          if ( (ZHtemp[i]<h[i])  )   then begin
+          b=1;
+          end
+        end 
+
+            if ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) )  or (bH<=bB) then begin
+            b=1;
+            end
+         
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIH3+$Smooth)
+        begin
+          ZHtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Hlongueur= (CBI-CBIH3+$Smooth);
+                  ZHtemp=void; 
+                  end         
+
+      end         
+ 
+
+
+ if( (H4<=H1) and (b=1) and ((CBIH1-CBIH4)>=($Mini/2))and ((CBIB1-CBIH4)<=$Maxi) ) then begin 
+      bH=( (H3-H1) / (CBIH1-CBIH4) );                         
+      aH=H1-((CBIB1-CBIH1)*bH );
+      for i= 0 to (CBI-CBIH4+$Smooth)
+        begin
+          ZHtemp[i]=aH + bH*(i-$Smooth);    
+        end
+ 
+      b=0;
+      for i= 0 to (CBI-CBIH4+$Smooth)
+        begin
+          if (ZHtemp[i]<h[i]) then begin
+          b=1;
+          end 
+
+            if ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) or (bH<=bB) then begin
+            b=1;
+            end
+        
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIH4+$Smooth)
+          ZHtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1; 
+                  Hlongueur= (CBI-CBIH4+$Smooth);
+                  ZHtemp=void;                 
+                  end         
+                end         
+
+
+
+ if( (H3<=H2) and (b=1) and ((CBIB1-CBIH3+$Smooth)<=$Maxi) ) then begin 
+      bH=( (H3-H2) / (CBIH2-CBIH3) );                         
+      aH=H2-((CBIB1-CBIH2)*bH );   
+      for i= (0) to ((CBI-CBIH3)+$Smooth) 
+        begin
+          ZHtemp[i]=aH + bH*(i-$Smooth);    
+        end
+ 
+      b=0;
+      for i= 0 to (CBI-CBIH3+$Smooth)
+        begin
+          if (ZHtemp[i]<h[i]) then begin
+          b=1;
+          end
+        end 
+    
+            if ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) or (bH<=bB) then begin
+            b=1;
+            end
+          
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIH3+$Smooth)
+        begin
+          ZHtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Hlongueur= (CBI-CBIH3+$Smooth);
+                  ZHtemp=void;
+                  end         
+
+      end          
+
+
+if $UseActualHigh=1 then begin
+
+    if( (h>=H1) and (h>=H2) and (h>=H3) and (b=1) and ((CBIH1-CBIH3)>=($Mini/2))and ((CBIB1-CBIH3+$Smooth)<=$Maxi) ) then begin
+      bH=( (H3-h) / (CBI-CBIH3) );                         
+      aH=h+bH; 
+      for i= 0 to (CBI-CBIH3+$Smooth)
+        begin
+          ZHtemp[i]=aH + bH*(i-$Smooth);    
+        end
+   
+      b=0;
+      for i= 0 to (CBI-CBIH3+$Smooth)
+        begin
+          if (ZHtemp[i]<h[i])  then begin 
+          b=1;
+          end
+        end 
+      
+            if ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) or (bH<=bB) then begin   
+            b=1;
+            end
+
+          
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIH3+$Smooth)
+        begin
+          ZHtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Hlongueur= (CBI-CBIH3+$Smooth);
+                  ZHtemp=void;                      
+                  end         
+      end  
+    if( (h>=H1) and (h>=H4) and (b=1) and ((CBIH1-CBIH4)>=($Mini))and ((CBIB1-CBIH4+$Smooth)<=$Maxi) ) then begin
+      bH=( (H4-h) / (CBI-CBIH4) );                         
+      aH=h+bH;
+      for i= 0 to (CBI-CBIH4+$Smooth)
+        begin
+          ZHtemp[i]=aH + bH*(i-$Smooth); 
+        end
+
+   
+      b=0;
+      for i= 0 to (CBI-CBIH4+$Smooth)
+        begin
+          if (ZHtemp[i]<h[i])  then begin
+          b=1;
+          end
+        end 
+  
+            if ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) or (bH<=bB) then begin 
+            b=1;
+            end
+            
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIH4+$Smooth)
+        begin
+          ZHtemp[i]=void;
+          end
+       end
+                if (b=0) then begin                    
+                  zz=zz+1;
+                  Hlongueur= (CBI-CBIH4+$Smooth);
+                  ZHtemp=void;              
+                  end         
+
+      end         
+    if( (h>=H1)  and (h>=H5) and (b=1) and ((CBIH1-CBIH5)>=($Mini))and ((CBIB1-CBIH5+$Smooth)<=$Maxi) ) 
+then begin
+      bH=( (H5-h) / (CBI-CBIH5) );                         
+      aH=h+bH;
+
+      for i= 0 to (CBI-CBIH5+$Smooth)
+        begin
+          ZHtemp[i]=aH + bH*(i-$Smooth);  
+        end
+
+      b=0;
+      for i= 0 to (CBI-CBIH5+$Smooth)
+        begin
+          if (ZHtemp[i]<h[i])  then begin
+          b=1;
+          end
+        end 
+ 
+            if ( (((-bH*100000)/c)>=$MaxHighInclination) or (((-bH*100000)/c)<$MinHighInclination) ) or (bH<=bB) then begin
+            b=1;
+            end
+          
+      If(b=1) then begin
+        for i= 0 to (CBI-CBIH5+$Smooth)
+        begin
+          ZHtemp[i]=void;
+          end
+       end
+                if (b=0) then begin
+                  zz=zz+1;
+                  Hlongueur= (CBI-CBIH5+$Smooth);
+                  ZHtemp=void;                     
+                  end         
+      end        
+end 
+  If (zz=2) and ( ($FirstImpact_A_H_L=0) or ((($FirstImpact_A_H_L=1)and(Hlongueur>Blongueur))or(($FirstImpact_A_H_L=2)and(Hlongueur<Blongueur))) )   then begin
+
+    For i= 0 to Hlongueur
+      begin
+      ZH[i]=ZHtemp[i];
+      end
+    For i=0 to Blongueur
+      begin
+      ZB[i]=ZBtemp[i];
+      end
+    TracerSuite[1]=$Prolong+1;
+    bHSuite=bH;
+    bBSuite=bB;
+    end
+    else begin 
+     for i= 0 to Blongueur
+        begin
+          ZBtemp[i]=void;
+end
+ end
+end 
+ end  
+  end  
+  else begin 
+  end   
+if (date<01_01_2050) then begin
+  if (TracerSuite[1]<($Prolong+1)) and (TracerSuite[1]>0) then begin 
+    bHSuite=bHsuite[1];
+    bBSuite=bBsuite[1];
+    ZHsuite=ZHsuite[1]-bHsuite;
+    ZBsuite=ZBsuite[1]-bBsuite;
+    TracerSuite=TracerSuite[1]-1;
+    end
+ If TracerSuite[1]=($Prolong+1) then begin  
+    ZHsuite=ZH[1]-bHSuite;
+    ZBsuite=ZB[1]-bBSuite;
+    bHSuite=bH;
+    bBSuite=bB;
+    TracerSuite=TracerSuite[1]-1;
+    bHStop=bH; 
+    bBStop=bB;
+    ZHStop=ZHsuite;
+    ZBStop=ZBsuite;
+    if $Sound=1 then PlaySound("E-BiseauEnFormation");
+    end
+if (Tracersuite=0) or (ZHsuite<ZBsuite) then begin
+  ZHsuite=void;
+  ZBsuite=void;
+  end
+end
+if ($EntryStrategy=1) then begin 
+  if (c<ZBsuite) and ((c[1]>=ZBsuite[1]) or ( (ZHsuite[1]=void) and (ZHsuite<>void) ) ) 
+                      and ( ((-bBsuite*100000)/c)<=$MaxLowInclination) and ( ((bHsuite*100000)/c)<=$MaxHighInclination) then begin    //
+    EntreeCourt=1;
+    end
+  if (c>ZHsuite) and ((c[1]<=ZHsuite[1]) or ( (ZHsuite[1]=void) and (ZHsuite<>void) ) ) 
+                      and ( ((-bBsuite*100000)/c)<=$MaxLowInclination) and ( ((bHsuite*100000)/c)<=$MaxHighInclination) then begin  //
+    EntreeLong=1;
+    end
+  end
+
+if ($EntryStrategy=2) then begin 
+  if (l<ZBsuite) and (h<ZHsuite) and ((l[1]>=ZBsuite[1] ) or ( (ZHsuite[1]=void) and (ZHsuite<>void) ) ) 
+                      and ( ((-bBsuite*100000)/c)<=$MaxLowInclination) and ( ((bHsuite*100000)/c)<=$MaxHighInclination) then begin    
+    EntreeCourt=1;
+    end
+  if (h>ZHsuite) and (l>ZBsuite) and ((h[1]<=ZHsuite[1]) or ( (ZHsuite[1]=void) and (ZHsuite<>void) ) ) 
+                      and ( ((-bBsuite*100000)/c)<=$MaxLowInclination) and ( ((bHsuite*100000)/c)<=$MaxHighInclination) then begin
+    EntreeLong=1;
+    end
+  end
+
+
+zz=0;
+ZH=void; 
+ZB=void; 
+
+
+
+Interpretation 
+begin
+//  if (EntreeLong[$DifferEntry]=1) then sentiment = 100;
+  if (EntreeCourt[$DifferEntry]=1) then sentiment = 0;
+
+
+
+end
+plot (ZH,black,3);
+
+plot (ZB,black,3);
+plot (ZHsuite,red,2);
+plot (ZBsuite,red,2);//@@@cs:13297359-10113173-12008928_cs@@@

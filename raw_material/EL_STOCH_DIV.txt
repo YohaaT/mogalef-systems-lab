@@ -1,0 +1,251 @@
+Express EL_STOCH_DIV
+// Author Eric Lefort for MOGALEF 
+// ATTENTION ! VERSION REGARDANT LES HIGH ET LOW POUR INDIC DE TYPE STO
+//version OK, mais pas optimisée.
+// c'est la version E_Stoch_Div_2 , celle que je n'ai pas pu améliorer
+
+Vars
+input $StartTime(0,2359,0),$EndTime(0,2359,2359),$MessageBox(0,1,0),$PlaySound(0,1,0),$SendEmail(0,1,0);
+input $Sto(5,21,12);
+input $StoD(1,10,3);
+input $smothH(1,10,2); 
+input $smothB(1,10,2);
+input $ORien1Normales2Inverses3Toutes(0,3,1);
+input $decalentree(0,10,0); 
+input $DistanceMaxH(5,200,200); 
+input $DistancemaxB(5,200,200);
+input $Visualise("yes;No",0);
+
+//series INDIC(Stochastic.main);
+series PH,PB,NumK,DenoK,StoK,StoD,Indic;// pour la sto 
+series DH,DCH; 
+series AH,ACH; 
+series DB,DCB; 
+series AB,ACB; 
+series DIVB,DIVH,DIVHI,DIVBI;  
+series compteurB,ZB,ZBI,ZH,ZHI,compteurH;  
+series temp1,temp3; 
+series temp4,temp6;
+series pose;
+
+numeric i,a,b,temp2,temp5; 
+
+Calculation
+
+
+if IsFirstBar() then CalculateAtEveryTick(false);
+PH=Highest(high,$Sto);//la sto
+PB=Lowest(l,$Sto);
+
+//Calcul de la STO K 
+//If isfirstbar() then  begin// ***************
+//    for i= FinalBarIndex() downto 0 begin//=========
+i=0;
+      NumK[-i]=(PH[-i]-c[-i]);  // la sto
+      DenoK[-i]=(PH[-i]-PB[-i]);
+      If DenoK[-i]=0 then begin 
+        StoK[-i]=100;
+      end
+      else begin
+        StoK[-i]= 100-((NumK[-i]/DenoK[-i])*100);
+      end
+//    end
+//end
+//If isfinalbar() then  begin// ***************
+MovingAverage(stok,stod,$StoD);
+//end
+
+Indic=StoD;
+
+temp1= Highest(INDIC,($smothH +1));
+temp2= temp1[$smothH];
+temp3= Highest(h,3); 
+if ($smothH>1) then begin 
+if ((INDIC[$smothH] = temp1) and (INDIC[$smothH] = temp2)) then 
+begin
+DH = INDIC[$smothH];
+DCH = Highest(h,( ($smothH*2) +1) );  
+compteurB = $smothH;
+end
+else begin
+DH = DH[1];
+DCH = DCH[1];
+compteurB = compteurB[1]+1 ;
+end
+end
+else begin 
+if ((INDIC[3] = temp1[2]) and (INDIC[3] = temp1[3])) then 
+begin
+DH = INDIC[3];
+DCH = temp3[2]; 
+compteurB = 3;
+end
+else begin
+DH = DH[1];
+DCH = DCH[1];
+compteurB = compteurB[1]+1 ;
+end 
+end
+if (date<01_01_2030) then begin  //****************DATE ************************************
+//   
+if ( ((h<=h[1])or (h<=h[2])) and (INDIC < INDIC[1]) and (INDIC[1]=temp1[1]) and (compteurB < $DistanceMaxH)    ) then begin 
+AH = INDIC[1];
+ACH = Highest(h,($smothH +2)); 
+end
+else begin
+AH = AH[1];
+ACH = ACH[1];
+end
+if ($ORien1Normales2Inverses3Toutes=1) or ($ORien1Normales2Inverses3Toutes>2) then begin 
+if( (AH<>AH[1]) and (DH>AH) and (DCH<ACH) ) then begin
+DIVB= -3;
+end
+else begin
+DIVB = 0;
+ZH = void;
+end
+if DIVB = -3 then begin 
+a= AH;
+b= ((DH-AH) / (compteurB -1));
+for i = 1 to compteurB 
+begin
+ZH[i] = a + b*(i-1); 
+end
+ZH = void;
+end
+end
+if $ORien1Normales2Inverses3Toutes>1 then begin
+if( (AH<>AH[1]) and (DH<AH) and (DCH>ACH) ) then begin
+DIVBI= -2;
+end
+else begin
+DIVBI = 0;
+ZHI = void;
+end
+if DIVBI = -2 then begin 
+a= AH;
+b= ((DH-AH) / (compteurB -1));
+for i = 1 to compteurB 
+begin
+ZHI[i] = a + b*(i-1); 
+end
+ZHI = void;
+end
+end
+temp4= Lowest(INDIC,($smothB +1));
+temp5= temp4[$smothB];
+temp6= Lowest(l,3); 
+if ($smothB>1) then begin 
+if ((INDIC[$smothB] = temp4) and (INDIC[$smothB] = temp5)) then 
+begin
+DB = INDIC[$smothB];
+DCB = Lowest(l,( ($smothB*2) +1) );  
+compteurH = $smothB;
+end
+else begin
+DB = DB[1];
+DCB = DCB[1];
+compteurH = compteurH[1]+1 ;
+end
+end
+else begin 
+if ((INDIC[3] = temp4[2]) and (INDIC[3] = temp4[3])) then 
+begin
+DB = INDIC[3];
+DCB = temp6[2]; 
+compteurH = 3;
+end
+else begin
+DB = DB[1];
+DCB = DCB[1];
+compteurH = compteurH[1]+1 ;
+end  
+end
+if ( ((l>=l[1])or(l>=l[2])) and (INDIC > INDIC[1]) and (INDIC[1]=temp4[1]) and (compteurH < $DistanceMaxB)   ) then begin 
+AB = INDIC[1];
+ACB = Lowest(l,($smothB +2)); 
+end
+else begin
+AB = AB[1];
+ACB = ACB[1];
+end
+if ($ORien1Normales2Inverses3Toutes=1) or ($ORien1Normales2Inverses3Toutes>2) then begin 
+if( (AB<>AB[1]) and (DB<AB) and (DCB>ACB) ) then begin
+DIVH= 3;
+end
+else begin
+DIVH = 0;
+ZB = void;
+end
+if DIVH = 3 then begin 
+a= AB;
+b= ((DB-AB) / (compteurH -1));
+for i = 1 to compteurH 
+begin
+ZB[i] = a + b*(i-1); 
+end
+ZB = void;
+end
+end
+if ($ORien1Normales2Inverses3Toutes>1) then begin
+if( (AB<>AB[1]) and (DB>AB) and (DCB<ACB) ) then begin
+DIVHI= 2;
+end
+else begin
+DIVHI = 0;
+ZBI = void;
+end
+if DIVHI = 2 then begin // 
+a= AB;
+b= ((DB-AB) / (compteurH -1));
+for i = 1 to compteurH 
+begin
+ZBI[i] = a + b*(i-1); 
+end
+ZBI = void;
+end
+end
+end
+
+Pose=0;
+if (DIVH[$decalentree]>0) then  pose=1;
+if (DIVB[$decalentree]<0) then  pose=-1;
+if (DIVHI[$decalentree]>0) then  pose=1;
+if (DIVBI[$decalentree]<0) then pose=-1;
+
+interpretation
+begin
+If (TimeToNumeric(timeopen) >= $StartTime) and (TimeToNumeric(timeopen) <= $EndTime) then begin
+ If (Pose=1) and (IsBarCompleted()) then 
+  begin
+    Sentiment=100;
+    If $Visualise = 0 then Highlight("slot","lightgreen");
+    if ($SendEmail = 1) then SendEmail("Buy signal","Buy signal: STO DIV " + SymbolName()); 
+    if ($PlaySound = 1) then Playsound("ring");
+    if ($MessageBox = 1) then MessageBox("Buy signal: STO DIV " + SymbolName());
+  end
+  else
+  begin
+    If (Pose=-1) and (IsBarCompleted()) then 
+    begin
+      Sentiment=0;
+      If $Visualise = 0 then Highlight("slot","lightred");
+      if ($SendEmail = 1) then SendEmail("Sell signal","Sell signal: STO DIV " + SymbolName()); 
+      if ($PlaySound = 1) then Playsound("ring");
+      if ($MessageBox = 1) then MessageBox("Sell signal: STO DIV " + SymbolName());
+    end
+  end
+end
+end
+
+plot (INDIC,red,2); 
+plot (DIVH,green,1);
+plot (ZB,green,2);
+plot (DIVB,green,1);
+plot (ZH,red,2);
+plot (ZHI,red,1);
+plot (ZBI,green,1);
+plot (DIVHI,green,1);
+plot (DIVBI,green,1);
+
+//plot (numk,black,3);//@@@cs:1900395-4316955-1700016_cs@@@

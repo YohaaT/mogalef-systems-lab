@@ -1,0 +1,25 @@
+{
+  "component": "EL_Stop_Intelligent",
+  "phase": 3,
+  "checks": [
+    {
+      "case": "case_long_monotonic.json",
+      "check": "long_stop_monotonic",
+      "result": "PASS",
+      "details": "active_stop_count=4"
+    },
+    {
+      "case": "case_wait_long.json",
+      "check": "wait_for_xtrem_freeze_long",
+      "result": "PASS",
+      "details": "hh0_next=14,stop_idx=5.0,stop_next=5.0"
+    },
+    {
+      "case": "case_short_monotonic.json",
+      "check": "short_stop_monotonic",
+      "result": "PASS",
+      "details": "active_stop_count=4"
+    }
+  ],
+  "result": "PASS"
+}

@@ -1,0 +1,272 @@
+Express EL_MACD_DIV
+// Version destinée au CLUB
+// Author Eric Lefort for MOGALEF 
+// Variable Force Repulsion incluse et OK
+
+// ATTENTION ! VERSION REGARDANT LE CLOSE POUR INDIC DE TYPE MACD
+Vars
+input $StartTime(0,2359,0),$EndTime(0,2359,2359);
+input $PlaySound(0,1,0), $MessageBox(0,1,0),$SendEmail(0,1,0);
+
+input $EMAfast(1,20,12),$EMAslow(21,50,26),$EMA(1,25,9);
+input $smothH(1,10,2);  
+input $smothL(1,10,2);
+input $ONone1Normals2Inverses3All(0,3,1); 
+input $DistanceMaxH(5,200,200); 
+input $DistancemaxL(5,200,200);
+input $DifferEntry(0,10,0);
+input $StrengtRepulsionTicks(-100,100,-100);         // RAJOUTE CECI EST UN FILTRE INTEGRE
+ 
+series INDIC; //(MACD.main); 
+series DH,DCH; 
+series AH,ACH; 
+series DB,DCB; 
+series AB,ACB; 
+series DIVB,DIVH,DIVHI,DIVBI;  
+series compteurB,ZB,ZBI,ZH,ZHI,compteurH;
+numeric a,b,temp2,temp5; 
+series temp1,temp3,Pose; 
+series temp4,temp6;
+series emafast,emaslow,macd;
+numeric i; 
+
+Calculation
+
+// Calcul de l'indicateur *********************************
+if isfirstbar() then 
+begin
+  CalculateAtEveryTick(false);
+  ExpMovingAverage(c,emafast,$emafast);
+  ExpMovingAverage(c,emaslow,$emaslow);
+
+  for i = 0 to FinalBarIndex()
+  begin
+    INDIC[-i] = emafast[-i] - emaslow[-i];
+  end
+end 
+// FIN Calcul de l'indicateur *****************************
+
+temp1= Highest(INDIC,($smothH +1));
+temp2= temp1[$smothH];
+temp3= Highest(c,3); 
+if ($smothH>1) then 
+begin 
+  if ((INDIC[$smothH] = temp1) and (INDIC[$smothH] = temp2)) then 
+  begin
+    DH = INDIC[$smothH];
+    DCH = Highest(c,( ($smothH*2) +1) ); 
+    compteurB = $smothH;
+  end
+  else 
+  begin
+    DH = DH[1];
+    DCH = DCH[1];
+    compteurB = compteurB[1]+1 ;
+  end
+end
+else 
+begin 
+  if ((INDIC[3] = temp1[2]) and (INDIC[3] = temp1[3])) then 
+  begin
+    DH = INDIC[3];
+    DCH = temp3[2];
+    compteurB = 3;
+  end
+  else 
+  begin
+    DH = DH[1];
+    DCH = DCH[1];
+    compteurB = compteurB[1]+1 ;
+  end  
+end
+
+if (date<01_01_2030) then 
+begin
+//   
+  if ( (c<=c[1]) and (INDIC < INDIC[1]) and (INDIC[1]=temp1[1]) and (compteurB < $DistanceMaxH)   ) then 
+  begin 
+    AH = INDIC[1];
+    ACH = Highest(c,($smothH +2)); 
+  end
+  else 
+  begin
+    AH = AH[1];
+    ACH = ACH[1];
+  end
+  if ($ONone1Normals2Inverses3All=1) or ($ONone1Normals2Inverses3All>2) then 
+  begin 
+    if( (AH<>AH[1]) and (DH>AH) and (DCH<ACH) ) then 
+    begin
+      DIVB= -3;
+    end
+    else 
+    begin
+      DIVB = 0;
+      ZH = void;
+    end
+    if DIVB = -3 then 
+    begin 
+      a= AH;
+      b= ((DH-AH) / (compteurB -1));
+      for i = 1 to compteurB 
+      begin
+        ZH[i] = a + b*(i-1); 
+      end
+      ZH = void;
+    end
+  end
+  if $ONone1Normals2Inverses3All>1 then 
+  begin
+    if( (AH<>AH[1]) and (DH<AH) and (DCH>ACH) ) then 
+    begin
+      DIVBI= -2;
+    end
+    else 
+    begin
+      DIVBI = 0;
+      ZHI = void;
+    end 
+    if DIVBI = -2 then 
+    begin 
+      a= AH;
+      b= ((DH-AH) / (compteurB -1));
+      for i = 1 to compteurB 
+      begin
+        ZHI[i] = a + b*(i-1); 
+      end
+      ZHI = void;
+    end
+  end
+  temp4= Lowest(INDIC,($smothL +1));
+  temp5= temp4[$smothL];
+  temp6= Lowest(c,3); 
+  if ($smothL>1) then 
+  begin 
+  if ((INDIC[$smothL] = temp4) and (INDIC[$smothL] = temp5)) then 
+  begin
+    DB = INDIC[$smothL];
+    DCB = Lowest(c,( ($smothL*2) +1) );  
+    compteurH = $smothL;
+  end
+  else 
+  begin
+    DB = DB[1];
+    DCB = DCB[1];
+    compteurH = compteurH[1]+1 ;
+  end
+end
+else 
+begin 
+  if ((INDIC[3] = temp4[2]) and (INDIC[3] = temp4[3])) then 
+  begin
+    DB = INDIC[3];
+    DCB = temp6[2]; 
+    compteurH = 3;
+  end
+  else 
+  begin
+    DB = DB[1];
+    DCB = DCB[1];
+    compteurH = compteurH[1]+1 ;
+  end  
+end
+if ( (c>=c[1]) and (INDIC > INDIC[1]) and (INDIC[1]=temp4[1]) and (compteurH < $DistancemaxL)  ) then 
+begin 
+  AB = INDIC[1];
+  ACB = Lowest(c,($smothL +2)); 
+end
+else 
+begin
+  AB = AB[1];
+  ACB = ACB[1];
+end
+if ($ONone1Normals2Inverses3All=1) or ($ONone1Normals2Inverses3All>2) then 
+begin 
+  if( (AB<>AB[1]) and (DB<AB) and (DCB>ACB) ) then 
+  begin
+    DIVH= 3;
+  end
+  else 
+  begin
+    DIVH = 0;
+    ZB = void;
+  end
+  if DIVH = 3 then 
+  begin 
+    a= AB;
+    b= ((DB-AB) / (compteurH -1));
+    for i = 1 to compteurH 
+    begin
+      ZB[i] = a + b*(i-1); 
+    end
+    ZB = void;
+  end
+end
+if ($ONone1Normals2Inverses3All>1) then 
+begin
+  if( (AB<>AB[1]) and (DB>AB) and (DCB<ACB) ) then 
+  begin
+    DIVHI= 2;
+  end
+  else 
+  begin
+    DIVHI = 0;
+    ZBI = void;
+  end
+  if DIVHI = 2 then 
+  begin // 
+    a= AB;
+    b= ((DB-AB) / (compteurH -1));
+    for i = 1 to compteurH 
+    begin
+      ZBI[i] = a + b*(i-1); 
+    end
+    ZBI = void;
+  end
+end
+end
+DIVH=DIVH*2*TickSize();
+DIVB=DIVB*2*TickSize();
+DIVHI=DIVHI*2*TickSize();
+DIVBI=DIVBI*2*TickSize();
+
+Pose=0;
+if (DIVH[$DifferEntry]>0) and ((c[$DifferEntry]-l[$DifferEntry+1]) > (TickSize()*$StrengtRepulsionTicks)) then Pose = 1;
+if (DIVB[$DifferEntry]<0) and ((h[$DifferEntry+1]-c[$DifferEntry]) > (TickSize()*$StrengtRepulsionTicks)) then Pose = -1;
+if (DIVHI[$DifferEntry]>0) and ((c[$DifferEntry]-l[$DifferEntry+1]) > (TickSize()*$StrengtRepulsionTicks)) then Pose = 1;
+if (DIVBI[$DifferEntry]<0) and ((h[$DifferEntry+1]-c[$DifferEntry]) > (TickSize()*$StrengtRepulsionTicks)) then Pose = -1;
+
+
+interpretation
+
+begin
+  If (Pose=1) and (TimeToNumeric(timeopen) >= $StartTime) and (TimeToNumeric(timeopen) <= $EndTime) 
+      and (IsBarCompleted()) then 
+  begin
+    Sentiment=100;
+    if ($SendEmail = 1) then SendEmail("Buy signal","Buy signal: MACD DIV " + SymbolName()); 
+    if ($PlaySound = 1) then Playsound("ring");
+    if ($MessageBox = 1) then MessageBox("Buy signal: MACD DIV " + SymbolName());
+  end
+  else
+  begin
+    If (Pose=-1) and (TimeToNumeric(timeopen) >= $StartTime) and (TimeToNumeric(timeopen) <= $EndTime)
+        and (IsBarCompleted()) then 
+    begin
+      Sentiment=0;
+      if ($SendEmail = 1) then SendEmail("Sell signal","Sell signal: MACD DIV " + SymbolName()); 
+      if ($PlaySound = 1) then Playsound("ring");
+      if ($MessageBox = 1) then MessageBox("Sell signal: MACD DIV " + SymbolName());
+    end
+  end
+end
+
+plot (INDIC,red,2); 
+plot (DIVH,green,1);
+plot (ZB,green,2);
+plot (DIVB,green,1);
+plot (ZH,red,2);
+plot (ZHI,red,1);
+plot (ZBI,green,1);
+plot (DIVHI,green,1);
+plot (DIVBI,green,1);//@@@cs:2151989-4442013-1953554_cs@@@

@@ -1,0 +1,61 @@
+{
+  "inputs": {
+    "r1": 1,
+    "r2": 2,
+    "r3": 3
+  },
+  "outputs": {
+    "cases": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "sentiment": [
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "block",
+      "pass",
+      "pass",
+      "pass",
+      "pass",
+      "pass",
+      "pass",
+      "pass",
+      "pass",
+      "pass"
+    ]
+  }
+}

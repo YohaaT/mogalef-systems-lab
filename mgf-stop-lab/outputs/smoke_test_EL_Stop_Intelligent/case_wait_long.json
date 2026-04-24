@@ -1,0 +1,124 @@
+{
+  "inputs": {
+    "high": [
+      10,
+      13,
+      12,
+      14,
+      13,
+      13.5,
+      13.6,
+      15
+    ],
+    "low": [
+      8,
+      9,
+      7,
+      10,
+      9,
+      10.5,
+      10.6,
+      12
+    ],
+    "close": [
+      9,
+      12,
+      11,
+      13,
+      12,
+      12.8,
+      12.9,
+      14
+    ],
+    "market_position": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "params": {
+      "quality": 1,
+      "recent_volat": 1,
+      "ref_volat": 1,
+      "coef_volat": 5,
+      "first_low_or_more": 1,
+      "wait_for_xtrem": 2
+    }
+  },
+  "outputs": {
+    "stop": [
+      5.0,
+      5.0,
+      5.0,
+      5.0,
+      null,
+      null,
+      null,
+      null
+    ],
+    "space": [
+      4.0,
+      4.0,
+      6.0,
+      4.0,
+      4.0,
+      3.0,
+      3.4,
+      null
+    ],
+    "h1": [
+      13,
+      14,
+      14,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "b1": [
+      7,
+      7,
+      9,
+      9,
+      null,
+      null,
+      null,
+      null
+    ],
+    "hh0": [
+      14,
+      14,
+      14,
+      null,
+      null,
+      null,
+      null,
+      null
+    ],
+    "bb0": [
+      7,
+      7,
+      9,
+      9,
+      null,
+      null,
+      null,
+      null
+    ],
+    "flaglong": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  }
+}

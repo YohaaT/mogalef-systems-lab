@@ -1,0 +1,81 @@
+express EL_Supertrend_05
+// Programmation Eric Lefort
+// Version opérationnelle et conforme du SuperTrend       2019-07-13
+// INTERPRETATION non faite.
+
+Vars
+input $spanST (1, 50, 10); // mettre défaut à 10
+input $CoefST (1,10,3);
+
+series tr,avtr,cbi,BH,BB,ST,STH,STB;
+numeric i;
+
+Calculation
+CalculateAtEveryTick(false);
+cbi= currentbarindex();
+
+if isfinalbar()then begin
+For i=0 to cbi
+    if (h[i]-l[i])>absvalue(c[i+1]-l[i]) then
+      if (h[i]-l[i])>absvalue(h[i]-c[i+1]) then
+        tr[i]=(h[i]-l[i]);
+        else
+        tr[i]=absvalue(h[i]-c[i+1]);
+      else
+      if absvalue(c[i+1]-l[i])>absvalue(h[i]-c[i+1]) then
+        tr[i]=absvalue(c[i+1]-l[i]);
+        else
+        tr[i]=absvalue(h[i]-c[i+1]);
+    end
+
+
+//if isfinalbar() then begin
+  MovingAverage(tr,avtr,$spanST);
+//end
+
+if isfinalbar() then begin
+  For i=cbi downto 0 begin
+    BH[i]= ((h[i] + l[i]) /2) + ($CoefST * avtr[i]);
+    BB[i]= ((h[i] + l[i]) /2) - ($CoefST * avtr[i]);
+    ST[i]=ST[i+1]; // Si rien ne change alors on reconduit les valeurs précédentes
+    STH[i]=STH[i+1];
+    STB[i]=STB[i+1];
+    if i= (cbi-$spanST-1) then ST[i]=c[i];
+
+    if ((ST[i+1]<c[i+1]) and (BB[i+1]<BB[i]) and (BB[i]>ST[i+1])) then begin
+      ST[i]=BB[i];// ST dessous et monte
+      STB[i]=ST[i];
+      STH[i]=void;
+      end
+    if ((ST[i+1]>c[i+1]) and (BH[i+1]>BH[i]) and (BH[i]<ST[i+1])) then begin
+      ST[i]=BH[i];// ST dessus et descend
+      STH[i]=ST[i];
+      STB[i]=void;
+      end
+    if ((ST[i+1]<c[i+1]) and (c[i]<ST[i+1])) then begin
+      ST[i]=BH[i]; // ST passe de dessous à dessus
+      STH[i]=ST[i];
+      STB[i]=void;
+      end
+    if ((ST[i+1]>c[i+1]) and (c[i]>ST[i+1])) then begin
+      ST[i]=BB[i]; // ST passe de dessus à dessous
+      STB[i]=ST[i];
+      STH[i]=void;
+      end
+
+    end
+
+end
+
+ 
+interpretation
+begin
+end 
+
+plot (STH, red, 1);
+plot (STB, green, 1);
+//plot (BH, red, 2);
+//plot (BB, green, 2);
+//Plot (ST, black,2);
+plot (c,blue,1);
+//plot (avtr,black,1);//@@@cs:755777-3688433-567721_cs@@@

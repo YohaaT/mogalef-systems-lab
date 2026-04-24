@@ -1,0 +1,597 @@
+Express EL_REPULSE_DIV
+// Author Eric Lefort for MOGALEF 
+
+// Cette version est OK.
+// Pourtant, elle ne correspond pas exactement au Repulse de WHS. 
+// Il y aura de petites différences.
+
+
+Vars
+Input $R1(1,4,1);               // Longueur des Repulses 
+Input $R2(5,14,5);
+Input $R3(15,24,15);
+input $smoothHighRep1(1,5,1);   // Lissage de Repulse 1
+input $smoothLowRep1(1,5,1);
+input $Activ_R1(0,1,1);
+input $SmoothHighRep5(1,10,3);   // Lissage de Repulse 5
+input $SmoothLowRep5(1,10,3);
+input $Activ_R5(0,1,1);
+input $SmoothHighRep15(1,20,6);   // Lissage de Repulse 15 
+input $smoothLowRep15(1,20,6);
+input $Activ_R15(0,1,1);
+input $DecalEntry(0,3,0);
+input $DureeSignal(1,5,1);
+input $Visualise("yes;No",0);
+
+series INDICM,INDICA,INDICB;
+//series INDICA(WHSREPULSE.REPA); // Repulse 5
+//series INDICM(WHSREPULSE.main); // Repulse
+//series INDICB(WHSREPULSE.REPB); // Repulse 15
+// ********************************************************
+series DHA,DCHA,DHB,DCHB,DHM,DCHM; // Derniers hauts connus sur Indic et Cours
+series AHA,AHB,AHM,ACHA,ACHB,ACHM; // Actuel haut détecté sur Indic et Cours
+series DBA,DBB,DBM,DCBA,DCBB,DCBM; // Derniers bas connus sur Indic et Cours
+series ABA,ABB,ABM,ACBA,ACBB,ACBM; // Actuel bas détecté sur indic et cours
+series DIVBA,DIVBB,DIVBM,DIVHA,DIVHB,DIVHM; // Présence divergence baissiere (haussière) si =-10 ou =+10 
+numeric a,b; // compteur de distance divergences baissières pour affichage
+series compteurBA,compteurBB,compteurBM,compteurHA,compteurHB,compteurHM,ZBA,ZBB,ZBM,ZHA,ZHB,ZHM; // compteur de distance divergences baissières pour affichage
+series temp1A,temp1B,temp1M,temp3A,temp3B,temp3M;
+numeric temp2A,temp2B,temp2M;
+series temp4A,temp4B,temp4M,temp6A,temp6B,temp6M;
+numeric temp5A,temp5B,temp5M;
+numeric i,j;  // numeric i,a,b;
+series Pose;
+Series PousH1,PousB1;
+Series PousH,PousB;
+Series Length1,bas,haut,R1;
+Series PousH2,PousB2;
+Series PousHH,PousBB;
+Series Length2,bas2,haut2,R2;
+Series PousH3,PousB3;
+Series PousHHH,PousBBB;
+Series Length3,bas3,haut3,R3;
+
+Calculation
+
+// ===============Calcul autonome du Repulse 1 ===================
+if isfirstbar() then begin
+  CalculateAtEveryTick(false);
+  Length1=$R1; // valeur de base du Repulse 1
+
+  for i = 0 to FinalBarIndex() begin  // calcul du lowest low
+    bas[-i]=l[-i];
+    for j =1 to (length1-1)
+      if l[j-i]<=bas[-i] then bas[-i]=l[j-i];  
+  end
+  for i = 0 to FinalBarIndex() begin  // calcul du highest high
+    haut[-i]=h[-i];
+    for j =1 to (length1-1)
+      if h[j-i]>=haut[-i] then haut[-i]=h[j-i];   
+  end
+
+  for i = 0 to FinalBarIndex() begin
+    PousH[-i]= (( (3*C[-i]) - (2*Bas[-i]) - O[Length1-i-1] ) * 100) /C[-i]; 
+    PousB[-i]=( (O[Length1-i-1] - (3*C[-i]) + (2*haut[-i]) )*100) / C[-i] ;
+  end
+  ExpMovingAverage(PousH,PousH1,Length1 *5);
+  ExpMovingAverage(PousB,PousB1,Length1 *5);
+  for i = 0 to FinalBarIndex() begin  
+    INDICM[-i]=PousH1[-i]-PousB1[-i]; // c'est le R1
+  end
+
+end
+// =============Fin de calcul autonome du Repulse 1 ==============
+// ===============Calcul autonome du Repulse 2 ===================
+if isfirstbar() then begin
+  CalculateAtEveryTick(false);
+  Length2=$R2; // valeur de base du Repulse 5
+
+  for i = 0 to FinalBarIndex() begin  // calcul du lowest low
+    bas2[-i]=l[-i];
+    for j =1 to (length2-1)
+      if l[j-i]<=bas2[-i] then bas2[-i]=l[j-i];  
+  end
+  for i = 0 to FinalBarIndex() begin  // calcul du highest high
+    haut2[-i]=h[-i];
+    for j =1 to (length2-1)
+      if h[j-i]>=haut2[-i] then haut2[-i]=h[j-i];   
+  end
+
+  for i = 0 to FinalBarIndex() begin
+    PousHH[-i]= ( (3*C[-i]) - (2*Bas2[-i]) - O[Length2-i-1] ) / C[-i] * 100 ; // calcul préalable 
+    PousBB[-i]=( O[Length2-i-1] - (3*C[-i]) + (2*haut2[-i]) ) / C[-i] * 100;
+  end
+  ExpMovingAverage(PousHH,PousH2,Length2 *5);
+  ExpMovingAverage(PousBB,PousB2,Length2 *5);
+  for i = 0 to FinalBarIndex() begin  
+    INDICA[-i]=PousH2[-i]-PousB2[-i]; // c'est le R2
+  end
+
+end
+// =============Fin de calcul autonome du Repulse 2 ==============
+// ===============Calcul autonome du Repulse 3 ===================
+if isfirstbar() then begin
+  CalculateAtEveryTick(false);
+  Length3=$R3; // valeur de base du Repulse 15
+
+  for i = 0 to FinalBarIndex() begin  // calcul du lowest low
+    bas3[-i]=l[-i];
+    for j =1 to (length3-1)
+      if l[j-i]<=bas3[-i] then bas3[-i]=l[j-i];  
+  end
+  for i = 0 to FinalBarIndex() begin  // calcul du highest high
+    haut3[-i]=h[-i];
+    for j =1 to (length3-1)
+      if h[j-i]>=haut3[-i] then haut3[-i]=h[j-i];   
+  end
+
+  for i = 0 to FinalBarIndex() begin
+    PousHHH[-i]= ( (3*C[-i]) - (2*Bas3[-i]) - O[Length3-i-1] ) / C[-i] * 100 ; // calcul préalable 
+    PousBBB[-i]=( O[Length3-i-1] - (3*C[-i]) + (2*haut3[-i]) ) / C[-i] * 100;
+  end
+  ExpMovingAverage(PousHHH,PousH3,Length3 *5);
+  ExpMovingAverage(PousBBB,PousB3,Length3 *5);
+  for i = 0 to FinalBarIndex() begin  
+    INDICB[-i]=PousH3[-i]-PousB3[-i]; // c'est le R3
+  end
+
+end
+// =============Fin de calcul autonome du Repulse 3 ==============
+
+
+
+if isfinalbar() then CalculateAtEveryTick(false);
+if (date<01_01_2022) then begin
+// DEBUT CALCUL REPULSE 1 *******************************************************************************
+// Stock du dernier haut indicateur
+temp1M= Highest(INDICM,($smoothHighRep1 +1));
+temp2M= temp1M[$smoothHighRep1];
+temp3M= Highest(h,3); //nécessaire pour $smothH=1 car Highest(h,3)[2] ne marche pas
+
+if ($smoothHighRep1>1) then begin // si smothH = 1 ou inférieur, traitement spécial pour 1
+ if ((INDICM[$smoothHighRep1] = temp1M) and (INDICM[$smoothHighRep1] = temp2M)) then // si l'Indic[smoth]est le plus haut avant et apres
+  begin
+   DHM = INDICM[$smoothHighRep1];
+   DCHM = Highest(h,( ($smoothHighRep1*2) +1) ); // plus haut des cours dans la 
+   compteurBM = $smoothHighRep1;
+  end
+  else begin
+   DHM = DHM[1];
+   DCHM = DCHM[1];
+   compteurBM = compteurBM[1]+1 ;
+  end
+ end
+else begin // traitement spécial pour $smoth=1
+ if ((INDICM[3] = temp1M[2]) and (INDICM[3] = temp1M[3])) then // si l'Indic[smoth]est le plus haut avant et apres
+  begin
+    DHM = INDICM[3];
+    DCHM = temp3M[2]; // plus haut des cours
+    compteurBM = 3;
+   end
+  else begin
+    DHM = DHM[1];
+    DCHM = DCHM[1];
+    compteurBM = compteurBM[1]+1 ;
+  end  // fin traitement spécial pour $smothH=1
+end
+
+// test de haut actuel  
+if ( (c<=c[1]) and (INDICM < INDICM[1]) and (INDICM[1]=temp1M[1]) ) then begin // la ai changé pour temp1[1] au lieu temp1 ****
+  AHM = INDICM[1];
+  ACHM = Highest(H,($smoothHighRep1 +2)); // la ai changé : smoth +2 au lieu de smoth+1  *******
+  end
+  else begin
+    AHM = AHM[1];
+    ACHM = ACHM[1];
+    end
+
+// On note la présence de divergence baissière
+if( (AHM<>AHM[1]) and (DHM>AHM) and (DCHM<ACHM) and ($Activ_R1=1) ) then begin
+  DIVBM= -0.4;
+  end
+  else begin
+  DIVBM = 0;
+  ZHM = void;
+  end
+
+// affichage de la divergence H sous forme de droite sur indic 
+if DIVBM <0 then begin // suis pas sur la : est-ce que ça va pas calculer non-stop pendant une barre?
+  a= AHM;
+  b= ((DHM-AHM) / (compteurBM -1));
+  for i = 1 to compteurBM 
+    begin
+      ZHM[i] = a + b*(i-1); 
+    end
+ZHM = void;
+end
+
+// Stock du dernier bas indicateur
+temp4M= Lowest(INDICM,($smoothLowRep1 +1));
+temp5M= temp4M[$smoothLowRep1];
+temp6M= Lowest(l,3); //nécessaire pour $smothB=1 car Lowest(l,3)[2] ne marche pas
+
+if ($smoothLowRep1>1) then begin // si smothB = 1 ou inférieur, traitement spécial pour 1
+ if ((INDICM[$smoothLowRep1] = temp4M) and (INDICM[$smoothLowRep1] = temp5M)) then // si l'Indic[smothB]est le plus bas avant et apres
+  begin
+   DBM = INDICM[$smoothLowRep1];
+   DCBM = Lowest(l,( ($smoothLowRep1*2) +1) ); // plus bas des cours dans la 
+   compteurHM = $smoothLowRep1;
+  end
+  else begin
+   DBM = DBM[1];
+   DCBM = DCBM[1];
+   compteurHM = compteurHM[1]+1 ;
+  end
+ end
+else begin // traitement spécial pour $smothB=1
+ if ((INDICM[3] = temp4M[2]) and (INDICM[3] = temp4M[3])) then // si l'Indic[smothB]est le plus haut avant et apres
+  begin
+    DBM = INDICM[3];
+    DCBM = temp6M[2]; // plus haut des cours
+    compteurHM = 3;
+   end
+  else begin
+    DBM = DBM[1];
+    DCBM = DCBM[1];
+    compteurHM = compteurHM[1]+1 ;
+  end  // fin traitement spécial pour $smoth=1
+end
+
+// test de bas actuel  
+if ( (c>=c[1]) and (INDICM > INDICM[1]) and (INDICM[1]=temp4M[1]) ) then begin // la ai changé pour temp1[1] au lieu temp1 ****
+  ABM = INDICM[1];
+  ACBM = Lowest(l,($smoothLowRep1 +2)); // la ai changé : smoth +2 au lieu de smoth+1  *******
+  end
+  else begin
+    ABM = ABM[1];
+    ACBM = ACBM[1];
+    end
+
+// On note la présence de divergence haussière
+if( (ABM<>ABM[1]) and (DBM<ABM) and (DCBM>ACBM) and ($Activ_R1=1) ) then begin
+  DIVHM= 0.4;
+  end
+  else begin
+  DIVHM = 0;
+  ZBM = void;
+  end
+
+// affichage de la divergence haussière sous forme de droite sur indic 
+if DIVHM >0 then begin // suis pas sur la : est-ce que ça va pas calculer non-stop pendant une barre?
+  a= ABM;
+  b= ((DBM-ABM) / (compteurHM -1));
+  for i = 1 to compteurHM 
+    begin
+      ZBM[i] = a + b*(i-1); 
+    end
+ZBM = void;
+end
+// FIN DE REPULSE 1  ********************************************************************************************
+
+// DEBUT CALCUL REPULSE 5 *******************************************************************************
+// Stock du dernier haut indicateur
+temp1A= Highest(INDICA,($SmoothHighRep5 +1));
+temp2A= temp1A[$SmoothHighRep5];
+temp3A= Highest(h,3); //nécessaire pour $smothH=1 car Highest(h,3)[2] ne marche pas
+
+if ($SmoothHighRep5>1) then begin // si smothH = 1 ou inférieur, traitement spécial pour 1
+ if ((INDICA[$SmoothHighRep5] = temp1A) and (INDICA[$SmoothHighRep5] = temp2A)) then // si l'Indic[smoth]est le plus haut avant et apres
+  begin
+   DHA = INDICA[$SmoothHighRep5];
+   DCHA = Highest(h,( ($SmoothHighRep5*2) +1) ); // plus haut des cours dans la 
+   compteurBA = $SmoothHighRep5;
+  end
+  else begin
+   DHA = DHA[1];
+   DCHA = DCHA[1];
+   compteurBA = compteurBA[1]+1 ;
+  end
+ end
+else begin // traitement spécial pour $smoth=1
+ if ((INDICA[3] = temp1A[2]) and (INDICA[3] = temp1A[3])) then // si l'Indic[smoth]est le plus haut avant et apres
+  begin
+    DHA = INDICA[3];
+    DCHA = temp3A[2]; // plus haut des cours
+    compteurBA = 3;
+   end
+  else begin
+    DHA = DHA[1];
+    DCHA = DCHA[1];
+    compteurBA = compteurBA[1]+1 ;
+  end  // fin traitement spécial pour $smothH=1
+end
+
+// test de haut actuel  
+if ( (c<=c[1]) and (INDICA < INDICA[1]) and (INDICA[1]=temp1A[1]) ) then begin // la ai changé pour temp1[1] au lieu temp1 ****
+  AHA = INDICA[1];
+  ACHA = Highest(H,($SmoothHighRep5 +2)); // la ai changé : smoth +2 au lieu de smoth+1  *******
+  end
+  else begin
+    AHA = AHA[1];
+    ACHA = ACHA[1];
+    end
+
+// On note la présence de divergence baissière
+if( (AHA<>AHA[1]) and (DHA>AHA) and (DCHA<ACHA) and ($Activ_R5=1) ) then begin
+  DIVBA= -0.8;
+  end
+  else begin
+  DIVBA = 0;
+  ZHA = void;
+  end
+
+// affichage de la divergence H sous forme de droite sur indic 
+if DIVBA <0 then begin // suis pas sur la : est-ce que ça va pas calculer non-stop pendant une barre?
+  a= AHA;
+  b= ((DHA-AHA) / (compteurBA -1));
+  for i = 1 to compteurBA 
+    begin
+      ZHA[i] = a + b*(i-1); 
+    end
+ZHA = void;
+end
+
+// Stock du dernier bas indicateur
+temp4A= Lowest(INDICA,($SmoothLowRep5 +1));
+temp5A= temp4A[$SmoothLowRep5];
+temp6A= Lowest(l,3); //nécessaire pour $smothB=1 car Lowest(l,3)[2] ne marche pas
+
+if ($SmoothLowRep5>1) then begin // si smothB = 1 ou inférieur, traitement spécial pour 1
+ if ((INDICA[$SmoothLowRep5] = temp4A) and (INDICA[$SmoothLowRep5] = temp5A)) then // si l'Indic[smothB]est le plus bas avant et apres
+  begin
+   DBA = INDICA[$SmoothLowRep5];
+   DCBA = Lowest(l,( ($SmoothLowRep5*2) +1) ); // plus bas des cours dans la 
+   compteurHA = $SmoothLowRep5;
+  end
+  else begin
+   DBA = DBA[1];
+   DCBA = DCBA[1];
+   compteurHA = compteurHA[1]+1 ;
+  end
+ end
+else begin // traitement spécial pour $smothB=1
+ if ((INDICA[3] = temp4A[2]) and (INDICA[3] = temp4A[3])) then // si l'Indic[smothB]est le plus haut avant et apres
+  begin
+    DBA = INDICA[3];
+    DCBA = temp6A[2]; // plus haut des cours
+    compteurHA = 3;
+   end
+  else begin
+    DBA = DBA[1];
+    DCBA = DCBA[1];
+    compteurHA = compteurHA[1]+1 ;
+  end  // fin traitement spécial pour $smoth=1
+end
+
+// test de bas actuel  
+if ( (c>=c[1]) and (INDICA > INDICA[1]) and (INDICA[1]=temp4A[1]) ) then begin // la ai changé pour temp1[1] au lieu temp1 ****
+  ABA = INDICA[1];
+  ACBA = Lowest(l,($SmoothLowRep5 +2)); // la ai changé : smoth +2 au lieu de smoth+1  *******
+  end
+  else begin
+    ABA = ABA[1];
+    ACBA = ACBA[1];
+    end
+
+// On note la présence de divergence haussière
+if( (ABA<>ABA[1]) and (DBA<ABA) and (DCBA>ACBA) and ($Activ_R5=1) ) then begin
+  DIVHA= 0.8;
+  end
+  else begin
+  DIVHA = 0;
+  ZBA = void;
+  end
+
+// affichage de la divergence haussière sous forme de droite sur indic 
+if DIVHA >0 then begin // suis pas sur la : est-ce que ça va pas calculer non-stop pendant une barre?
+  a= ABA;
+  b= ((DBA-ABA) / (compteurHA -1));
+  for i = 1 to compteurHA 
+    begin
+      ZBA[i] = a + b*(i-1); 
+    end
+ZBA = void;
+end
+// FIN DE REPULSE 5  ********************************************************************************************
+
+// DEBUT CALCUL REPULSE 15 *******************************************************************************
+// Stock du dernier haut indicateur
+temp1B= Highest(INDICB,($SmoothHighRep15 +1));
+temp2B= temp1B[$SmoothHighRep15];
+temp3B= Highest(h,3); //nécessaire pour $smothH=1 car Highest(h,3)[2] ne marche pas
+
+if ($SmoothHighRep15>1) then begin // si smothH = 1 ou inférieur, traitement spécial pour 1
+ if ((INDICB[$SmoothHighRep15] = temp1B) and (INDICB[$SmoothHighRep15] = temp2B)) then // si l'Indic[smoth]est le plus haut avant et apres
+  begin
+   DHB = INDICB[$SmoothHighRep15];
+   DCHB = Highest(h,( ($SmoothHighRep15*2) +1) ); // plus haut des cours dans la 
+   compteurBB = $SmoothHighRep15;
+  end
+  else begin
+   DHB = DHB[1];
+   DCHB = DCHB[1];
+   compteurBB = compteurBB[1]+1 ;
+  end
+ end
+else begin // traitement spécial pour $smoth=1
+ if ((INDICB[3] = temp1B[2]) and (INDICB[3] = temp1B[3])) then // si l'Indic[smoth]est le plus haut avant et apres
+  begin
+    DHB = INDICB[3];
+    DCHB = temp3B[2]; // plus haut des cours
+    compteurBB = 3;
+   end
+  else begin
+    DHB = DHB[1];
+    DCHB = DCHB[1];
+    compteurBB = compteurBB[1]+1 ;
+  end  // fin traitement spécial pour $smothH=1
+end
+
+// test de haut actuel  
+if ( (c<=c[1]) and (INDICB < INDICB[1]) and (INDICB[1]=temp1B[1]) ) then begin // la ai changé pour temp1[1] au lieu temp1 ****
+  AHB = INDICB[1];
+  ACHB = Highest(H,($SmoothHighRep15 +2)); 
+  end
+  else begin
+    AHB = AHB[1];
+    ACHB = ACHB[1];
+    end
+
+// On note la présence de divergence baissière
+if( (AHB<>AHB[1]) and (DHB>AHB) and (DCHB<ACHB) and ($Activ_R15=1) ) then begin
+  DIVBB= -1;
+  end
+  else begin
+  DIVBB = 0;
+  ZHB = void;
+  end
+
+// affichage de la divergence H sous forme de droite sur indic 
+if DIVBB <0 then begin // suis pas sur la : est-ce que ça va pas calculer non-stop pendant une barre?
+  a= AHB;
+  b= ((DHB-AHB) / (compteurBB -1));
+  for i = 1 to compteurBB 
+    begin
+      ZHB[i] = a + b*(i-1); 
+    end
+ZHB = void;
+end
+
+// Stock du dernier bas indicateur
+temp4B= Lowest(INDICB,($smoothLowRep15 +1));
+temp5B= temp4B[$smoothLowRep15];
+temp6B= Lowest(l,3); //nécessaire pour $smothB=1 car Lowest(l,3)[2] ne marche pas
+
+if ($smoothLowRep15>1) then begin // si smothB = 1 ou inférieur, traitement spécial pour 1
+ if ((INDICB[$smoothLowRep15] = temp4B) and (INDICB[$smoothLowRep15] = temp5B)) then // si l'Indic[smothB]est le plus bas avant et apres
+  begin
+   DBB = INDICB[$smoothLowRep15];
+   DCBB = Lowest(l,( ($smoothLowRep15*2) +1) ); // plus bas des cours dans la 
+   compteurHB = $smoothLowRep15; 
+  end
+  else begin
+   DBB = DBB[1];
+   DCBB = DCBB[1];
+   compteurHB = compteurHB[1]+1 ;
+  end
+ end
+else begin // traitement spécial pour $smothB=1
+ if ((INDICB[3] = temp4B[2]) and (INDICB[3] = temp4B[3])) then // si l'Indic[smothB]est le plus haut avant et apres
+  begin
+    DBB = INDICB[3];
+    DCBB = temp6B[2]; // plus haut des cours
+    compteurHB = 3;
+   end
+  else begin
+    DBB = DBB[1];
+    DCBB = DCBB[1];
+    compteurHB = compteurHB[1]+1 ;
+  end  // fin traitement spécial pour $smoth=1
+end
+
+// test de bas actuel  
+if ( (c>=c[1]) and (INDICB > INDICB[1]) and (INDICB[1]=temp4B[1]) ) then begin // la ai changé pour temp1[1] au lieu temp1 ****
+  ABB = INDICB[1];
+  ACBB = Lowest(l,($smoothLowRep15 +2)); // la ai changé : smoth +2 au lieu de smoth+1  *******
+  end
+  else begin
+    ABB = ABB[1];
+    ACBB = ACBB[1];
+    end
+
+// On note la présence de divergence haussière
+if( (ABB<>ABB[1]) and (DBB<ABB) and (DCBB>ACBB) and ($Activ_R15=1) ) then begin
+  DIVHB= 1;
+  end
+  else begin
+  DIVHB = 0;
+  ZBB = void;
+  end
+
+// affichage de la divergence haussière sous forme de droite sur indic 
+if DIVHB >0 then begin // suis pas sur la : est-ce que ça va pas calculer non-stop pendant une barre?
+  a= ABB;
+  b= ((DBB-ABB) / (compteurHB -1));
+  for i = 1 to compteurHB 
+    begin
+      ZBB[i] = a + b*(i-1); 
+    end
+ZBB = void;
+end
+// FIN DE REPULSE 15  
+end
+
+For i=1 to $DureeSignal
+begin
+  if ((Pose<>1) and (Pose<>-1)) then begin
+  if (DIVHM[$DecalEntry+i-1]>0) and ($Activ_R1=1) then begin
+    Pose = 1; // Div hauss Repulse 1
+    If $Visualise = 0 then begin
+      if (divhm>0) then Highlight("slot","lightgreen");
+    end
+  end
+  if (DIVBM[$DecalEntry+i-1]<0) and ($Activ_R1=1)  then begin
+    Pose = -1;   // Div baiss Repulse 1
+    If $Visualise = 0 then begin
+      if (divbm<0) then Highlight("slot","lightred");
+    end
+  end
+  if (DIVHA[$DecalEntry+i-1]>0) and ($Activ_R5=1)  then begin
+    Pose = 1; // Div hauss Repulse 5
+    If $Visualise = 0 then begin
+      if (divha>0) then Highlight("slot","lightgreen");
+    end
+  end
+  if (DIVBA[$DecalEntry+i-1]<0) and ($Activ_R5=1)  then begin
+    Pose = -1;   // Div baiss Repulse 5
+    If $Visualise = 0 then begin
+      if (divba<0) then Highlight("slot","lightred");
+    end
+  end
+  if (DIVHB[$DecalEntry+i-1]>0) and ($Activ_R15=1)  then begin
+    Pose = 1; // Div hauss Repulse 15
+    If $Visualise = 0 then begin
+      if (divhb>0) then Highlight("slot","lightgreen");
+    end
+  end
+  if (DIVBB[$DecalEntry+i-1]<0) and ($Activ_R15=1)  then begin
+    Pose = -1;   // Div baiss Repulse 15
+    If $Visualise = 0 then begin
+      if (divbb<0) then Highlight("slot","lightred");
+    end
+  end
+  end
+end
+
+DIVHM=DIVHM*TickSize()/5;
+DIVBM=DIVBM*TickSize()/5;
+DIVHA=DIVHA*TickSize()/4;
+DIVBA=DIVBA*TickSize()/4;
+DIVHB=DIVHB*TickSize()/3;
+DIVBB=DIVBB*TickSize()/3;
+
+interpretation
+begin
+
+if (Pose=1) then sentiment=100;
+if (Pose=-1) then sentiment=0;
+
+
+end
+
+
+plot (INDICM,red,1); // Repulse 1
+plot (DIVHM,green,1); // DIV Hauss de Repulse 1
+plot (ZBM,green,2);   // Affichage droite DIV Hauss Repulse 1
+plot (DIVBM,green,1); // DIV Baiss de Repulse 1
+plot (ZHM,red,2);     // Affichage droite DIV Baiss Repulse 1
+plot (INDICA,blue,1); // Repulse 5
+plot (DIVHA,blue,1); // DIV Hauss de Repulse 5
+plot (ZBA,green,2);   // Affichage droite DIV Hauss Repulse 5
+plot (DIVBA,blue,1); // DIV Baiss de Repulse 5
+plot (ZHA,red,2);     // Affichage droite DIV Baiss Repulse 5
+plot (INDICB,YELLOW,1); // Repulse 15
+plot (DIVHB,yellow,1); // DIV Hauss de Repulse 15
+plot (ZBB,green,2);   // Affichage droite DIV Hauss Repulse 15
+plot (DIVBB,yellow,1); // DIV Baiss de Repulse 15
+plot (ZHB,red,2);     // Affichage droite DIV Baiss Repulse 15//@@@cs:6368331-6729083-5864321_cs@@@

@@ -1,0 +1,54 @@
+Express blocker EL_Block_Day_2019
+// 2019-03 : ajout d'un interrupteur général
+
+Vars
+input $Filter("On;Off",0);
+input $Day_1_block (0,1,0);
+input $Day_2_block (0,1,0);
+input $Day_3_block (0,1,0);
+input $Day_4_block (0,1,0);
+input $Day_5_block (0,1,0);
+input $TradeOnlyDay (0,5,0);
+
+series senti,
+temp1,temp2,temp3,temp4,temp5;
+numeric i;
+
+Calculation
+CalculateAtEveryTick(false); 
+
+if isfirstbar() and $Filter=0 then 
+begin
+  for i=0 to finalbarindex()
+  begin
+    if $Day_1_block = 0 then temp1[-i]=1;
+    if $Day_2_block = 0 then temp2[-i]=2;
+    if $Day_3_block = 0 then temp3[-i]=3;
+    if $Day_4_block = 0 then temp4[-i]=4;
+    if $Day_5_block = 0 then temp5[-i]=5;
+  end
+end
+
+interpretation
+begin
+
+if $Filter=0 then begin
+If $TradeOnlyDay=0 then 
+begin
+  if (DayOfWeek(date) <> temp1) 
+    and (DayOfWeek(date) <> temp2) // si on est lundi et que le lundi n'est pas bloqué
+    and (DayOfWeek(date) <> temp3)
+    and (DayOfWeek(date) <> temp4)
+    and (DayOfWeek(date) <> temp5)
+    then sentiment = senti_block;
+  end
+else begin
+  if ($TradeOnlyDay<>DayOfWeek(date)) then sentiment=senti_block;
+  if ($TradeOnlyDay>5) then sentiment=senti_pass;
+end
+end
+
+end
+//If ($TradeOnlyDay=1) and (DayOfWeek(date)<>1) then sentiment = senti_block;
+
+// Eric Lefort pour Mogalef//@@@cs:541894-3564428-381632_cs@@@

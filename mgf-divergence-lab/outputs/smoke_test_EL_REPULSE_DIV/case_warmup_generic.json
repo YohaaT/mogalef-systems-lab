@@ -1,0 +1,8 @@
+{
+  "case": "case_warmup_generic",
+  "indicm_tail_count": 40,
+  "indicm_tail_all_float": true,
+  "last_pose": 1,
+  "last_sentiment": 100,
+  "result": "PASS"
+}

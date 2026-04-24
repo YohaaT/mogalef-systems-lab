@@ -1,0 +1,19 @@
+{
+  "component": "EL_STPMT_DIV",
+  "phase": 3,
+  "checks": [
+    {
+      "case": "case_warmup_generic",
+      "result": "PASS"
+    },
+    {
+      "case": "case_bearish_normal_smooth1",
+      "result": "PASS"
+    },
+    {
+      "case": "case_bullish_normal_smooth1",
+      "result": "PASS"
+    }
+  ],
+  "result": "PASS"
+}

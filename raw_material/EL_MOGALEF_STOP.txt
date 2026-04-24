@@ -1,0 +1,116 @@
+express stop EL_MOGALEF_STOP
+// version modifiée 2016
+
+vars
+input $N(2,10,3),$ET(5,15,7);
+series MogH,MogB,MogM,etyp;
+series xx,yy,zz,e,mm;
+numeric i,SumXY,SumX2,SumY,SumX,a,b;
+series X,Y,Z,MogRegLin,CoursP;
+series position,Milieu, MilieuAncien1, MilieuAncien2,NivStop;
+
+calculation
+
+//if IsFirstBar() then CalculateAtEveryTick(false);
+
+// Calcul du cours pondéré Mogalef
+CoursP = ((h+l+o+c+c)/5); // Fin du calcul
+
+// on calcule la régression linéaire---------------------------------------- 
+// if isbarcompleted() then   // à la clôture de la dernière barre?
+
+  for i = 0 to $N-1 
+  begin
+    X[i] = i;
+    Y[i] = CoursP[i];
+    SumX = SumX + X[i];
+    SumX2 = SumX2 + Power(X[i],2);
+    SumXY = SumXY + X[i]*Y[i];
+    SumY = SumY + Y[i];
+  end
+  b = (SumXY - SumX*SumY/$N)/(SumX2 - (1/$N)*Power(SumX,2));
+  a = (SumY - b*SumX)/$N;
+  Z = a + b*X[0];
+    SumX = 0;
+    SumX2 = 0;
+    SumXY = 0;
+    SumY = 0;
+if Z = void then // Si rég lin pas définie
+  MogRegLin = Close;
+else
+  MogRegLin = Z; // Fin régression linéaire---------------------------------
+
+// Calcul des bandes Mogalef------------------------------------------------
+// Reprise des niveaux Mogalef précédents.
+StdDev(MogRegLin,etyp,$ET); //calcul écart type de longueur ET
+xx=MogH[1];
+yy=MogB[1];
+e=etyp[1];
+zz=Z[1];
+mm=MogM[1];
+// Pas de décalage si la RegLine est à l'intérieur des anciennes bandes
+  If ((MogRegLin < xx) and (MogRegLin >yy)) then
+    begin
+    etyp=e;
+    MogH=xx;
+    MogB=yy;
+    MogM=mm;
+    end
+  else  //Si décalage tracé des nouvelles bandes
+    begin
+    MogH= (MogRegLin + (etyp*2));
+    MogB= (MogRegLin - (etyp*2));
+    MogM= MogRegLin;
+    end  // Fin calcul bandes Mogalef---------------------------------------
+
+
+
+if MarketPosition() = 1 then position=1;  // On met à jour la variable position
+if MarketPosition() = -1 then position=-1;
+
+
+  MilieuAncien2=MilieuAncien2[1];
+  MilieuAncien1=MilieuAncien1[1];
+  Milieu=Milieu[1];
+if MogM<>MogM[1] then begin               // On met à jour les variables Milieu et MilieuAncien 1 et 2
+  MilieuAncien2=MilieuAncien1[1];
+  MilieuAncien1=Milieu[1];
+  Milieu=MogM;
+  end
+
+NivStop=NivStop[1]; // par défaut, le stop est mis à son niveau antérieur
+
+
+if (MarketPosition() = 1) then begin //Long position
+  if (Milieu>Milieu[1]) and (Milieu[1]<MogB) then NivStop=MilieuAncien1; // si décalage vers le haut et un nouveau stop est utilisable, on l'utilise
+  if position > position[1] then begin // si on entre en position
+    if MilieuAncien1 < MogB then begin 
+      NivStop=MilieuAncien1; // si le milieu ancien 1 est utilisable on l'utilise
+      end
+    if (MilieuAncien1 >= MogB) and (MilieuAncien2 < MogB) then  begin
+      NivStop=MilieuAncien2; // sinon, si le milieu ancien 2 est utilisable on l'utilise
+      end
+      else NivStop=MogB;                // sinon on utilise simplement le bas de la bande mogalef
+  end
+end
+
+
+if (Position = -1) then begin
+  if (Milieu<Milieu[1]) and (Milieu[1]>MogH) then NivStop=MilieuAncien1; // si décalage vers le bas et un nouveau stop est utilisable, on l'utilise
+
+  if position < position[1] then begin // si on entre en position
+    if MilieuAncien1 > MogH then begin 
+      NivStop=MilieuAncien1; // si le milieu ancien 1 est utilisable on l'utilise
+      end
+    if (MilieuAncien1 <= MogH) and (MilieuAncien2 > MogH) then  begin
+      NivStop=MilieuAncien2; // sinon, si le milieu ancien 2 est utilisable on l'utilise
+      end
+    if (MilieuAncien1 <= MogH) and (MilieuAncien2 <= MogH) then  begin    
+      NivStop=MogH;                // sinon on utilise simplement le haut de la bande mogalef
+      end
+  end
+end
+
+if (date<01_06_2025) then begin
+  SetStopPrice(NivStop);
+  end//@@@cs:1347392-3996725-1114211_cs@@@

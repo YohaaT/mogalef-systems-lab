@@ -1,0 +1,66 @@
+Express stop EL_Stop_Keltner
+// Version 1 du 05 mars 2020
+
+vars
+input $Period_SMA(1,50,10), $Period_ATR(1,50,10);
+input $ATR_coef_10e(5,30,15);
+input $StopSort("Loss;Trailing",0);
+series SMA, BandLow, BandHigh; 
+numeric Volatility,Reglin;
+series Position, Nivstop;
+
+
+calculation
+
+if isfirstbar() then
+begin
+  MovingAverage(close,SMA,$Period_SMA); // ici la fonction ne nécessite pas l'affichage de la MM
+//  CalculateAtEveryTick(false);
+end
+
+if (CurrentBarIndex() < $Period_ATR) then
+begin
+  BandHigh = void; // remet à vide la bande haute
+  BandLow = void;
+end
+else begin
+  Volatility = ATR($Period_ATR)*close/100;
+  BandHigh = SMA + ( $ATR_coef_10e/10 * Volatility);
+  BandLow = SMA - ( $ATR_coef_10e/10 * Volatility);
+end
+
+
+If Marketposition()=1 then begin
+  position=1;
+  NivStop=nivstop[1];
+end
+If Marketposition()=-1 then begin
+  position=-1;
+  NivStop=nivstop[1];
+end
+
+if position=1 then begin
+  if position>position[1] then begin
+    NivStop=Bandlow;
+  end
+  else begin
+    if $StopSort=1 then begin
+      if NivStop<Bandlow then NivStop=BandLow;
+    end
+  end
+end
+
+if position=-1 then begin
+  if position<position[1] then begin
+    NivStop=BandHigh;
+  end
+  else begin
+    if $stopSort=1 then begin
+      if NivStop>BandHigh then NivStop=BandHigh;
+    end
+  end
+  if NivStop<c then nivstop=h;
+end
+
+
+setstopprice(NivStop);//@@@cs:545434-3570351-412844_cs@@@

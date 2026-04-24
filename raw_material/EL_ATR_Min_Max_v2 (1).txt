@@ -1,0 +1,58 @@
+Express Blocker EL_ATR_Min_Max_v2
+// Version 1 du 05/10/ 2018
+// V2 aout 2019  -
+
+Vars
+input $ATR_long (1, 50, 5);
+input $ATR_Min (0,200,0);
+input $ATR_Max (1,500,100);
+input $Filter("Off;On",1);
+
+series tr,avtr;
+series ATR_Max,ATR_Min;
+series atr,cbi,senti;
+numeric i;
+
+Calculation
+if isfirstbar() then CalculateAtEveryTick(false);
+ATR_Max=$ATR_Max;
+ATR_Min=$ATR_Min;
+
+cbi= currentbarindex();
+
+
+if isfinalbar()then begin
+  For i=0 to cbi
+    if (h[i]-l[i])>absvalue(c[i+1]-l[i]) then
+      if (h[i]-l[i])>absvalue(h[i]-c[i+1]) then
+        tr[i]=(h[i]-l[i]);
+        else
+        tr[i]=absvalue(h[i]-c[i+1]);
+      else
+      if absvalue(c[i+1]-l[i])>absvalue(h[i]-c[i+1]) then
+        tr[i]=absvalue(c[i+1]-l[i]);
+        else
+        tr[i]=absvalue(h[i]-c[i+1]);
+end
+
+
+if isfinalbar() then begin
+  MovingAverage(tr,avtr,$ATR_long);
+  For i=0 to cbi begin
+    atr[i]=(avtr[i]*10);
+    if (((atr[i] > $ATR_Max) or (atr[i] < $ATR_Min)) and ($Filter=1)) then senti[i]=0;
+    else senti[i]=1;
+  end
+end
+
+
+
+interpretation
+begin
+  if (senti=0) then sentiment=senti_block;
+   else sentiment=senti_pass;
+end 
+
+plot (ATR_Min, green, 1);
+plot (ATR_Max, red, 1);
+plot (atr, blue, 2);//@@@cs:543282-3580777-382789_cs@@@

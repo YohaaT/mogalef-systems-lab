@@ -1,0 +1,7 @@
+{
+  "case": "case_bullish_normal_smooth1",
+  "divh_at_10": 3.0,
+  "pose_at_10": 1,
+  "sentiment_at_10": 100,
+  "result": "PASS"
+}
