@@ -1,0 +1,39 @@
+{
+  "optimization_id": "OPT-COMB002-FDAX-15m-PH4-20260424",
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "FDAX",
+  "timeframe": "15m",
+  "phase": "4",
+  "stpmt_smooth_h": 5,
+  "stpmt_smooth_b": 4,
+  "stpmt_distance_max_h": 75,
+  "stpmt_distance_max_l": 25,
+  "horaire_label": "NY_morning_9_12",
+  "horaire_allowed_hours_utc": [
+    9,
+    10,
+    11,
+    12
+  ],
+  "volatility_label": "no_filter_0_500",
+  "volatility_atr_min": 0.0,
+  "volatility_atr_max": 500.0,
+  "scalping_target_coef_volat": 4.0,
+  "timescan_bars": 15,
+  "superstop_quality": 1,
+  "superstop_coef_volat": 5.0,
+  "robustness": 4.9831,
+  "phase_a_pf": 0.6748,
+  "phase_b_pf": 3.3625,
+  "phase_a_trades": 57,
+  "phase_b_trades": 31,
+  "robustness_pass": true,
+  "min_trades_pass": true,
+  "phase_ids": {
+    "phase1": "OPT-COMB002-FDAX-15m-PH1-20260424",
+    "phase2a": "OPT-COMB002-FDAX-15m-PH2a-20260424",
+    "phase2b": "OPT-COMB002-FDAX-15m-PH2b-20260424",
+    "phase3": "OPT-COMB002-FDAX-15m-PH3-20260424",
+    "phase4": "OPT-COMB002-FDAX-15m-PH4-20260424"
+  }
+}

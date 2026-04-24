@@ -1,0 +1,15 @@
+{
+  "optimization_id": "OPT-COMB002-YM-10m-PH5-20260424",
+  "asset": "YM",
+  "timeframe": "10m",
+  "cross_winner": {
+    "robustness": 1.8451,
+    "phase_a_pf": 0.7868,
+    "phase_b_pf": 1.4517,
+    "phase_a_trades": 164,
+    "robustness_pass": true
+  },
+  "sequential_master": null,
+  "verdict": null,
+  "delta_robustness": null
+}

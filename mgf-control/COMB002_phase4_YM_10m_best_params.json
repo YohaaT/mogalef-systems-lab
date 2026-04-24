@@ -1,0 +1,42 @@
+{
+  "optimization_id": "OPT-COMB002-YM-10m-PH4-20260424",
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "YM",
+  "timeframe": "10m",
+  "phase": "4",
+  "stpmt_smooth_h": 3,
+  "stpmt_smooth_b": 1,
+  "stpmt_distance_max_h": 75,
+  "stpmt_distance_max_l": 25,
+  "horaire_label": "US_regular_9_15",
+  "horaire_allowed_hours_utc": [
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "volatility_label": "min_floor_10_500",
+  "volatility_atr_min": 10.0,
+  "volatility_atr_max": 500.0,
+  "scalping_target_coef_volat": 5.0,
+  "timescan_bars": 18,
+  "superstop_quality": 1,
+  "superstop_coef_volat": 2.0,
+  "robustness": 2.0046,
+  "phase_a_pf": 0.8073,
+  "phase_b_pf": 1.6183,
+  "phase_a_trades": 219,
+  "phase_b_trades": 155,
+  "robustness_pass": true,
+  "min_trades_pass": true,
+  "phase_ids": {
+    "phase1": "OPT-COMB002-YM-10m-PH1-20260424",
+    "phase2a": "OPT-COMB002-YM-10m-PH2a-20260424",
+    "phase2b": "OPT-COMB002-YM-10m-PH2b-20260424",
+    "phase3": "OPT-COMB002-YM-10m-PH3-20260424",
+    "phase4": "OPT-COMB002-YM-10m-PH4-20260424"
+  }
+}
