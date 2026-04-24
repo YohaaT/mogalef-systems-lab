@@ -1,0 +1,9 @@
+{
+  "asset": "FDAX",
+  "timeframe": "15m",
+  "source_bars_1m": 535397,
+  "bars_resampled": 40749,
+  "phase_a_bars": 24449,
+  "phase_b_bars": 16300,
+  "date_range": "2023-01-02 \u2013 2024-12-17"
+}

@@ -1,0 +1,67 @@
+# COMB001_TREND.cs Parameter Updates
+
+Copy the following parameter declarations to replace the existing ones:
+
+
+        [Parameter("STPMT Smooth H", Order = 1, MinValue = 1, MaxValue = 10)]
+        public int StpmtSmoothH { get; set; } = 2;
+
+        [Parameter("STPMT Smooth B", Order = 2, MinValue = 1, MaxValue = 10)]
+        public int StpmtSmoothB { get; set; } = 5;
+
+        [Parameter("STPMT Distance Max H", Order = 3, MinValue = 10, MaxValue = 200)]
+        public int StpmtDistanceMaxH { get; set; } = 25;
+
+        [Parameter("STPMT Distance Max L", Order = 4, MinValue = 10, MaxValue = 200)]
+        public int StpmtDistanceMaxL { get; set; } = 25;
+
+        [Parameter("Trend R1", Order = 5, MinValue = 1, MaxValue = 10)]
+        public int TrendR1 { get; set; } = 3;
+
+        [Parameter("Trend R2", Order = 6, MinValue = 20, MaxValue = 200)]
+        public int TrendR2 { get; set; } = 50;
+
+        [Parameter("Trend R3", Order = 7, MinValue = 50, MaxValue = 500)]
+        public int TrendR3 { get; set; } = 200;
+
+        [Parameter("Horaire Start Hour UTC", Order = 8, MinValue = 0, MaxValue = 23)]
+        public int HoraireStartHour { get; set; } = 12;
+
+        [Parameter("Horaire End Hour UTC", Order = 9, MinValue = 0, MaxValue = 23)]
+        public int HoraireEndHour { get; set; } = 15;
+
+        [Parameter("Volatility ATR Min", Order = 10, MinValue = 0, MaxValue = 500)]
+        public double VolatilityAtrMin { get; set; } = 20.0;
+
+        [Parameter("Volatility ATR Max", Order = 11, MinValue = 0, MaxValue = 500)]
+        public double VolatilityAtrMax { get; set; } = 200.0;
+
+        [Parameter("Target ATR Multiplier", Order = 12, MinValue = 1, MaxValue = 20)]
+        public double TargetAtrMultiplier { get; set; } = 10.0;
+
+        [Parameter("TimeStop Bars", Order = 13, MinValue = 5, MaxValue = 100)]
+        public int TimescanBars { get; set; } = 30;
+
+        [Parameter("Stop Intelligent Quality", Order = 14, MinValue = 1, MaxValue = 5)]
+        public int StopIntQuality { get; set; } = 1;
+
+        [Parameter("Stop Intelligent Recent Volatility", Order = 15, MinValue = 1, MaxValue = 5)]
+        public int StopIntRecent { get; set; } = 1;
+
+        [Parameter("Stop Intelligent Ref Volatility", Order = 16, MinValue = 5, MaxValue = 100)]
+        public int StopIntRefVolat { get; set; } = 10;
+
+        [Parameter("Stop Intelligent Coef Volatility", Order = 17, MinValue = 1, MaxValue = 10)]
+        public double StopIntCoefVolat { get; set; } = 3.0;
+
+
+# Validation Metrics
+Phase A PF: 0.8746
+Phase B PF: 1.5195
+Robustness: 1.7374
+
+# Parameter Evolution Summary
+Phase 1 Best Robustness: 1.7374
+Phase 2 Contexto Robustness: 1.3643
+Phase 3 Exits Robustness: 1.6552
+Phase 4 Stops Robustness: 1.6552

@@ -1,0 +1,128 @@
+{
+  "project": "mogalef-systems-lab",
+  "mode": "hybrid_orchestrated",
+  "source_of_truth": "persistent_files",
+  "workspace": "/home/ubuntu/.openclaw/workspace/agents/BO/projects/mogalef-systems-lab",
+  "read_always": [
+    "PROJECT_MASTER.md",
+    "TOKEN_POLICY.md",
+    "RUN_PROTOCOL.md",
+    "mgf-control/phase_state.json",
+    "mgf-control/approval_queue.md",
+    "mgf-control/approval_request.md",
+    "mgf-control/session_checkpoint.md",
+    "mgf-control/night_run_summary.md"
+  ],
+  "ignore_by_default": [
+    "mgf-control/research-context/Trader_Les_Futures_doctrine_summary.md"
+  ],
+  "phase_status": {
+    "phase_0": "completed",
+    "phase_1_p0_core": "completed_and_doc_reqa_approved",
+    "phase_2": {
+      "status": "authorized_for_selected_components",
+      "authorized_components": [
+        "EL_MOGALEF_Bands",
+        "EL_Stop_Intelligent",
+        "EL_Mogalef_Trend_Filter_V2",
+        "EL_NeutralZone_B_V2",
+        "EL_STPMT_DIV",
+        "EL_REPULSE_DIV"
+      ],
+      "completed_components": [
+        "EL_MOGALEF_Bands",
+        "EL_Stop_Intelligent",
+        "EL_Mogalef_Trend_Filter_V2",
+        "EL_NeutralZone_B_V2",
+        "EL_STPMT_DIV",
+        "EL_REPULSE_DIV"
+      ],
+      "component_status": {
+        "EL_MOGALEF_Bands": "PASS",
+        "EL_Stop_Intelligent": "PASS",
+        "EL_Mogalef_Trend_Filter_V2": "PASS",
+        "EL_NeutralZone_B_V2": "PASS",
+        "EL_STPMT_DIV": "PASS",
+        "EL_REPULSE_DIV": "PASS"
+      },
+      "gates": {
+        "phase_2_to_phase_3": "auto_authorized_for_individual_components_with_pass"
+      },
+      "next_components_in_order": []
+    },
+    "phase_3": {
+      "status": "completed_for_selected_components",
+      "authorized_components": [
+        "EL_MOGALEF_Bands",
+        "EL_Stop_Intelligent",
+        "EL_Mogalef_Trend_Filter_V2",
+        "EL_NeutralZone_B_V2",
+        "EL_STPMT_DIV",
+        "EL_REPULSE_DIV"
+      ],
+      "completed_components": [
+        "EL_MOGALEF_Bands",
+        "EL_Stop_Intelligent",
+        "EL_Mogalef_Trend_Filter_V2",
+        "EL_NeutralZone_B_V2",
+        "EL_STPMT_DIV",
+        "EL_REPULSE_DIV"
+      ],
+      "component_status": {
+        "EL_MOGALEF_Bands": "PASS",
+        "EL_Stop_Intelligent": "PASS",
+        "EL_Mogalef_Trend_Filter_V2": "PASS",
+        "EL_NeutralZone_B_V2": "PASS",
+        "EL_STPMT_DIV": "PASS",
+        "EL_REPULSE_DIV": "PASS"
+      }
+    },
+    "phase_4": "light_backtest_completed_fix_required_new_phase_4_work_requires_explicit_approval"
+  },
+  "current_focus": {
+    "component": "COMB_001_Candidate_B",
+    "state": "candidate_B_active_derived_branch_candidate_B1_is_current_valid_unit_COMB_001_base_remains_reference_mother",
+    "next_allowed_action": "prepare_or_execute_Candidate_B1_while_keeping_COMB_001_base_as_reference_mother"
+  },
+  "awaiting_user_approval": false,
+  "approval_topic": null,
+  "execution_rules": {
+    "unit_complete_only": true,
+    "never_leave_half_done": true,
+    "no_out_of_phase_work": true,
+    "no_video_by_default": true,
+    "no_backtest_without_approval": true,
+    "no_fix_and_qa_same_run_except_trivial_critical": true,
+    "use_persistent_artifacts": true,
+    "phase_2_to_phase_3_auto_for_individual_pass": true
+  },
+  "subagent_policy": {
+    "allowed_roles": [
+      "sa-build",
+      "sa-qa",
+      "sa-review",
+      "sa-research"
+    ],
+    "assignment_rule": {
+      "bo": "small_linear_cheap_admin_and_consolidation",
+      "sa-build": "real_build_and_build_fixes",
+      "sa-qa": "qa_reqa_and_smoke_review",
+      "sa-review": "discrepancy_analysis_and_pass_fix_block_dictamen",
+      "sa-research": "essential_missing_information_only"
+    },
+    "default": "use_bo_unless_specialist_clearly_reduces_cost_or_improves_isolation",
+    "max_subagents_per_main_unit": 1,
+    "parallel_branches": "avoid_unless_clearly_necessary",
+    "must_write_artifacts": true,
+    "consolidation_owner": "bo"
+  },
+  "approval_gates": [
+    "phase_3_to_phase_4",
+    "real_blocker",
+    "expensive_or_sensitive_work",
+    "architecture_change",
+    "video_usage",
+    "backtest"
+  ],
+  "last_updated_utc": "2026-04-16 11:01"
+}

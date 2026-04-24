@@ -1,0 +1,9 @@
+{
+  "phase": "2c",
+  "volatility_profile": "none",
+  "atr_min": 0.0,
+  "atr_max": 500.0,
+  "robustness": 1.8207,
+  "phase_a_pf": 0.63,
+  "phase_b_pf": 1.1469
+}

@@ -1,0 +1,261 @@
+{
+  "strategy": "COMB_002_IMPULSE",
+  "version": "1.0",
+  "description": "Configuration for all 4 optimization phases (Signal → Contexto → Exits → Stops)",
+  "framework": "UNIVERSAL_OPTIMIZATION_FRAMEWORK_v1",
+  "multi_asset": ["ES", "MNQ", "YM", "FDAX"],
+  "multi_timeframe": ["5m", "10m", "15m"],
+  "walk_forward": {
+    "phase_a_percent": 0.60,
+    "phase_b_percent": 0.40,
+    "robustness_threshold": 0.80,
+    "description": "Phase A for training, Phase B for unseen validation. Success = Phase_B_PF >= 0.80 * Phase_A_PF"
+  },
+
+  "phase_1_signal": {
+    "description": "STPMT Divergence signal optimization (Entry point quality)",
+    "locked_from_previous": null,
+    "parameters": {
+      "stpmt_smooth_h": {
+        "type": "int",
+        "range": [1, 10],
+        "grid": [1, 2, 3, 4, 5],
+        "description": "Pivot smoothing for bearish divergence detection"
+      },
+      "stpmt_smooth_b": {
+        "type": "int",
+        "range": [1, 10],
+        "grid": [1, 2, 3, 4, 5],
+        "description": "Pivot smoothing for bullish divergence detection"
+      },
+      "stpmt_distance_max_h": {
+        "type": "int",
+        "range": [25, 200],
+        "grid": [25, 75, 125, 175, 200],
+        "description": "Max bars between bearish pivots"
+      },
+      "stpmt_distance_max_l": {
+        "type": "int",
+        "range": [25, 200],
+        "grid": [25, 75, 125, 175, 200],
+        "description": "Max bars between bullish pivots"
+      }
+    },
+    "total_combos": 625,
+    "distribution": {
+      "bo_percent": 80,
+      "tank_percent": 20,
+      "bo_combos": 500,
+      "tank_combos": 125,
+      "parallel_blocks": 2
+    },
+    "time_estimate_minutes": 15,
+    "output_file": "phase1_COMB_002_IMPULSE_{asset}_{timeframe}_best_params.json",
+    "success_metrics": {
+      "robustness_min": 0.80,
+      "trades_min": 20
+    }
+  },
+
+  "phase_2_contexto": {
+    "description": "Context filters: Horaire (time of day) + Diario (day of week)",
+    "note": "COMB_002_IMPULSE: NO Trend Filter, NO Volatility Filter (differs from COMB_001)",
+    "locked_from_previous": ["phase_1"],
+    "parameters": {
+      "horaire_allowed_hours_utc": {
+        "type": "list[int]",
+        "options": [
+          {"name": "Extended (9-17+20-22)", "value": [9,10,11,12,13,14,15,16,17,20,21,22]},
+          {"name": "Standard (9-17)", "value": [9,10,11,12,13,14,15,16,17]},
+          {"name": "Tight (10-16)", "value": [10,11,12,13,14,15,16]},
+          {"name": "Tight with evening (10-16+20-22)", "value": [10,11,12,13,14,15,16,20,21,22]},
+          {"name": "Morning only (9-12)", "value": [9,10,11,12]},
+          {"name": "Afternoon (13-17)", "value": [13,14,15,16,17]}
+        ],
+        "description": "UTC hours allowed for trading (Mogalef recommendation: 9-17 + 20-22)"
+      },
+      "blocked_weekdays": {
+        "type": "list[int]",
+        "options": [
+          {"name": "All days", "value": []},
+          {"name": "No Tuesday", "value": [1]},
+          {"name": "No Monday", "value": [0]},
+          {"name": "No Mon-Tue", "value": [0, 1]}
+        ],
+        "description": "Python weekday numbering: 0=Mon, 1=Tue, 2=Wed, 3=Thu, 4=Fri"
+      }
+    },
+    "total_combos": 12,
+    "distribution": {
+      "parallel": false,
+      "sequential": true
+    },
+    "time_estimate_minutes": 3,
+    "output_file": "phase2_COMB_002_IMPULSE_{asset}_{timeframe}_best_params.json",
+    "success_metrics": {
+      "robustness_min": 0.80,
+      "trades_min": 15
+    }
+  },
+
+  "phase_3_exits": {
+    "description": "Exit strategies: Profit Target (10 ATR), Intelligent Scalping Target, TimeStop",
+    "locked_from_previous": ["phase_1", "phase_2"],
+    "parameters": {
+      "target_atr_multiplier": {
+        "type": "float",
+        "range": [5.0, 15.0],
+        "grid": [5.0, 7.5, 10.0, 12.5, 15.0],
+        "description": "Profit target as multiple of ATR at entry (Mogalef: 10 ATR standard)"
+      },
+      "scalping_target_quality": {
+        "type": "int",
+        "range": [1, 5],
+        "grid": [1, 2, 3, 4, 5],
+        "description": "Swing pivot quality for intelligent scalping target"
+      },
+      "scalping_target_coef_volat": {
+        "type": "float",
+        "range": [2.0, 6.0],
+        "grid": [2.0, 3.0, 4.0, 5.0, 6.0],
+        "description": "Volatility coefficient for scalping target space (motor principal de COMB_002)"
+      },
+      "timescan_bars": {
+        "type": "int",
+        "range": [10, 20],
+        "grid": [10, 12, 14, 16, 18, 20],
+        "description": "Max bars in trade before forced exit (Mogalef IMPULSE: 15 bars)"
+      }
+    },
+    "total_combos": 150,
+    "distribution": {
+      "bo_percent": 80,
+      "tank_percent": 20
+    },
+    "time_estimate_minutes": 10,
+    "output_file": "phase3_COMB_002_IMPULSE_{asset}_{timeframe}_best_params.json",
+    "success_metrics": {
+      "robustness_min": 0.80,
+      "trades_min": 15
+    }
+  },
+
+  "phase_4_stops": {
+    "description": "Stop Intelligent Risk Management: SuperStop for IMPULSE strategy",
+    "locked_from_previous": ["phase_1", "phase_2", "phase_3"],
+    "parameters": {
+      "superstop_quality": {
+        "type": "int",
+        "range": [1, 4],
+        "grid": [1, 2, 3, 4],
+        "description": "Swing high/low confirmation quality (bars on each side)"
+      },
+      "superstop_coef_volat": {
+        "type": "float",
+        "range": [2.0, 5.0],
+        "grid": [2.0, 2.75, 3.5, 4.25, 5.0],
+        "description": "Volatility coefficient for stop space (Mogalef IMPULSE: tighter than TREND)"
+      }
+    },
+    "total_combos": 20,
+    "distribution": {
+      "sequential": true
+    },
+    "time_estimate_minutes": 5,
+    "output_file": "phase4_COMB_002_IMPULSE_{asset}_{timeframe}_best_params.json",
+    "success_metrics": {
+      "robustness_min": 0.80,
+      "max_drawdown_max": 0.30
+    }
+  },
+
+  "final_consolidation": {
+    "description": "Combine best params from all 4 phases",
+    "output_files": [
+      "{asset}_{timeframe}_phase1_best.json",
+      "{asset}_{timeframe}_phase2_best.json",
+      "{asset}_{timeframe}_phase3_best.json",
+      "{asset}_{timeframe}_phase4_best.json"
+    ],
+    "final_output": "COMB_002_IMPULSE_MASTER_PARAMS.json",
+    "c_sharp_mapping": {
+      "stpmt_smooth_h": "StpmtSmoothH",
+      "stpmt_smooth_b": "StpmtSmoothB",
+      "stpmt_distance_max_h": "StpmtDistMaxH",
+      "stpmt_distance_max_l": "StpmtDistMaxL",
+      "horaire_allowed_hours_utc": "HoraireHours",
+      "blocked_weekdays": "BlockedWeekdays",
+      "target_atr_multiplier": "TargetAtrMult",
+      "scalping_target_quality": "ScalpQuality",
+      "scalping_target_coef_volat": "ScalpCoefVolat",
+      "timescan_bars": "TimeScanBars",
+      "superstop_quality": "StopQuality",
+      "superstop_coef_volat": "StopCoefVolat"
+    }
+  },
+
+  "execution_timeline": {
+    "total_duration_minutes": 110,
+    "phase_0_prep": 5,
+    "phase_1_signal": 60,
+    "phase_2_contexto": 15,
+    "phase_3_exits": 20,
+    "phase_4_stops": 10,
+    "note": "Phases 2-4 can overlap (Phase 1 locked). Total = 1h 50m for 4 assets"
+  },
+
+  "validation_checklist": {
+    "pre_optimization": [
+      "Phase A + B splits exist for all assets/timeframes",
+      "CSV files have correct columns: timestamp_utc, open, high, low, close",
+      "No gaps in data (or interpolated)",
+      "Data sorted chronologically"
+    ],
+    "post_phase_1": [
+      "Robustness >= 0.80 for each asset",
+      "Trade count >= 20 in Phase A",
+      "Export best_signal_params.json"
+    ],
+    "post_phase_2": [
+      "Robustness >= 0.80 (with Phase 1 locked)",
+      "Trade count >= 15",
+      "Horaire filter respecting 9-17 + 20-22 (Mogalef)",
+      "Export best_contexto_params.json"
+    ],
+    "post_phase_3": [
+      "Robustness >= 0.80 (with Phase 1+2 locked)",
+      "Trade count >= 15",
+      "TimeStop ~15 bars (per IMPULSE spec)",
+      "Export best_exits_params.json"
+    ],
+    "post_phase_4": [
+      "Robustness >= 0.80 (with Phase 1+2+3 locked)",
+      "Max Drawdown <= 30% capital",
+      "SuperStop protecting DD",
+      "Export best_stops_params.json"
+    ],
+    "final": [
+      "Consolidate all 4 phases to master_params.json",
+      "Generate C# parameter mappings",
+      "Compile in NinjaTrader 8",
+      "Backtests match Python results ±0.00001"
+    ]
+  },
+
+  "notes": {
+    "mogalef_differentiators": [
+      "IMPULSE does NOT use Trend Filter (COMB_001 feature)",
+      "IMPULSE does NOT use Volatility ATR filter (kills performance)",
+      "IMPULSE MUST use Intelligent Scalping Target (main motor)",
+      "IMPULSE uses SuperStop (tighter than Stop Inteligente)",
+      "IMPULSE uses 15-bar TimeStop (vs 30 for TREND)"
+    ],
+    "success_factors": [
+      "Lock each phase before next (never combine)",
+      "Use Phase B only for validation (no reoptimization)",
+      "Vectorize all operations (NumPy/Pandas)",
+      "Run multi-asset in parallel (BO 80%, TANK 20%)",
+      "Document robustness for each phase"
+    ]
+  }
+}

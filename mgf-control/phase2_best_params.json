@@ -1,0 +1,26 @@
+{
+  "phase": 2,
+  "signal_from_phase1": {
+    "stpmt_smooth_h": 3,
+    "stpmt_smooth_b": 2,
+    "stpmt_distance_max_h": 50,
+    "stpmt_distance_max_l": 50,
+    "phase1_robustness": 1.3424210330732071
+  },
+  "trend_filter_best": {
+    "trend_r1": 3,
+    "trend_r2": 50,
+    "trend_r3": 200,
+    "phase2a_robustness": 1.3643
+  },
+  "horaire_best": {
+    "horaire_allowed_hours_utc": "[12, 13, 14, 15]",
+    "phase2b_robustness": 1.4815
+  },
+  "volatility_best": {
+    "volatility_atr_min": 20.0,
+    "volatility_atr_max": 200.0,
+    "phase2c_robustness": 1.6552
+  },
+  "overall_phase2_robustness": 1.3643
+}

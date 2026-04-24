@@ -1,0 +1,77 @@
+{
+  "strategy": "COMB_001_TREND",
+  "version": "5m_optimized",
+  "timeframe": "10 minutes",
+  "asset": "FDAX @ 10m",
+  "validation": {
+    "phase_a_bars": 81438,
+    "phase_b_bars": 54544,
+    "phase_a_pf": 0.0765,
+    "phase_b_pf": 0.8938,
+    "final_robustness": 11.683660130718955
+  },
+  "parameters": {
+    "signal": {
+      "stpmt_smooth_h": 5,
+      "stpmt_smooth_b": 5,
+      "stpmt_distance_max_h": 50,
+      "stpmt_distance_max_l": 50
+    },
+    "contexto": {
+      "trend_filter": {
+        "trend_r1": 1,
+        "trend_r2": 50,
+        "trend_r3": 100
+      },
+      "horaire": {
+        "allowed_hours_utc": [
+          13,
+          14,
+          15,
+          16
+        ]
+      },
+      "volatility": {
+        "atr_period": 14,
+        "atr_min": 20.0,
+        "atr_max": 200.0
+      },
+      "weekday_filter": {
+        "blocked_weekdays": [
+          0
+        ]
+      }
+    },
+    "exits": {
+      "target_atr_multiplier": 7.0,
+      "timescan_bars": 35
+    },
+    "stops": {
+      "stop_intelligent_quality": 3,
+      "stop_intelligent_recent_volat": 1,
+      "stop_intelligent_ref_volat": 10,
+      "stop_intelligent_coef_volat": 5.0
+    }
+  },
+  "robustness_per_phase": {
+    "phase_1_signal": 3.2453,
+    "phase_2a_trend_filter": 3.2453,
+    "phase_2b_horaire": 2.1458,
+    "phase_2c_volatility": 3.8045,
+    "phase_2d_weekday": 7.0676,
+    "phase_3_exits": 11.6838,
+    "phase_4_stops": 11.6838
+  },
+  "mogalef_alignment": {
+    "independent_optimization": "Each phase locks previous (no cumulative testing)",
+    "signal_type": "STPMT Divergence",
+    "trend_filter": "Mogalef Trend Filter V2 (R1/R2/R3)",
+    "horaire_coverage": "9h-17h + 20h-22h CET (tested via profiles)",
+    "volatility_filter": "ATR bands (Mogalef recommended)",
+    "weekday_filter": "No Monday/Tuesday (from PDF)",
+    "profit_target": "10 ATR (10.0 multiplier)",
+    "time_stop": "30 bars (TimeStop)",
+    "trailing_stop": "Stop Intelligent (volatility-adaptive)",
+    "validation": "Walk-forward 60/40 split (Phase A train, Phase B unseen)"
+  }
+}

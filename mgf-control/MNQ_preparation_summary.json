@@ -1,0 +1,14 @@
+{
+  "asset": "MNQ",
+  "timeframe": "5-minute",
+  "source_format": "Continuous text (YYYYMMDD HHMMSS;O;H;L;C;V)",
+  "input_bars": 695755,
+  "output_5m_bars": 139763,
+  "compression_ratio": 4.98,
+  "phase_a_bars": 83857,
+  "phase_b_bars": 55906,
+  "phase_a_range": "2023-01-01 12:10:00 to 2024-03-07 05:35:00",
+  "phase_b_range": "2024-03-07 05:40:00 to 2024-12-13 22:00:00",
+  "total_range": "2023-01-01 12:10:00 to 2024-12-13 22:00:00",
+  "status": "SUCCESS"
+}

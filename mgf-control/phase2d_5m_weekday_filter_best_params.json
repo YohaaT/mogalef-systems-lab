@@ -1,0 +1,10 @@
+{
+  "profile": "no_tuesday",
+  "blocked_weekdays": [
+    1
+  ],
+  "description": "No Tuesday (Mogalef maximum priority)",
+  "phase_a_pf": 0.795,
+  "phase_b_pf": 1.1647,
+  "phase2d_robustness": 1.4652
+}

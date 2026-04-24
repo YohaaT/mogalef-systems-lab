@@ -1,0 +1,11 @@
+{
+  "block": 2,
+  "server": "VPS_BO",
+  "smooth_h": 3,
+  "smooth_b": 5,
+  "dist_h": 25,
+  "dist_l": 25,
+  "robustness": 1.5312,
+  "phase_a_pf": 0.647,
+  "phase_b_pf": 0.9907
+}

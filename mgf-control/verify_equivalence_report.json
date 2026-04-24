@@ -1,0 +1,12 @@
+{
+  "original_trades": 83,
+  "original_equity": -261.0,
+  "original_time_s": 0.875,
+  "vectorized_trades": 83,
+  "vectorized_equity": -261.0,
+  "vectorized_time_s": 1.16,
+  "speedup_x": 0.8,
+  "equivalence_passed": true,
+  "mismatches": 0,
+  "mismatches_detail": []
+}

@@ -1,0 +1,9 @@
+{
+  "asset": "MNQ",
+  "timeframe": "15m",
+  "source_bars_1m": 695755,
+  "bars_resampled": 47003,
+  "phase_a_bars": 28201,
+  "phase_b_bars": 18802,
+  "date_range": "2023-01-01 \u2013 2024-12-13"
+}

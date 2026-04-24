@@ -1,0 +1,14 @@
+{
+  "asset": "ES",
+  "timeframe": "5-minute",
+  "source_format": "Continuous text (YYYYMMDD HHMMSS;O;H;L;C;V)",
+  "input_bars": 693910,
+  "output_5m_bars": 139510,
+  "compression_ratio": 4.97,
+  "phase_a_bars": 83706,
+  "phase_b_bars": 55804,
+  "phase_a_range": "2023-01-01 12:30:00 to 2024-03-06 00:50:00",
+  "phase_b_range": "2024-03-06 00:55:00 to 2024-12-13 22:00:00",
+  "total_range": "2023-01-01 12:30:00 to 2024-12-13 22:00:00",
+  "status": "SUCCESS"
+}

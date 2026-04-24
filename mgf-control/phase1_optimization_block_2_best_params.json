@@ -1,0 +1,10 @@
+{
+  "block": 2,
+  "stpmt_smooth_h": 2,
+  "stpmt_smooth_b": 5,
+  "stpmt_distance_max_h": 50,
+  "stpmt_distance_max_l": 50,
+  "robustness": 1.2959,
+  "phase_a_pf": 1.0014,
+  "phase_b_pf": 1.2977
+}

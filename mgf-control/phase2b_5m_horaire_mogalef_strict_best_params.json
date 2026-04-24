@@ -1,0 +1,21 @@
+{
+  "profile": "mogalef_strict",
+  "horaire_allowed_hours_utc": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    19,
+    20,
+    21
+  ],
+  "description": "9h-17h + 20h-22 CET (Mogalef primary)",
+  "phase_a_pf": 1.0242,
+  "phase_b_pf": 1.2817,
+  "phase2b_robustness": 1.2515
+}

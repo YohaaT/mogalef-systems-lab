@@ -1,0 +1,13 @@
+{
+  "phase": 1,
+  "timeframe": "5m",
+  "signal_best": {
+    "stpmt_smooth_h": 5,
+    "stpmt_smooth_b": 2,
+    "stpmt_distance_max_h": 25,
+    "stpmt_distance_max_l": 25,
+    "phase1_robustness": 1.7669
+  },
+  "phase_a_pf": 1.3006,
+  "phase_b_pf": 2.2981
+}

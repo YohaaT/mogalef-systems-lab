@@ -1,0 +1,45 @@
+{
+  "phase": 2,
+  "timeframe": "5m",
+  "signal_component": {
+    "stpmt_smooth_h": 5,
+    "stpmt_smooth_b": 5,
+    "stpmt_distance_max_h": 25,
+    "stpmt_distance_max_l": 25,
+    "robustness": 1.2127
+  },
+  "contexto_component": {
+    "trend_filter": {
+      "trend_r1": 1,
+      "trend_r2": 50,
+      "trend_r3": 100,
+      "robustness": 1.2127
+    },
+    "horaire": {
+      "profile": "afternoon",
+      "hours": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "robustness": 1.2069
+    },
+    "volatility": {
+      "profile": "min_floor",
+      "atr_min": 10.0,
+      "atr_max": 500.0,
+      "robustness": 2.7326
+    },
+    "weekday_filter": {
+      "combo": "no_tuesday",
+      "blocked_days": [
+        1
+      ],
+      "robustness": 4.1462
+    }
+  },
+  "phase_a_pf": 0.9205,
+  "phase_b_pf": 3.8166,
+  "overall_robustness": 4.1462
+}

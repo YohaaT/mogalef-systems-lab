@@ -1,0 +1,54 @@
+{
+  "strategy": "COMB_001_TREND_V1",
+  "version": "1.0",
+  "status": "OPTIMIZED",
+  "phase": "1+2+3+4 COMPLETE",
+  "signal_component": {
+    "type": "STPMT Divergence",
+    "stpmt_smooth_h": 3,
+    "stpmt_smooth_b": 2,
+    "stpmt_distance_max_h": 50,
+    "stpmt_distance_max_l": 50,
+    "phase1_robustness": 1.3424210330732071
+  },
+  "contexto_component": {
+    "trend_filter": {
+      "trend_r1": 3,
+      "trend_r2": 50,
+      "trend_r3": 200,
+      "phase2a_robustness": 1.3643
+    },
+    "horaire": {
+      "horaire_allowed_hours_utc": [
+        12,
+        13,
+        14,
+        15
+      ],
+      "phase2b_robustness": 1.4815
+    },
+    "volatility": {
+      "volatility_atr_min": 20.0,
+      "volatility_atr_max": 200.0,
+      "phase2c_robustness": 1.6552
+    }
+  },
+  "exits_component": {
+    "target_atr_multiplier": 10.0,
+    "timescan_bars": 30,
+    "phase3_robustness": 1.6552
+  },
+  "stops_component": {
+    "stop_intelligent_quality": 1,
+    "stop_intelligent_recent_volat": 1,
+    "stop_intelligent_ref_volat": 10,
+    "stop_intelligent_coef_volat": 3.0,
+    "phase4_robustness": 1.6552
+  },
+  "final_backtest_metrics": {
+    "phase_a_profit_factor": 0.8636,
+    "phase_b_profit_factor": 1.4294,
+    "overall_robustness": 1.6552,
+    "validation": "Walk-forward 60/40 (Phase A: train, Phase B: unseen validation)"
+  }
+}

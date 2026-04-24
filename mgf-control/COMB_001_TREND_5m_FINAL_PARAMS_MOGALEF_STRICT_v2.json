@@ -1,0 +1,89 @@
+{
+  "strategy": "COMB_001_TREND",
+  "version": "5m_mogalef_strict_final",
+  "timeframe": "5 minutes",
+  "asset": "YM (E-mini Dow Jones)",
+  "optimization_note": "Phase 2 & 3 & 4 re-optimized with Mogalef-Strict parameters (9-17+20-22 CET horaire, no Tuesday)",
+  "validation": {
+    "phase_a_bars": 81438,
+    "phase_b_bars": 54544,
+    "phase_a_pf": 0.8746,
+    "phase_b_pf": 1.5195,
+    "final_robustness": 1.7374
+  },
+  "parameters": {
+    "signal": {
+      "stpmt_smooth_h": 2,
+      "stpmt_smooth_b": 5,
+      "stpmt_distance_max_h": 25,
+      "stpmt_distance_max_l": 25
+    },
+    "contexto": {
+      "trend_filter": {
+        "trend_r1": 1,
+        "trend_r2": 50,
+        "trend_r3": 150
+      },
+      "horaire": {
+        "allowed_hours_utc": [
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          19,
+          20,
+          21
+        ],
+        "description": "9h-17h + 20h-22h CET (Mogalef PDF strict)"
+      },
+      "volatility": {
+        "atr_period": 14,
+        "atr_min": 20.0,
+        "atr_max": 200.0
+      },
+      "weekday_filter": {
+        "blocked_weekdays": [
+          1
+        ],
+        "description": "No Tuesday (Mogalef maximum priority)"
+      }
+    },
+    "exits": {
+      "target_atr_multiplier": 9.0,
+      "timescan_bars": 35
+    },
+    "stops": {
+      "stop_intelligent_quality": 1,
+      "stop_intelligent_recent_volat": 1,
+      "stop_intelligent_ref_volat": 10,
+      "stop_intelligent_coef_volat": 3.0
+    }
+  },
+  "robustness_per_phase": {
+    "phase_1_signal": 1.7374,
+    "phase_2a_trend_filter": 1.7374,
+    "phase_2b_horaire_mogalef": 1.2515,
+    "phase_2c_volatility": 1.6552,
+    "phase_2d_weekday_mogalef": 1.4652,
+    "phase_3_exits": 1.4672,
+    "phase_4_stops": 1.4672
+  },
+  "mogalef_alignment": {
+    "pdf_reference": "Trading Automatique: Conception et Securisation (Eric LEFORT)",
+    "compliance": "FULL MOGALEF STRICT - All Phases Optimized per PDF",
+    "signal_type": "STPMT Divergence",
+    "trend_filter": "Mogalef Trend Filter V2 (R1/R2/R3)",
+    "horaire_coverage": "9h-17h + 20h-22h CET (IMPERATIVO)",
+    "weekday_filter": "No Tuesday (max priority per Mogalef)",
+    "volatility_filter": "ATR bands (dobla trade medio)",
+    "profit_target": "9.0 ATR",
+    "time_stop": "35 bars",
+    "trailing_stop": "Stop Intelligent (volatility-adaptive)",
+    "validation": "Walk-forward 60/40 (Phase A=train, Phase B=unseen)"
+  }
+}

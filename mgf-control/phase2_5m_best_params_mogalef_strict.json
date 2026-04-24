@@ -1,0 +1,48 @@
+{
+  "phase": 2,
+  "version": "mogalef_strict_corrected",
+  "signal_from_phase1": {
+    "stpmt_smooth_h": 2,
+    "stpmt_smooth_b": 5,
+    "stpmt_distance_max_h": 25,
+    "stpmt_distance_max_l": 25,
+    "phase1_robustness": 1.7374
+  },
+  "trend_filter_best": {
+    "trend_r1": 1,
+    "trend_r2": 50,
+    "trend_r3": 150,
+    "phase2a_robustness": 1.7374
+  },
+  "horaire_best": {
+    "horaire_allowed_hours_utc": [
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      19,
+      20,
+      21
+    ],
+    "horaire_description": "9h-17h + 20h-22 CET (Mogalef primary)",
+    "phase2b_robustness": 1.2515
+  },
+  "volatility_best": {
+    "volatility_atr_min": 20.0,
+    "volatility_atr_max": 200.0,
+    "phase2c_robustness": 1.6552
+  },
+  "weekday_filter_best": {
+    "blocked_weekdays": [
+      1
+    ],
+    "weekday_description": "No Tuesday (Mogalef maximum priority)",
+    "phase2d_robustness": 1.4652
+  },
+  "overall_phase2_robustness": 1.7374
+}

@@ -1,0 +1,13 @@
+{
+  "phase": "2b",
+  "horaire_profile": "morning",
+  "hours": [
+    9,
+    10,
+    11,
+    12
+  ],
+  "robustness": 1.8207,
+  "phase_a_pf": 0.63,
+  "phase_b_pf": 1.1469
+}

@@ -1,0 +1,14 @@
+{
+  "asset": "FDAX",
+  "timeframe": "5-minute",
+  "source_format": "Continuous text (YYYYMMDD HHMMSS;O;H;L;C;V)",
+  "input_bars": 535397,
+  "output_5m_bars": 119482,
+  "compression_ratio": 4.48,
+  "phase_a_bars": 71689,
+  "phase_b_bars": 47793,
+  "phase_a_range": "2023-01-02 00:15:00 to 2024-03-06 02:20:00",
+  "phase_b_range": "2024-03-06 02:25:00 to 2024-12-17 21:00:00",
+  "total_range": "2023-01-02 00:15:00 to 2024-12-17 21:00:00",
+  "status": "SUCCESS"
+}

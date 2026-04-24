@@ -1,0 +1,73 @@
+{
+  "preparation_date": "2026-04-22T23:56:32.502408",
+  "assets_processed": [
+    "YM",
+    "MNQ",
+    "FDAX",
+    "ES"
+  ],
+  "phase_a_ratio": 0.6,
+  "phase_b_ratio": 0.4,
+  "total_5m_bars": 534419,
+  "total_phase_a_bars": 320650,
+  "total_phase_b_bars": 213769,
+  "asset_summaries": {
+    "YM": {
+      "asset": "YM",
+      "timeframe": "5-minute",
+      "source_format": "Continuous text (YYYYMMDD HHMMSS;O;H;L;C;V)",
+      "input_bars": 666624,
+      "output_5m_bars": 135664,
+      "compression_ratio": 4.91,
+      "phase_a_bars": 81398,
+      "phase_b_bars": 54266,
+      "phase_a_range": "2023-01-02 23:00:00 to 2024-03-18 14:55:00",
+      "phase_b_range": "2024-03-18 15:00:00 to 2024-12-13 22:00:00",
+      "total_range": "2023-01-02 23:00:00 to 2024-12-13 22:00:00",
+      "status": "SUCCESS"
+    },
+    "MNQ": {
+      "asset": "MNQ",
+      "timeframe": "5-minute",
+      "source_format": "Continuous text (YYYYMMDD HHMMSS;O;H;L;C;V)",
+      "input_bars": 695755,
+      "output_5m_bars": 139763,
+      "compression_ratio": 4.98,
+      "phase_a_bars": 83857,
+      "phase_b_bars": 55906,
+      "phase_a_range": "2023-01-01 12:10:00 to 2024-03-07 05:35:00",
+      "phase_b_range": "2024-03-07 05:40:00 to 2024-12-13 22:00:00",
+      "total_range": "2023-01-01 12:10:00 to 2024-12-13 22:00:00",
+      "status": "SUCCESS"
+    },
+    "FDAX": {
+      "asset": "FDAX",
+      "timeframe": "5-minute",
+      "source_format": "Continuous text (YYYYMMDD HHMMSS;O;H;L;C;V)",
+      "input_bars": 535397,
+      "output_5m_bars": 119482,
+      "compression_ratio": 4.48,
+      "phase_a_bars": 71689,
+      "phase_b_bars": 47793,
+      "phase_a_range": "2023-01-02 00:15:00 to 2024-03-06 02:20:00",
+      "phase_b_range": "2024-03-06 02:25:00 to 2024-12-17 21:00:00",
+      "total_range": "2023-01-02 00:15:00 to 2024-12-17 21:00:00",
+      "status": "SUCCESS"
+    },
+    "ES": {
+      "asset": "ES",
+      "timeframe": "5-minute",
+      "source_format": "Continuous text (YYYYMMDD HHMMSS;O;H;L;C;V)",
+      "input_bars": 693910,
+      "output_5m_bars": 139510,
+      "compression_ratio": 4.97,
+      "phase_a_bars": 83706,
+      "phase_b_bars": 55804,
+      "phase_a_range": "2023-01-01 12:30:00 to 2024-03-06 00:50:00",
+      "phase_b_range": "2024-03-06 00:55:00 to 2024-12-13 22:00:00",
+      "total_range": "2023-01-01 12:30:00 to 2024-12-13 22:00:00",
+      "status": "SUCCESS"
+    }
+  },
+  "status": "COMPLETE"
+}

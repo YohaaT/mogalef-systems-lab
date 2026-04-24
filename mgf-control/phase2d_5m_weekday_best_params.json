@@ -1,0 +1,11 @@
+{
+  "phase": "2d",
+  "weekday_combo": "no_mon_tue",
+  "blocked_days": [
+    0,
+    1
+  ],
+  "robustness": 20.3114,
+  "phase_a_pf": 0.0709,
+  "phase_b_pf": 1.441
+}

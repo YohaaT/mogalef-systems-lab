@@ -1,0 +1,9 @@
+{
+  "asset": "YM",
+  "timeframe": "10m",
+  "source_bars_1m": 666624,
+  "bars_resampled": 68202,
+  "phase_a_bars": 40921,
+  "phase_b_bars": 27281,
+  "date_range": "2023-01-02 \u2013 2024-12-13"
+}

@@ -1,0 +1,383 @@
+# COMB_001 Trend Trading Version A - Parameter Documentation
+
+## [metadata]
+strategy_name = COMB_001_TREND
+version = 1.0
+status = EXPLORATORY_BASELINE
+description = Professional Trend Trading system following Eric Mogalef's independent optimization methodology
+
+---
+
+## [data_contract]
+# Required CSV columns
+required_columns = timestamp_utc,open,high,low,close
+
+# Execution convention (critical for reproducibility)
+signal_evaluation_bar = t (closed bar)
+entry_execution_bar = t+1 (open of next bar)
+position_management = causally from entry onward (no lookahead)
+
+# Timestamp format
+timestamp_format = YYYY-MM-DD HH:MM:SS (UTC)
+
+# Minimum data length
+minimum_bars = 150 (for Trend Filter warmup)
+
+---
+
+## [signal_component] "EL_STPMT_DIV Divergence Detection"
+# Parameter: stpmt_smooth_h
+# Description: Smoothing period for signal bar HIGH extremes
+# Default: 2
+# Optimization range: [1, 2, 3, 4, 5]
+# Phase 1 optimization knob
+stpmt_smooth_h = 2
+
+# Parameter: stpmt_smooth_b
+# Description: Smoothing period for signal bar LOW extremes
+# Default: 2
+# Optimization range: [1, 2, 3, 4, 5]
+# Phase 1 optimization knob
+stpmt_smooth_b = 2
+
+# Parameter: stpmt_mode
+# Description: Divergence algorithm variant
+# Default: 1
+# Note: Keep at 1 (standard mode)
+stpmt_mode = 1
+
+# Parameter: stpmt_decal_entry
+# Description: Shift entry signal by N bars (delays recognition)
+# Default: 0
+# Range: [0, 1, 2] (rarely optimized)
+stpmt_decal_entry = 0
+
+# Parameter: stpmt_distance_max_h
+# Description: Maximum lookback bars for HIGH pivot detection
+# Default: 200
+# Optimization range: [50, 100, 150, 200, 300]
+# Phase 1 optimization knob
+stpmt_distance_max_h = 200
+
+# Parameter: stpmt_distance_max_l
+# Description: Maximum lookback bars for LOW pivot detection
+# Default: 200
+# Optimization range: [50, 100, 150, 200, 300]
+# Phase 1 optimization knob
+stpmt_distance_max_l = 200
+
+---
+
+## [contexto_trend_filter] "EL_Mogalef_Trend_Filter_V2"
+# Regime permission layer: blocks trades outside target trend cases
+
+# Parameter: trend_r1
+# Description: Repulsion window scale for 1-bar regime
+# Default: 1
+# Range: [1] (fixed per Mogalef methodology)
+trend_r1 = 1
+
+# Parameter: trend_r2
+# Description: Repulsion window scale for 90-bar intermediate trend
+# Default: 90
+# Optimization range: [60, 75, 90, 120] (Phase 2)
+trend_r2 = 90
+
+# Parameter: trend_r3
+# Description: Repulsion window scale for 150-bar long-term trend
+# Default: 150
+# Optimization range: [100, 120, 150, 200] (Phase 2)
+trend_r3 = 150
+
+# Parameter: trend_trade_only_case
+# Description: Case restriction mode
+#   0 = AllPass (trade all cases except blocked_cases)
+#   N = Trade only specific case N [1-8]
+# Default: 0
+# Note: Keep at 0 for Trend Trading (AllPass mode)
+trend_trade_only_case = 0
+
+# Parameter: trend_blocked_cases
+# Description: Cases to block when in AllPass mode
+# Default: () empty tuple
+# Range: Subset of {1,2,3,4,5,6,7,8}
+trend_blocked_cases = ()
+
+# Parameter: trend_off_on
+# Description: Enable/disable filter
+#   0 = AllPass (ignore filter, trade always)
+#   1 = Active (respect filter sentiment)
+# Default: 1
+# Note: Must be 1 for Trend Trading to work properly
+trend_off_on = 1
+
+# Parameter: trend_enforce_date_kill_switch
+# Description: Force Case 0 (block) after specific date
+# Default: True (blocks after 2030-12-05)
+# Note: Irrelevant for historical backtests; keep True
+trend_enforce_date_kill_switch = True
+
+---
+
+## [contexto_horaire] "Time-of-Day Filter"
+# Block trades outside designated trading hours (UTC)
+
+# Parameter: horaire_allowed_hours_utc
+# Description: List of allowed UTC hours (0-23)
+# Default: [9,10,11,12,13,14,15] (UTC 9-15 = US session)
+# Rationale: Avoids early Asian session (low volatility), late NY (after-hours)
+# Optimization range: Vary hour windows (Phase 2)
+#   Example A: [9,10,11,12,13,14,15] (9am-3:59pm UTC)
+#   Example B: [10,11,12,13,14] (10am-2:59pm UTC)
+#   Example C: [] (disable filter)
+horaire_allowed_hours_utc = [9, 10, 11, 12, 13, 14, 15]
+
+---
+
+## [contexto_volatility] "ATR-Based Volatility Filter"
+# Block trades if volatility is outside expected range
+# Rationale: Extremely low volatility = whipsaw risk, extremely high = uncontrollable
+
+# Parameter: volatility_atr_period
+# Description: Period for ATR calculation
+# Default: 14 (standard period)
+# Note: Fixed (not optimized) to maintain focus on other components
+volatility_atr_period = 14
+
+# Parameter: volatility_atr_min
+# Description: Minimum acceptable ATR (in points)
+# Default: 0.0 (no lower bound)
+# Optimization range: [0.0, 2.0, 5.0, 10.0] (Phase 2)
+volatility_atr_min = 0.0
+
+# Parameter: volatility_atr_max
+# Description: Maximum acceptable ATR (in points)
+# Default: 500.0 (very wide upper bound)
+# Optimization range: [100.0, 200.0, 300.0, 500.0, 1000.0] (Phase 2)
+volatility_atr_max = 500.0
+
+---
+
+## [exits_profit_target] "10 ATR Dynamic Objective"
+# Exit with profit when target is touched
+# Calculation: entry_price ± (target_atr_multiplier × ATR[signal_bar])
+
+# Parameter: target_atr_multiplier
+# Description: Multiplier for ATR-based profit target
+# Default: 10.0 (per Mogalef PDF recommendation)
+# Optimization range: [5.0, 7.0, 10.0, 15.0, 20.0] (Phase 3)
+# Rationale: Mogalef DOW Jones backtest showed 10 ATR optimal
+target_atr_multiplier = 10.0
+
+# Exit logic:
+#   LONG:  exit if high[i] >= entry_price + (10 × ATR[signal_bar])
+#   SHORT: exit if low[i] <= entry_price - (10 × ATR[signal_bar])
+# Priority: Second (after stop)
+
+---
+
+## [exits_opposite_signal] "Divergence Reversal Exit"
+# Exit if opposite divergence signal detected AND filter still allows
+
+# Logic:
+#   LONG position:  exit if pose[bar_i] == -1 AND trend_sentiment[bar_i] == "pass"
+#   SHORT position: exit if pose[bar_i] == 1 AND trend_sentiment[bar_i] == "pass"
+# Execution: Exit on bar t+1 open (causal)
+# Priority: Third (after stop, target)
+
+---
+
+## [exits_timescan] "Duration-Based TimeStop Exit"
+# Exit if position has been open for >= N bars
+# Rationale: Trend Trading discipline (30-bar max per Mogalef)
+
+# Parameter: timescan_bars
+# Description: Maximum bars in any single trade
+# Default: 30 (per Mogalef Trend Trading spec)
+# Optimization range: [20, 25, 30, 40, 50] (Phase 3)
+timescan_bars = 30
+
+# Exit logic:
+#   if bars_in_trade >= timescan_bars:
+#       exit on close of bar (or bar[i] close)
+# Priority: Fourth (after stop, target, opposite_signal)
+
+---
+
+## [stops_intelligent] "Stop Inteligente Volatility-Adaptive Stop"
+# Intelligent trailing stop that adapts spacing to recent volatility
+# Reduces average loss in trend trading vs fixed stops
+
+# Parameter: stop_intelligent_quality
+# Description: Local extremum detection sensitivity
+#   1 = Very sensitive (quick adaptation)
+#   2 = Standard (balanced)
+#   3 = Conservative (slow adaptation)
+# Default: 2
+# Optimization range: [1, 2, 3] (Phase 4)
+stop_intelligent_quality = 2
+
+# Parameter: stop_intelligent_recent_volat
+# Description: Period for recent volatility (TR) smoothing
+# Default: 2
+# Optimization range: [1, 2, 3, 5] (Phase 4)
+stop_intelligent_recent_volat = 2
+
+# Parameter: stop_intelligent_ref_volat
+# Description: Period for reference volatility (TR) smoothing
+# Default: 20
+# Optimization range: [10, 15, 20, 30] (Phase 4)
+stop_intelligent_ref_volat = 20
+
+# Parameter: stop_intelligent_coef_volat
+# Description: Volatility scaling coefficient
+# Default: 5.0
+# Optimization range: [3.0, 4.0, 5.0, 6.0, 7.0] (Phase 4)
+stop_intelligent_coef_volat = 5.0
+
+# Fallback: If Stop Inteligente unavailable, use signal bar low/high:
+#   LONG:  stop = low[signal_bar]
+#   SHORT: stop = high[signal_bar]
+
+---
+
+## [optimization_phases] "Independent Component Optimization Protocol"
+
+# CRITICAL CONSTRAINT
+# ==================
+# Never optimize multiple components simultaneously.
+# Lock all prior phase results before proceeding to next phase.
+# Test each phase on Phase B unseen data to confirm robustness.
+
+# Phase 1: Signal Optimization (10-12 hours)
+# ==========================================
+# Lock: Contexto, Exits, Stops at defaults
+# Vary: stpmt_smooth_h, stpmt_smooth_b, stpmt_distance_max_h, stpmt_distance_max_l
+# Test on: Phase A (training set), validate on Phase B (unseen)
+# Decision: Pick best combo that generalizes to Phase B
+# Output: Phase1_OptimizationLog.txt + best params
+
+# Phase 2: Contexto Filters Optimization (12-16 hours)
+# ===================================================
+# Lock: Signal to Phase 1 best, Exits, Stops at defaults
+# Vary: trend_r2, trend_r3, horaire_allowed_hours_utc, volatility_atr_min/max
+# Test on: Phase A, validate on Phase B
+# Decision: Filters that improve Phase B robustness without overfitting Phase A
+# Output: Phase2_OptimizationLog.txt + best params
+
+# Phase 3: Exits Optimization (6-8 hours)
+# =======================================
+# Lock: Signal, Contexto to Phase 1-2 best, Stops at default
+# Vary: target_atr_multiplier, timescan_bars
+# Test on: Phase A, validate on Phase B
+# Decision: Exit logic that balances target hits vs duration discipline
+# Output: Phase3_OptimizationLog.txt + best params
+
+# Phase 4: Stops Optimization (12-14 hours)
+# ==========================================
+# Lock: Signal, Contexto, Exits to Phase 1-3 best
+# Vary: stop_intelligent_quality, stop_intelligent_recent_volat, stop_intelligent_ref_volat, stop_intelligent_coef_volat
+# Test on: Phase A, validate on Phase B
+# Decision: Stop parameters that reduce average loss without choking position early
+# Output: Phase4_OptimizationLog.txt + best params
+
+# Phase 5: Final Validation
+# =========================
+# Combine: All Phase 1-4 best parameters
+# Test: Full Phase A + Phase B data with combined params
+# Robustness check: Phase B PF >= 80% × Phase A PF
+# Output: Final_Validation_Report.txt + capital requirement
+
+---
+
+## [constraints]
+
+# Constraint 1: Never test combined changes
+# Reason: Cumulative optimization leads to overfitting and poor out-of-sample performance
+# Enforcement: Lock all non-optimization components at defaults/prior-phase-best
+
+# Constraint 2: Phase B is sacred (no optimization)
+# Reason: Out-of-sample validation requires truly unseen data
+# Enforcement: Run Phase B with Phase A params only; never optimize against Phase B results
+
+# Constraint 3: Temporal causality maintained
+# Reason: No lookahead bias, realistic execution
+# Enforcement: Signal bar t → Entry bar t+1 open (always honored in backtest loop)
+
+# Constraint 4: Minimum Phase B data
+# Reason: Robust statistical validation
+# Enforcement: Phase B >= 3 months unseen data from same market regime
+
+---
+
+## [success_criteria]
+
+# Phase A (In-Sample Training)
+# =============================
+# Profit Factor (PF) >= 1.5
+# Win Rate (WR) >= 50%
+# Max Drawdown (DD) <= 30% of capital
+# Trade count >= 20 (sufficient sample)
+
+# Phase B (Out-of-Sample Validation)
+# ====================================
+# Profit Factor (PF) >= 1.3 (at least 80% of Phase A)
+# Win Rate (WR) >= 45% (slightly lower acceptable out-of-sample)
+# Max Drawdown (DD) <= 35% of capital (more conservative)
+# Trade count >= 10 (minimum sample for statistics)
+
+# Robustness = Phase_B_PF / Phase_A_PF >= 0.80
+# If robustness < 0.80, strategy likely overfit; revisit Phase 1-4
+
+---
+
+## [capital_planning]
+
+# Capital Requirement Calculation
+# ================================
+# Formula: Minimum Capital = Max_Drawdown × 10
+
+# Example:
+# If Phase B max drawdown = 2500 points
+# Min Capital Required = 2500 × 10 = 25,000 points (in account currency)
+
+# Safety Multiplier:
+# Recommended Account Size = Min Capital × 2
+# Rationale: 2× buffer for margin, slippage, unexpected regime changes
+
+# Multi-System Recommendation:
+# Mogalef Safety Framework = 3-4 independent systems on different:
+#   - Assets (ES, NQ, GC, CL, etc.)
+#   - Designs (Trend, Impulse, Multi-timeframe)
+#   - Timeframes (5m, 15m, 1h)
+# Rationale: Diversification reduces correlation risk, ensures stability
+
+---
+
+## [notes]
+
+# Default Configuration as Baseline
+# ==================================
+# The defaults above represent a conservative, proven baseline:
+# - STPMT smoothing: 2,2 (standard divergence detection)
+# - Trend Filter: r1=1, r2=90, r3=150 (Mogalef standard)
+# - Horaire: 9-15 UTC (main US trading session)
+# - Volatility: 0-500 (very wide, minimal filtering)
+# - Target: 10 ATR (per Mogalef DOW Jones research)
+# - TimeStop: 30 bars (Trend Trading discipline)
+# - Stop Inteligente: quality=2 (balanced)
+
+# This baseline should produce PF ~1.2-1.5 on typical regimes.
+# Phase 1-4 optimization aims to improve robustness and consistency.
+
+# Interpretation of Exit Reasons
+# ==============================
+# - "stop": Position hit stop loss (loss-limiting exit)
+# - "target": Position hit 10 ATR profit target (profit-taking exit)
+# - "opposite_signal": Reverse divergence detected + filter allows (signal-based exit)
+# - "timescan": Position exceeded 30-bar duration (discipline-based exit)
+# - "end_of_data": Backtest ended with open position (edge case, exclude from analysis)
+
+# Ideal distribution: Mix of stop + target + opposite_signal
+# If >80% stops: Risk/reward too tight, increase ATR multiplier
+# If <20% targets: Targets too aggressive, decrease ATR multiplier or disable

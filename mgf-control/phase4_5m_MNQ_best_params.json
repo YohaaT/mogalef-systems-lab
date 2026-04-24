@@ -1,0 +1,12 @@
+{
+  "phase": 4,
+  "stops_best": {
+    "stop_intelligent_quality": 3,
+    "stop_intelligent_recent_volat": 1,
+    "stop_intelligent_ref_volat": 10,
+    "stop_intelligent_coef_volat": 5.0,
+    "phase4_robustness": 2.7027
+  },
+  "phase_a_pf": 0.8511,
+  "phase_b_pf": 2.3002
+}

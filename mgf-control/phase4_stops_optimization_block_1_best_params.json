@@ -1,0 +1,10 @@
+{
+  "block": 1,
+  "quality": 1,
+  "recent": 1,
+  "ref_vol": 10,
+  "coef": 3.0,
+  "robustness": 1.6552,
+  "phase_a_pf": 0.8636,
+  "phase_b_pf": 1.4294
+}

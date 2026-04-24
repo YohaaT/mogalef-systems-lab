@@ -1,0 +1,15 @@
+PHASE A/B SPLIT INFORMATION
+==================================================
+
+Total data rows: 13725
+Split point: Row 8235
+Phase A (training): 8235 rows (60.0%)
+Phase B (validation): 5490 rows (40.0%)
+
+Phase A timestamp range:
+  Start: 2026-02-03T05:05:00Z
+  End:   2026-03-18T03:40:00Z
+
+Phase B timestamp range:
+  Start: 2026-03-18T03:45:00Z
+  End:   2026-04-15T19:56:20Z

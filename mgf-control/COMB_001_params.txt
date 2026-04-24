@@ -1,0 +1,47 @@
+# COMB_001 parameters
+# Base strategy parameters for the main branch.
+
+[dataset]
+required_columns = timestamp_utc, open, high, low, close
+optional_columns = volume, symbol
+execution_convention = signal_on_closed_bar_t__entry_on_open_t_plus_1
+single_position_only = true
+pyramiding = false
+
+[entry_component]
+name = EL_STPMT_DIV
+smooth_h = 2
+smooth_b = 2
+mode = 1
+decal_entry = 0
+distance_max_h = 200
+distance_max_l = 200
+long_signal = pose == 1
+short_signal = pose == -1
+
+[filter_component]
+name = EL_Mogalef_Trend_Filter_V2
+r1 = 1
+r2 = 90
+r3 = 150
+trade_only_case = 0
+blocked_cases =
+off_on = 1
+enforce_date_kill_switch = true
+pass_condition = sentiment == pass
+
+[risk_and_exit]
+stop_model = simple_causal_stop
+long_initial_stop = low_of_signal_bar
+short_initial_stop = high_of_signal_bar
+exit_on_stop = true
+exit_on_valid_opposite_signal = true
+exit_on_end_of_data = true
+fixed_target = false
+trailing_stop = false
+advanced_money_management = false
+
+[notes]
+status = exploratory_main_branch
+use_case = provisional_ranking_and_clean_research_iteration
+warning = not_a_final_validated_strategy

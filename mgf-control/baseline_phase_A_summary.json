@@ -1,0 +1,18 @@
+{
+  "trade_count": 47,
+  "wins": 12,
+  "losses": 35,
+  "win_rate": "0.2553",
+  "equity_points": "502.5000",
+  "profit_factor": "1.6395",
+  "max_drawdown": "422.0000",
+  "max_drawdown_trade_idx": 39,
+  "avg_win": "107.3542",
+  "avg_loss": "22.4500",
+  "exit_reason_breakdown": {
+    "stop": 35,
+    "timescan": 4,
+    "target": 1,
+    "opposite_signal": 7
+  }
+}

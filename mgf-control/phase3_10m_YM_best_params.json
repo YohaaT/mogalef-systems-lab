@@ -1,0 +1,8 @@
+{
+  "phase": 3,
+  "target_atr_multiplier": 7.0,
+  "timescan_bars": 20,
+  "robustness": 5.2053,
+  "phase_a_pf": 0.4593,
+  "phase_b_pf": 2.3905
+}

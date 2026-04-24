@@ -1,0 +1,10 @@
+{
+  "phase": 3,
+  "exits_best": {
+    "target_atr_multiplier": 10.0,
+    "timescan_bars": 30,
+    "phase3_robustness": 1.6552
+  },
+  "phase_a_pf": 0.8636,
+  "phase_b_pf": 1.4294
+}
