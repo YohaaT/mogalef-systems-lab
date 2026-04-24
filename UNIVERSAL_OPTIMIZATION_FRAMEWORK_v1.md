@@ -424,6 +424,80 @@ Patrón de nombre: `{ASSET}_phase_A_{TF}.csv`, `{ASSET}_phase_B_{TF}.csv`
 
 ---
 
+# XIII. OPTIMIZATION ID — ESTÁNDAR OBLIGATORIO
+
+Todo resultado de optimización (JSON + CSV) DEBE llevar un `optimization_id` único
+que permita trazar exactamente qué estrategia, activo, TF, fase y fecha lo generó.
+
+## Formato
+
+```
+OPT-{ESTRATEGIA}-{ASSET}-{TF}-{FASE}-{FECHA}
+```
+
+**Ejemplo:**
+```
+OPT-COMB002-ES-5m-PH1-20260424
+OPT-COMB002-ES-5m-PH2a-20260424
+OPT-COMB002-ES-5m-PH2b-20260424
+OPT-COMB002-ES-5m-PH3-20260424
+OPT-COMB002-ES-5m-PH4-20260424
+```
+
+## Componentes del ID
+
+| Campo | Valores válidos | Ejemplo |
+|-------|----------------|---------|
+| ESTRATEGIA | COMB001, COMB002, COMB003... | COMB002 |
+| ASSET | ES, MNQ, YM, FDAX | ES |
+| TF | 5m, 10m, 15m | 5m |
+| FASE | PH1, PH2a, PH2b, PH3, PH4 | PH2a |
+| FECHA | YYYYMMDD | 20260424 |
+
+## Implementación en Python
+
+```python
+from datetime import date
+
+def generate_opt_id(strategy: str, asset: str, timeframe: str, phase: str) -> str:
+    fecha = date.today().strftime("%Y%m%d")
+    return f"OPT-{strategy}-{asset}-{timeframe}-{phase}-{fecha}"
+
+# Ejemplo de uso en runner:
+opt_id = generate_opt_id("COMB002", asset, timeframe, "PH3")
+# → "OPT-COMB002-ES-5m-PH3-20260424"
+```
+
+## Dónde aparece
+
+**En JSON de best_params:**
+```json
+{
+  "optimization_id": "OPT-COMB002-ES-5m-PH3-20260424",
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "ES",
+  "timeframe": "5m",
+  "phase": "3",
+  ...
+}
+```
+
+**En CSV de log** — columna `optimization_id` en todas las filas.
+
+**En commit de GitHub:**
+```
+BO: Phase 3 DONE - ES 5m | OPT-COMB002-ES-5m-PH3-20260424 | Rob=X.XXXX PASS
+```
+
+## Regla
+
+- **Todo runner de Phase 3 en adelante DEBE generar y propagar el optimization_id.**
+- Los runners de Phase 1 y 2 ya ejecutados NO se retroactivan (quedaron sin ID).
+- Al consolidar en master_params.json, incluir los IDs de todas las fases que
+  contribuyeron a los parámetros finales.
+
+---
+
 **Fin del Framework v1**
 
 ---
