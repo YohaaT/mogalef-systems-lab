@@ -1,0 +1,15 @@
+{
+  "optimization_id": "OPT-COMB002-ES-5m-PH5-20260424",
+  "asset": "ES",
+  "timeframe": "5m",
+  "cross_winner": {
+    "robustness": 1.6252,
+    "phase_a_pf": 1.0325,
+    "phase_b_pf": 1.6779,
+    "phase_a_trades": 137,
+    "robustness_pass": true
+  },
+  "sequential_master": null,
+  "verdict": null,
+  "delta_robustness": null
+}
