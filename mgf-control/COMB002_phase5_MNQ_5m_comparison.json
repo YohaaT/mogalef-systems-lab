@@ -1,0 +1,15 @@
+{
+  "optimization_id": "OPT-COMB002-MNQ-5m-PH5-20260424",
+  "asset": "MNQ",
+  "timeframe": "5m",
+  "cross_winner": {
+    "robustness": 2.1111,
+    "phase_a_pf": 0.7021,
+    "phase_b_pf": 1.4822,
+    "phase_a_trades": 98,
+    "robustness_pass": true
+  },
+  "sequential_master": null,
+  "verdict": null,
+  "delta_robustness": null
+}
