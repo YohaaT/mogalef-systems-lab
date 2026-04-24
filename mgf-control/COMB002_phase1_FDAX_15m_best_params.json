@@ -1,0 +1,17 @@
+{
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "FDAX",
+  "timeframe": "15m",
+  "phase": 1,
+  "stpmt_smooth_h": 5,
+  "stpmt_smooth_b": 4,
+  "stpmt_distance_max_h": 75,
+  "stpmt_distance_max_l": 25,
+  "robustness": 2.5453,
+  "phase_a_pf": 1.0362,
+  "phase_b_pf": 2.6375,
+  "phase_a_trades": 102,
+  "phase_b_trades": 69,
+  "robustness_pass": true,
+  "min_trades_pass": true
+}
