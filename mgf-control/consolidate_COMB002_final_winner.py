@@ -26,6 +26,7 @@ import json
 import sys
 from datetime import date
 from pathlib import Path
+from typing import Tuple
 
 ASSETS     = ["ES", "MNQ", "YM", "FDAX"]
 TIMEFRAMES = ["5m", "10m", "15m"]
@@ -55,7 +56,7 @@ def load_json_safe(path: Path):
         return None
 
 
-def passes_filters(params: dict) -> tuple[bool, bool]:
+def passes_filters(params: dict) -> Tuple[bool, bool]:
     """Returns (rob_pass, trades_pass)."""
     if params is None:
         return (False, False)
@@ -69,7 +70,7 @@ def passes_filters(params: dict) -> tuple[bool, bool]:
     return (rob_pass, trades_pass)
 
 
-def decide_winner(seq: dict, cross: dict) -> tuple[str, str]:
+def decide_winner(seq: dict, cross: dict) -> Tuple[str, str]:
     """
     Decide ganador. Returns (winner: "sequential"|"cross"|"none", reason).
     """

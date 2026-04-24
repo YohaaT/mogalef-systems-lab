@@ -20,6 +20,7 @@ import json
 import sys
 from datetime import date
 from pathlib import Path
+from typing import List
 
 ASSETS     = ["ES", "MNQ", "YM", "FDAX"]
 TIMEFRAMES = ["5m", "10m", "15m"]
@@ -47,7 +48,7 @@ def status_icon(entry: dict) -> str:
     return "❌"
 
 
-def generate_summary_table(entries: dict) -> list[str]:
+def generate_summary_table(entries: dict) -> List[str]:
     lines = [
         "## Tabla resumen — ganadores por asset/timeframe",
         "",
@@ -73,7 +74,7 @@ def generate_summary_table(entries: dict) -> list[str]:
     return lines
 
 
-def generate_counts_section(entries: dict) -> list[str]:
+def generate_counts_section(entries: dict) -> List[str]:
     win_seq = win_crs = win_none = 0
     ok = deg = miss = 0
     pass_rob = pass_tr = 0
@@ -104,7 +105,7 @@ def generate_counts_section(entries: dict) -> list[str]:
     ]
 
 
-def generate_decisions_detail(entries: dict) -> list[str]:
+def generate_decisions_detail(entries: dict) -> List[str]:
     lines = ["## Detalle de decisión por combo", ""]
     for asset in ASSETS:
         for tf in TIMEFRAMES:
@@ -127,7 +128,7 @@ def generate_decisions_detail(entries: dict) -> list[str]:
     return lines
 
 
-def generate_params_section(entries: dict) -> list[str]:
+def generate_params_section(entries: dict) -> List[str]:
     """Tabla de parámetros finales por combo (listos para deploy)."""
     lines = [
         "## Parámetros finales por combo",
@@ -153,7 +154,7 @@ def generate_params_section(entries: dict) -> list[str]:
     return lines
 
 
-def generate_alerts_section(entries: dict) -> list[str]:
+def generate_alerts_section(entries: dict) -> List[str]:
     degraded = [(k, v) for k, v in entries.items() if v.get("status") == "DEGRADED"]
     missing  = [(k, v) for k, v in entries.items() if v.get("status") == "NO_PARAMS"]
 
@@ -179,7 +180,7 @@ def generate_alerts_section(entries: dict) -> list[str]:
     return lines
 
 
-def generate_recommendations(entries: dict) -> list[str]:
+def generate_recommendations(entries: dict) -> List[str]:
     ok_combos = [k for k, v in entries.items() if v.get("status") == "OK"]
     return [
         "## Recomendaciones operacionales",
