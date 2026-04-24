@@ -1,0 +1,17 @@
+{
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "YM",
+  "timeframe": "15m",
+  "phase": 1,
+  "stpmt_smooth_h": 5,
+  "stpmt_smooth_b": 1,
+  "stpmt_distance_max_h": 25,
+  "stpmt_distance_max_l": 25,
+  "robustness": 1.5583,
+  "phase_a_pf": 0.9892,
+  "phase_b_pf": 1.5414,
+  "phase_a_trades": 132,
+  "phase_b_trades": 105,
+  "robustness_pass": true,
+  "min_trades_pass": true
+}
