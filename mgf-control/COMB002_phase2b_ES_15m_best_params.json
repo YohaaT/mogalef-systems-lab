@@ -1,0 +1,28 @@
+{
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "ES",
+  "timeframe": "15m",
+  "phase": "2b",
+  "stpmt_smooth_h": 5,
+  "stpmt_smooth_b": 5,
+  "stpmt_distance_max_h": 75,
+  "stpmt_distance_max_l": 25,
+  "horaire_label": "Mogalef_V2_CET_19_21",
+  "horaire_allowed_hours_utc": [
+    19,
+    20,
+    21
+  ],
+  "volatility_profile_id": 1,
+  "volatility_label": "no_filter_0_500",
+  "volatility_atr_min": 0.0,
+  "volatility_atr_max": 500.0,
+  "robustness": 1.992,
+  "phase_a_pf": 0.721,
+  "phase_b_pf": 1.4363,
+  "phase_a_trades": 26,
+  "phase_b_trades": 22,
+  "robustness_pass": true,
+  "min_trades_pass": false,
+  "improvement_vs_baseline": 0.0
+}

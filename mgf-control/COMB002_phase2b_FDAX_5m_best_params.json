@@ -1,0 +1,28 @@
+{
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "FDAX",
+  "timeframe": "5m",
+  "phase": "2b",
+  "stpmt_smooth_h": 4,
+  "stpmt_smooth_b": 5,
+  "stpmt_distance_max_h": 75,
+  "stpmt_distance_max_l": 25,
+  "horaire_label": "Mogalef_V2_CEST_18_20",
+  "horaire_allowed_hours_utc": [
+    18,
+    19,
+    20
+  ],
+  "volatility_profile_id": 2,
+  "volatility_label": "min_floor_10_500",
+  "volatility_atr_min": 10.0,
+  "volatility_atr_max": 500.0,
+  "robustness": 2.5297,
+  "phase_a_pf": 0.7796,
+  "phase_b_pf": 1.9722,
+  "phase_a_trades": 18,
+  "phase_b_trades": 18,
+  "robustness_pass": true,
+  "min_trades_pass": false,
+  "improvement_vs_baseline": 0.9663
+}

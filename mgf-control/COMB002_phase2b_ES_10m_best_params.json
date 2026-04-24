@@ -1,0 +1,29 @@
+{
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "ES",
+  "timeframe": "10m",
+  "phase": "2b",
+  "stpmt_smooth_h": 1,
+  "stpmt_smooth_b": 5,
+  "stpmt_distance_max_h": 25,
+  "stpmt_distance_max_l": 25,
+  "horaire_label": "NY_morning_9_12",
+  "horaire_allowed_hours_utc": [
+    9,
+    10,
+    11,
+    12
+  ],
+  "volatility_profile_id": 1,
+  "volatility_label": "no_filter_0_500",
+  "volatility_atr_min": 0.0,
+  "volatility_atr_max": 500.0,
+  "robustness": 1.5339,
+  "phase_a_pf": 0.7842,
+  "phase_b_pf": 1.2029,
+  "phase_a_trades": 124,
+  "phase_b_trades": 56,
+  "robustness_pass": true,
+  "min_trades_pass": true,
+  "improvement_vs_baseline": 0.0
+}

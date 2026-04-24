@@ -1,0 +1,30 @@
+{
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "MNQ",
+  "timeframe": "10m",
+  "phase": "2b",
+  "stpmt_smooth_h": 5,
+  "stpmt_smooth_b": 2,
+  "stpmt_distance_max_h": 25,
+  "stpmt_distance_max_l": 25,
+  "horaire_label": "NY_afternoon_12_16",
+  "horaire_allowed_hours_utc": [
+    12,
+    13,
+    14,
+    15,
+    16
+  ],
+  "volatility_profile_id": 5,
+  "volatility_label": "selective_20_200",
+  "volatility_atr_min": 20.0,
+  "volatility_atr_max": 200.0,
+  "robustness": 1.6688,
+  "phase_a_pf": 1.0767,
+  "phase_b_pf": 1.7968,
+  "phase_a_trades": 85,
+  "phase_b_trades": 64,
+  "robustness_pass": true,
+  "min_trades_pass": true,
+  "improvement_vs_baseline": 0.3064
+}
