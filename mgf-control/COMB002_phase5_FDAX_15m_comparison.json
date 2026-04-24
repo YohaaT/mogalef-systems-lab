@@ -1,0 +1,15 @@
+{
+  "optimization_id": "OPT-COMB002-FDAX-15m-PH5-20260424",
+  "asset": "FDAX",
+  "timeframe": "15m",
+  "cross_winner": {
+    "robustness": 2.8201,
+    "phase_a_pf": 0.9865,
+    "phase_b_pf": 2.782,
+    "phase_a_trades": 102,
+    "robustness_pass": true
+  },
+  "sequential_master": null,
+  "verdict": null,
+  "delta_robustness": null
+}
