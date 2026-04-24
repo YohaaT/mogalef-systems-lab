@@ -1,0 +1,33 @@
+{
+  "optimization_id": "OPT-COMB002-YM-10m-PH3-20260424",
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "YM",
+  "timeframe": "10m",
+  "phase": "3",
+  "stpmt_smooth_h": 3,
+  "stpmt_smooth_b": 1,
+  "stpmt_distance_max_h": 75,
+  "stpmt_distance_max_l": 25,
+  "horaire_label": "US_regular_9_15",
+  "horaire_allowed_hours_utc": [
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "volatility_label": "min_floor_10_500",
+  "volatility_atr_min": 10.0,
+  "volatility_atr_max": 500.0,
+  "scalping_target_coef_volat": 5.0,
+  "timescan_bars": 18,
+  "robustness": 1.914,
+  "phase_a_pf": 0.7898,
+  "phase_b_pf": 1.5117,
+  "phase_a_trades": 216,
+  "phase_b_trades": 151,
+  "robustness_pass": true,
+  "min_trades_pass": true
+}
