@@ -1,0 +1,13 @@
+asset,timeframe,winner,reported_rob,reported_pf_a,reported_pf_b,reported_tr_a,reported_tr_b,sanity_pf_a,sanity_pf_b,sanity_tr_a,sanity_tr_b,sanity_rob,pf_a_drift,pf_b_drift,holdout_pf,holdout_wr,holdout_trades,holdout_equity,holdout_rob_vs_a,sanity_note,holdout_note,note
+ES,5m,,,,,,,,,,,,,,,,,,,,,incomplete
+ES,10m,,,,,,,,,,,,,,,,,,,,,incomplete
+ES,15m,,,,,,,,,,,,,,,,,,,,,incomplete
+MNQ,5m,,,,,,,,,,,,,,,,,,,,,incomplete
+MNQ,10m,sequential,1.8567,1.1024,2.0468,85,64,1.1024,2.0468,85,64,1.8567,0.0,0.0,,,,,,,missing_phase_C_csv,
+MNQ,15m,sequential,2.0844,0.9296,1.9378,91,69,0.9296,1.9378,91,69,2.0846,0.0,0.0,,,,,,,missing_phase_C_csv,
+YM,5m,,,,,,,,,,,,,,,,,,,,,incomplete
+YM,10m,sequential,2.0046,0.8073,1.6183,219,155,0.8073,1.6183,219,155,2.0046,0.0,0.0,,,,,,,missing_phase_C_csv,
+YM,15m,sequential,2.7084,0.7088,1.9196,81,69,0.7088,1.9196,81,69,2.7082,0.0,0.0,,,,,,,missing_phase_C_csv,
+FDAX,5m,,,,,,,,,,,,,,,,,,,,,incomplete
+FDAX,10m,sequential,3.7668,0.3412,1.2851,58,52,0.3412,1.2851,58,52,3.7664,0.0,0.0,,,,,,,missing_phase_C_csv,
+FDAX,15m,sequential,4.9831,0.6748,3.3625,57,31,0.6748,3.3625,57,31,4.983,0.0,0.0,,,,,,,missing_phase_C_csv,
