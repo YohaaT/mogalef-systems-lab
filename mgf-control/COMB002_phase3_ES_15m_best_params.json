@@ -1,0 +1,29 @@
+{
+  "optimization_id": "OPT-COMB002-ES-15m-PH3-20260424",
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "ES",
+  "timeframe": "15m",
+  "phase": "3",
+  "stpmt_smooth_h": 5,
+  "stpmt_smooth_b": 5,
+  "stpmt_distance_max_h": 75,
+  "stpmt_distance_max_l": 25,
+  "horaire_label": "Mogalef_V2_CET_19_21",
+  "horaire_allowed_hours_utc": [
+    19,
+    20,
+    21
+  ],
+  "volatility_label": "no_filter_0_500",
+  "volatility_atr_min": 0.0,
+  "volatility_atr_max": 500.0,
+  "scalping_target_coef_volat": 2.0,
+  "timescan_bars": 15,
+  "robustness": 2.9759,
+  "phase_a_pf": 0.7153,
+  "phase_b_pf": 2.1287,
+  "phase_a_trades": 26,
+  "phase_b_trades": 23,
+  "robustness_pass": true,
+  "min_trades_pass": false
+}

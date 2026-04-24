@@ -1,0 +1,33 @@
+{
+  "optimization_id": "OPT-COMB002-FDAX-10m-PH3-20260424",
+  "strategy": "COMB_002_IMPULSE",
+  "asset": "FDAX",
+  "timeframe": "10m",
+  "phase": "3",
+  "stpmt_smooth_h": 3,
+  "stpmt_smooth_b": 5,
+  "stpmt_distance_max_h": 25,
+  "stpmt_distance_max_l": 75,
+  "horaire_label": "US_regular_9_15",
+  "horaire_allowed_hours_utc": [
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "volatility_label": "selective_20_200",
+  "volatility_atr_min": 20.0,
+  "volatility_atr_max": 200.0,
+  "scalping_target_coef_volat": 5.0,
+  "timescan_bars": 10,
+  "robustness": 3.2506,
+  "phase_a_pf": 0.3745,
+  "phase_b_pf": 1.2173,
+  "phase_a_trades": 57,
+  "phase_b_trades": 52,
+  "robustness_pass": true,
+  "min_trades_pass": true
+}
