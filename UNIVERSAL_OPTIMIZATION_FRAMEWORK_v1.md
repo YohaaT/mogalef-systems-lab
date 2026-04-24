@@ -379,6 +379,51 @@ Cuando se pida: **"Optimiza COMB_002"**
 
 ---
 
+# XII. REGLA OBLIGATORIA: POOL + VECTORIZADO
+
+**Todo runner de optimización DEBE usar `multiprocessing.Pool`.**  
+Los runners secuenciales están PROHIBIDOS en producción.
+
+## Estándar obligatorio:
+
+```python
+from multiprocessing import Pool, cpu_count
+
+def run_single_combo(args):
+    """Worker function — evalúa 1 combo (Phase A + Phase B)."""
+    params, phase_a_rows, phase_b_rows = args
+    result_a = Comb00xStrategy(params).run(phase_a_rows)
+    result_b = Comb00xStrategy(params).run(phase_b_rows)
+    robustness = result_b.profit_factor / result_a.profit_factor if result_a.profit_factor > 0 else 0.0
+    return {...}
+
+# En main():
+all_combos = [(params, phase_a, phase_b) for params in grid]
+with Pool(processes=cpu_count()) as pool:
+    results = list(pool.imap_unordered(run_single_combo, all_combos, chunksize=5))
+```
+
+## Velocidad con Pool vs secuencial:
+| Máquina | Cores | Sin Pool | Con Pool | Ratio |
+|---------|-------|----------|----------|-------|
+| BO      | 4     | ~60 min/activo | ~15 min/activo | 4× |
+| TANK    | 8     | ~60 min/activo | ~8 min/activo  | 8× |
+
+## Referencia de implementación:
+- ✅ `mgf-control/phase1_COMB002_pool_runner.py` — MODELO A SEGUIR
+- ❌ `mgf-control/phase1_COMB002_multiasset_runner.py` — secuencial, no usar en producción
+
+## Datos en cada máquina:
+Cada máquina (BO y TANK) DEBE tener todos los data files (Phase A/B CSVs) para todos
+los activos y timeframes. Los CSVs NO van en GitHub (demasiado grandes) pero deben
+estar presentes en `~/mogalef-systems-lab/mgf-control/` en ambas máquinas.
+
+Assets requeridos: ES, MNQ, YM, FDAX  
+Timeframes requeridos: 5m, 10m, 15m  
+Patrón de nombre: `{ASSET}_phase_A_{TF}.csv`, `{ASSET}_phase_B_{TF}.csv`
+
+---
+
 **Fin del Framework v1**
 
 ---
