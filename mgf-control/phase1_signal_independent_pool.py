@@ -52,8 +52,8 @@ def run_single_combo_worker(combo: Dict[str, Any]) -> Dict[str, Any]:
             params = Comb001TrendParams(
                 stpmt_smooth_h=int(combo["smooth_h"]),
                 stpmt_smooth_b=int(combo["smooth_b"]),
-                stpmt_dist_max_h=int(combo.get("dist_max_h", 200)),
-                stpmt_dist_max_l=int(combo.get("dist_max_l", 200)),
+                stpmt_distance_max_h=int(combo.get("dist_max_h", 200)),
+                stpmt_distance_max_l=int(combo.get("dist_max_l", 200)),
                 horaire_allowed_hours_utc=list(range(24)),
                 trend_enforce_date_kill_switch=False,
             )
@@ -62,8 +62,8 @@ def run_single_combo_worker(combo: Dict[str, Any]) -> Dict[str, Any]:
             params = Comb002ImpulseV2Params(
                 stpmt_smooth_h=int(combo["smooth_h"]),
                 stpmt_smooth_b=int(combo["smooth_b"]),
-                stpmt_dist_max_h=int(combo.get("dist_max_h", 200)),
-                stpmt_dist_max_l=int(combo.get("dist_max_l", 200)),
+                stpmt_distance_max_h=int(combo.get("dist_max_h", 200)),
+                stpmt_distance_max_l=int(combo.get("dist_max_l", 200)),
                 horaire_allowed_hours_utc=list(range(24)),
                 allowed_weekdays=list(range(7)),
             )
