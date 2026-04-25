@@ -47,6 +47,7 @@ def init_worker(data: List[Dict[str, str]], comb: str) -> None:
 
 def run_single_combo_worker(combo: Dict[str, Any]) -> Dict[str, Any]:
     """Worker function for Pool — runs ONE combo with global data."""
+    import sys
     try:
         if _GLOBAL_COMB == "001":
             params = Comb001TrendParams(
@@ -79,7 +80,9 @@ def run_single_combo_worker(combo: Dict[str, Any]) -> Dict[str, Any]:
             "max_dd": result.max_drawdown,
         }
     except Exception as e:
-        return {**combo, "error": str(e)}
+        error_msg = f"{type(e).__name__}: {str(e)}"
+        print(f"[ERROR Worker] Combo {combo}: {error_msg}", file=sys.stderr, flush=True)
+        return {**combo, "error": error_msg}
 
 
 def main() -> int:
@@ -133,9 +136,14 @@ def main() -> int:
     elapsed = time.time() - t0
 
     results_ok = [r for r in results if "error" not in r]
+    results_error = [r for r in results if "error" in r]
     results_ok.sort(key=lambda x: x["pf"], reverse=True)
 
     print(f"\n[phase1-pool] {len(results_ok)}/{len(results)} combos passed")
+    if results_error and len(results_error) <= 5:
+        print(f"[phase1-pool] Sample errors (first 5):")
+        for r in results_error[:5]:
+            print(f"  smooth=({r.get('smooth_h', '?')},{r.get('smooth_b', '?')}) error={r['error']}")
     print(f"[phase1-pool] Top-5 by PF:")
     for i, r in enumerate(results_ok[:5], 1):
         print(f"  {i}. smooth=({r['smooth_h']},{r['smooth_b']}) dist=({r.get('dist_max_h', 200)},{r.get('dist_max_l', 200)}) PF={r['pf']:.3f} trades={r['trades']}")
