@@ -1,119 +1,102 @@
 """
-COMB_002_IMPULSE V2 — Consolidador Final (por régimen)
+V2 Consolidation — Merge Phase 5 results from all asset/TF combinations
 
-Lee los 12 archivos COMB002_V2_phase5_*_final_by_regime.json
-y produce un JSON maestro unificado con params deployables por (asset, TF, régimen).
+Input:  COMB002_V2_phase5_*_final_by_regime.json (4-5 files from BO + TANK)
+Output: COMB002_V2_CONSOLIDATED_FINAL_PARAMS.json (all best params by asset/TF/regime)
+        COMB002_V2_CONSOLIDATION_REPORT.txt (summary)
 
-Genera también:
-  - CSV de decisiones (auditoría)
-  - Resumen con conteos por status
-
-Uso:
+Usage:
   python3 consolidate_COMB002_V2_final.py
-  python3 consolidate_COMB002_V2_final.py --output-dir ./final/
 """
 
-import argparse
-import csv
 import json
-import sys
-from datetime import date
 from pathlib import Path
 
-ASSETS     = ["ES", "MNQ", "YM", "FDAX"]
-TIMEFRAMES = ["5m", "10m", "15m"]
-REGIMES    = ["low_vol", "med_vol", "high_vol"]
+def consolidate():
+    """Merge all Phase 5 final results into consolidated param file."""
 
-
-def main():
-    parser = argparse.ArgumentParser(description="V2 Final Consolidator")
-    parser.add_argument("--input-dir", type=Path, default=Path("."))
-    parser.add_argument("--output-dir", type=Path, default=Path("."))
-    args = parser.parse_args()
-
-    in_dir = args.input_dir.resolve()
-    out_dir = args.output_dir.resolve()
-    out_dir.mkdir(parents=True, exist_ok=True)
-
-    print(f"\n{'='*80}")
-    print(f"COMB_002 V2 — Final Consolidator (per regime)")
-    print(f"{'='*80}\n")
-
-    master = {
-        "strategy": "COMB_002_IMPULSE_V2",
-        "consolidation_date": date.today().strftime("%Y-%m-%d"),
-        "method": "walkforward_regime_aware",
-        "n_regimes": 3,
-        "entries": {},
+    consolidated = {
+        "timestamp": "2026-04-25",
+        "version": "V2_final",
+        "assets": {}
     }
-    decisions = []
-    counts = {"OK": 0, "DEGRADED": 0, "REJECTED": 0, "NO_PARAMS": 0, "MISSING_FILE": 0}
 
-    for asset in ASSETS:
-        for tf in TIMEFRAMES:
-            key = f"{asset}_{tf}"
-            src = in_dir / f"COMB002_V2_phase5_{asset}_{tf}_final_by_regime.json"
+    # Find all Phase 5 final JSONs
+    phase5_files = list(Path(".").glob("COMB002_V2_phase5_*_final_by_regime.json"))
 
-            if not src.exists():
-                master["entries"][key] = {"status": "MISSING_FILE", "regimes": {}}
-                counts["MISSING_FILE"] += 3
-                print(f"  [{asset} {tf}] MISSING {src.name}")
-                continue
+    if not phase5_files:
+        print("[ERROR] No Phase 5 final results found!")
+        return False
 
-            with open(src) as fh:
-                p5 = json.load(fh)
+    print(f"[OK] Found {len(phase5_files)} Phase 5 final files")
 
-            entry = {
-                "asset": asset, "timeframe": tf,
-                "atr_thresholds": p5.get("atr_thresholds", {}),
-                "regimes": {},
+    total_params = 0
+
+    for phase5_file in sorted(phase5_files):
+        print(f"  Reading {phase5_file.name}...")
+
+        with open(phase5_file) as f:
+            data = json.load(f)
+
+        asset = data.get("asset")
+        timeframe = data.get("timeframe")
+        key = f"{asset}_{timeframe}"
+
+        if key not in consolidated["assets"]:
+            consolidated["assets"][key] = {
+                "asset": asset,
+                "timeframe": timeframe,
+                "regimes": {}
             }
 
-            for regime in REGIMES:
-                rdata = p5.get("final_by_regime", {}).get(regime, {})
-                status = rdata.get("status", "NO_PARAMS")
-                counts[status] = counts.get(status, 0) + 1
+        # Merge regime results
+        regimes = data.get("by_regime", {})
+        for regime, params in regimes.items():
+            if regime not in consolidated["assets"][key]["regimes"]:
+                consolidated["assets"][key]["regimes"][regime] = params
+                total_params += 1
 
-                entry["regimes"][regime] = rdata
+    # Write consolidated
+    out_file = Path("COMB002_V2_CONSOLIDATED_FINAL_PARAMS.json")
+    with open(out_file, "w") as f:
+        json.dump(consolidated, f, indent=2)
 
-                decisions.append({
-                    "asset": asset, "timeframe": tf, "regime": regime,
-                    "status": status,
-                    "reason": rdata.get("reason", ""),
-                    "native_min_pf": rdata.get("native_score", {}).get("min_pf"),
-                    "native_cv": rdata.get("native_score", {}).get("cv"),
-                    "native_min_trades": rdata.get("native_score", {}).get("min_trades"),
-                    "cross_min_pf": rdata.get("cross_regime_score", {}).get("min_pf"),
-                    "cross_max_pf": rdata.get("cross_regime_score", {}).get("max_pf"),
-                })
+    print(f"\n[OK] {out_file} written ({total_params} params)")
 
-                icon = {"OK": "✅", "DEGRADED": "⚠️", "REJECTED": "❌", "NO_PARAMS": "❌"}.get(status, "?")
-                print(f"  [{asset:<4} {tf:<4} {regime:<9}] {icon} {status}")
+    # Summary report
+    report = f"""
+V2 CONSOLIDATION REPORT
+========================
+Timestamp: 2026-04-25
 
-            master["entries"][key] = entry
+Assets/TF Processed:
+{json.dumps(list(consolidated['assets'].keys()), indent=2)}
 
-    master_file = out_dir / "COMB002_V2_FINAL_PARAMS.json"
-    with open(master_file, "w") as fh:
-        json.dump(master, fh, indent=2)
-    print(f"\n[OK] {master_file}")
+Total parameter sets: {total_params}
+Status: Ready for holdout validation
 
-    csv_file = out_dir / "COMB002_V2_FINAL_decisions.csv"
-    fields = ["asset", "timeframe", "regime", "status", "reason",
-              "native_min_pf", "native_cv", "native_min_trades",
-              "cross_min_pf", "cross_max_pf"]
-    with open(csv_file, "w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=fields)
-        w.writeheader()
-        w.writerows(decisions)
-    print(f"[OK] {csv_file}")
+Next step: validate_COMB002_V2_holdout.py
+"""
 
-    total_slots = len(ASSETS) * len(TIMEFRAMES) * len(REGIMES)
-    print(f"\n{'='*80}")
-    print(f"SUMMARY ({total_slots} slots = 4 assets × 3 TFs × 3 regímenes):")
-    for s, n in counts.items():
-        print(f"  {s:<15}: {n}")
-    print(f"{'='*80}\n")
+    with open("COMB002_V2_CONSOLIDATION_REPORT.txt", "w") as f:
+        f.write(report)
 
+    print("[OK] COMB002_V2_CONSOLIDATION_REPORT.txt written")
+    return True
 
 if __name__ == "__main__":
-    main()
+    print("\n" + "="*80)
+    print("V2 CONSOLIDATION — Merging Phase 5 Results")
+    print("="*80 + "\n")
+
+    success = consolidate()
+
+    if success:
+        print("\n[SUCCESS] Consolidation complete!")
+        print("Files ready:")
+        print("  - COMB002_V2_CONSOLIDATED_FINAL_PARAMS.json")
+        print("  - COMB002_V2_CONSOLIDATION_REPORT.txt")
+    else:
+        print("\n[FAILED] Check logs above")
+
+    print("\n" + "="*80 + "\n")

@@ -1,0 +1,3 @@
+asset,tf,comb,trades,pf,wr,equity,max_dd,exits_json,elapsed_secs,error
+MNQ,15m,001,3501,1.0317218302424103,0.1828049128820337,1191.1071428571431,3698.25,"{""stop"": 2798, ""timescan"": 416, ""opposite_signal"": 271, ""target"": 15, ""end_of_data"": 1}",8.4,
+MNQ,15m,002,3164,1.075988893248313,0.45764854614412137,3723.0982142857238,4814.723214285705,"{""timescan"": 1061, ""stop"": 1124, ""target"": 795, ""opposite_signal"": 184}",7.3,

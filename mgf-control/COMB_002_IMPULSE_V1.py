@@ -153,7 +153,8 @@ class Comb002ImpulseStrategy:
         closes = []
 
         for row in rows:
-            timestamps.append(row["timestamp_utc"])
+            ts = row.get("timestamp_utc") or row.get("timestamp")
+            timestamps.append(ts)
             opens.append(float(row["open"]))
             highs.append(float(row["high"]))
             lows.append(float(row["low"]))
@@ -457,11 +458,14 @@ class Comb002ImpulseStrategy:
 
 
 def load_ohlc_csv(filepath: str) -> List[Dict[str, str]]:
-    """Load OHLC data from CSV."""
+    """Load OHLC data from CSV. Renames 'timestamp' -> 'timestamp_utc' for compatibility."""
     rows = []
     with open(filepath, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
+            # Rename 'timestamp' to 'timestamp_utc' if needed
+            if 'timestamp' in row and 'timestamp_utc' not in row:
+                row['timestamp_utc'] = row.pop('timestamp')
             rows.append(row)
     return rows
 

@@ -20,6 +20,34 @@ Archivos clave para COMB_002_IMPULSE:
 
 ---
 
+# NOTA OPERACIONAL — 2026-04-24
+
+## Paralelismo en BO (4 cores): REGLA OBLIGATORIA
+
+**NUNCA lanzar más de 4 workers totales simultáneos en BO.**
+
+Lección aprendida (2026-04-24): Se lanzaron 12 procesos Phase 5 con `--workers 4` cada uno
+→ 48 workers compitiendo por 4 cores → load average 48 → velocidad real 8% → estimado 10-12h.
+
+**Solución correcta para BO:**
+```bash
+# Opción A: Todos en paralelo con 1 worker cada uno (recomendado para Phase 5)
+python3 phase5_COMB002_cross_validation_pool_runner.py --asset ES --timeframe 5m --workers 1
+
+# Opción B: Máximo 1 proceso a la vez con todos los cores
+python3 phase5_COMB002_cross_validation_pool_runner.py --asset ES --timeframe 5m --workers 4
+```
+
+| Configuración | Workers totales | Load | Tiempo estimado |
+|---|---|---|---|
+| 12 proc × 4w (MAL) | 48 | ~48 | ~10-12h |
+| 12 proc × 1w (BIEN) | 12 | ~3 | ~2h |
+| 1 proc × 4w (BIEN) | 4 | ~1 | ~2h total secuencial |
+
+**TANK (8 cores):** puede usar `--workers 8` en 1 proceso, o `--workers 2` en hasta 4 procesos paralelos.
+
+---
+
 # SSH CREDENTIALS & REMOTE EXECUTION
 
 ## SSH Configuration
