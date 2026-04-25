@@ -14,6 +14,7 @@ Uso:
 import argparse
 import csv
 import json
+import subprocess
 import sys
 from datetime import date
 from itertools import product
@@ -246,6 +247,19 @@ def main():
     print(f"  phase_a_pf         = {best['phase_a_pf']:.4f}")
     print(f"  phase_b_pf         = {best['phase_b_pf']:.4f}")
     print(f"{'='*80}\n")
+
+    try:
+        repo_root = Path(__file__).resolve().parents[1]
+        subprocess.run(["git", "add", f"mgf-control/{best_file}"],
+            cwd=repo_root, check=True)
+        msg = (f"PH4 DONE - {asset} {timeframe} | {opt_id} | "
+               f"Rob={best['robustness']:.4f} {'PASS' if best['robustness'] >= ROBUSTNESS_THRESHOLD else 'FAIL'} | "
+               f"q={best['superstop_quality']} coef={best['superstop_coef']}")
+        subprocess.run(["git", "commit", "-m", msg], cwd=repo_root, check=True)
+        subprocess.run(["git", "push"], cwd=repo_root, check=True)
+        print(f"[GIT] Pushed: {msg}")
+    except subprocess.CalledProcessError as e:
+        print(f"[GIT WARNING] Push failed: {e} — results saved locally")
 
 
 if __name__ == "__main__":
