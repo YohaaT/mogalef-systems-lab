@@ -949,3 +949,37 @@ Next recommended action: `Fase 2` para `EL_NeutralZone_B_V2`.
   - existe gate real para cualquier avance nuevo fuera de ese cierre.
 - El run se detiene aquí tras persistir estado coherente.
 - Notificación pendiente: Telegram al usuario indicando que no hay unidad técnica válida adicional bajo el standing order actual y que cualquier avance nuevo requiere aprobación explícita para Fase 4 o trabajo metodológico asociado.
+
+## 2026-04-27 00:00 Madrid
+- Session handoff for TANK.
+- Source of truth for COMB002 contract-active runpack:
+  - `contract_rollover_lab/comb002_certified_contract_runpack`
+- Contract logic and plan status:
+  - Phase 0 completed on contract-active data with rollover `friday_to_expiry_week_monday`.
+  - Phase 1 completed on contract-active data with Madrid-aware context filtering.
+  - Phase 2a current behavior: optimize signal only, using the best Phase 1 context per dataset.
+  - Phase 2a does not yet sweep all Phase 1 contexts with `PF > 1.0`.
+- Phase 1 winners to carry forward:
+  - `ES 15m`: `asiatico + no_mardi`, PF `1.291687`, DD `75.866071`
+  - `ES 5m`: `asiatico + no_mardi`, PF `1.223796`, DD `113.607143`
+  - `ES 10m`: `asiatico + no_lundi_mardi`, PF `1.088302`, DD `145.410714`
+  - `FDAX 15m`: `asiatico + no_lundi`, PF `1.257061`, DD `333.071429`
+  - `FDAX 5m`: `asiatico + no_lundi`, PF `1.117723`, DD `394.607143`
+  - `NQ 5m`: `asiatico + no_lundi_mardi`, PF `1.154113`, DD `484.964286`
+  - `NQ 15m`: `madrid_1400_2145 + no_lundi`, PF `1.396342`, DD `840.500000`
+  - `FDAX 10m`: `asiatico + no_mardi`, PF `1.066708`, DD `662.428571`
+  - `NQ 10m`: `matutino + no_lundi`, PF `1.058328`, DD `1675.267857`
+- Mogalef notes to preserve:
+  - COMB_002 / impulsion is documented around `YM 5m`.
+  - Time windows: `9h-17h` and `20h-22h` in Madrid/CET terms.
+  - Daily filter: `no martes`.
+  - No MTF trend filter for COMB_002.
+  - No volatility filter for COMB_002.
+  - Keep `SuperStop Long` and `Intelligent Scalping Target`.
+- Tier reference file created for later C# port:
+  - `mgf-control/COMB002_phase1_tier_parameters.md`
+- Next valid continuation on TANK:
+  - monitor the active BO/TANK runs,
+  - keep vectorized + pool execution where it reduces wall time,
+  - preserve contract-active roll logic and Madrid timezone conversion,
+  - avoid re-optimizing already certified indicator math during the C# port.
