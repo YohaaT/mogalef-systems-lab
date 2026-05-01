@@ -41,9 +41,12 @@ def load_phase2a_top(phase2a_dir: Path, asset: str, timeframe: str, stem: str) -
 
 def run_one(job: dict) -> dict:
     args = SimpleNamespace(**job["args"])
+    args.data_dir = Path(args.data_dir)
+    args.phase2a_dir = Path(args.phase2a_dir)
+    args.out_dir = Path(args.out_dir)
     asset = job["asset"]
     timeframe = job["timeframe"]
-    out_dir = Path(args.out_dir) / asset / timeframe
+    out_dir = args.out_dir / asset / timeframe
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = f"COMB002_contract_{asset}_{timeframe}_{args.roll_rule}_label_{args.bar_label}"
 
@@ -60,7 +63,7 @@ def run_one(job: dict) -> dict:
     train = dataset.subset(train_contracts)
     holdout = dataset.subset(holdout_contracts)
 
-    p2a_top = load_phase2a_top(Path(args.phase2a_dir), asset, timeframe, stem)
+    p2a_top = load_phase2a_top(args.phase2a_dir, asset, timeframe, stem)
     p2b, thresholds = phase2b(train, out_dir, stem, p2a_top)
     p3 = phase3(train, out_dir, stem, p2b, thresholds)
     p4 = phase4(train, out_dir, stem, p3, thresholds)
