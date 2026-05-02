@@ -142,7 +142,23 @@ def main() -> int:
     with concurrent.futures.ProcessPoolExecutor(max_workers=args.workers) as pool:
         future_to_job = {pool.submit(run_one, job): job for job in jobs}
         for future in concurrent.futures.as_completed(future_to_job):
-            result = future.result()
+            job = future_to_job[future]
+            try:
+                result = future.result()
+            except FileNotFoundError as exc:
+                result = {
+                    "asset": job["asset"],
+                    "timeframe": job["timeframe"],
+                    "status": "SKIP_MISSING_PHASE2A",
+                    "reason": str(exc),
+                }
+            except Exception as exc:
+                result = {
+                    "asset": job["asset"],
+                    "timeframe": job["timeframe"],
+                    "status": "FAIL",
+                    "reason": repr(exc),
+                }
             print(
                 f"{result['asset']:<5} {result['timeframe']:<4} "
                 f"{result['status']}",
