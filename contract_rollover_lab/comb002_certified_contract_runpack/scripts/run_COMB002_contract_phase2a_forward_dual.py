@@ -195,13 +195,17 @@ def run_one(job: dict) -> dict:
     args.out_dir = Path(args.out_dir)
     asset = job["asset"]
     timeframe = job["timeframe"]
+    lanes = set(job["lanes"])
+    independent_timeframes = set(job["independent_timeframes"])
+    run_accumulated = "accumulated" in lanes
+    run_independent = "independent" in lanes and timeframe in independent_timeframes
     out_dir = args.out_dir / asset / timeframe
     out_dir.mkdir(parents=True, exist_ok=True)
     stem = f"COMB002_contract_{asset}_{timeframe}_{args.roll_rule}_label_{args.bar_label}"
 
     accumulated_done = out_dir / "accumulated" / f"{stem}_phase5_accumulated_validation.json"
-    independent_done = out_dir / "independent_from_phase2a" / f"{stem}_phase4_from_phase2a_top_params.json"
-    if accumulated_done.exists() and independent_done.exists():
+    independent_done = out_dir / "independent_from_phase2a" / f"{stem}_phase4_from_phase2a_stops_top_params.json"
+    if (not run_accumulated or accumulated_done.exists()) and (not run_independent or independent_done.exists()):
         return {"asset": asset, "timeframe": timeframe, "status": "SKIP_DONE"}
 
     dataset, manifest, dataset_path = build_dataset(args, asset, timeframe, out_dir)
@@ -233,22 +237,33 @@ def run_one(job: dict) -> dict:
         },
     )
 
-    p2b_rows = grid_atr(phase2a_top, train)
-    p2b_top = write_grid(acc_dir, stem, "phase2b_accumulated_atr", p2b_rows)
-    p3_rows = grid_exits(p2b_top, train)
-    p3_top = write_grid(acc_dir, stem, "phase3_accumulated_exits", p3_rows)
-    p4_rows = grid_stops(p3_top, train)
-    p4_top = write_grid(acc_dir, stem, "phase4_accumulated_stops", p4_rows)
-    final = validate_final(acc_dir, stem, p4_top, train, holdout, dataset)
+    final = {"status": "SKIPPED"}
+    p2b_top: list[dict] = []
+    p3_top: list[dict] = []
+    p4_top: list[dict] = []
+    if run_accumulated:
+        p2b_rows = grid_atr(phase2a_top, train)
+        p2b_top = write_grid(acc_dir, stem, "phase2b_accumulated_atr", p2b_rows)
+        p3_rows = grid_exits(p2b_top, train)
+        p3_top = write_grid(acc_dir, stem, "phase3_accumulated_exits", p3_rows)
+        p4_rows = grid_stops(p3_top, train)
+        p4_top = write_grid(acc_dir, stem, "phase4_accumulated_stops", p4_rows)
+        final = validate_final(acc_dir, stem, p4_top, train, holdout, dataset)
 
-    ind_p2b_top = write_grid(independent_dir, stem, "phase2b_from_phase2a_atr", grid_atr(phase2a_top, train))
-    ind_p3_top = write_grid(independent_dir, stem, "phase3_from_phase2a_exits", grid_exits(phase2a_top, train))
-    ind_p4_top = write_grid(independent_dir, stem, "phase4_from_phase2a_stops", grid_stops(phase2a_top, train))
+    ind_p2b_top: list[dict] = []
+    ind_p3_top: list[dict] = []
+    ind_p4_top: list[dict] = []
+    if run_independent:
+        ind_p2b_top = write_grid(independent_dir, stem, "phase2b_from_phase2a_atr", grid_atr(phase2a_top, train))
+        ind_p3_top = write_grid(independent_dir, stem, "phase3_from_phase2a_exits", grid_exits(phase2a_top, train))
+        ind_p4_top = write_grid(independent_dir, stem, "phase4_from_phase2a_stops", grid_stops(phase2a_top, train))
 
     return {
         "asset": asset,
         "timeframe": timeframe,
         "status": "OK",
+        "lanes": sorted(lanes),
+        "independent_enabled": run_independent,
         "accumulated_status": final.get("status"),
         "accumulated_phase2b_passed": len(p2b_top),
         "accumulated_phase3_passed": len(p3_top),
@@ -273,14 +288,24 @@ def main() -> int:
     parser.add_argument("--no-saturday", action="store_true", default=True)
     parser.add_argument("--allow-saturday", action="store_false", dest="no_saturday")
     parser.add_argument("--workers", type=int, default=3)
+    parser.add_argument("--lanes", default="accumulated,independent")
+    parser.add_argument("--independent-timeframes", default="")
     args = parser.parse_args()
 
     assets = [item.strip() for item in args.assets.split(",") if item.strip()]
     timeframes = [item.strip() for item in args.timeframes.split(",") if item.strip()]
+    lanes = [item.strip() for item in args.lanes.split(",") if item.strip()]
+    independent_timeframes = [
+        item.strip()
+        for item in (args.independent_timeframes or args.timeframes).split(",")
+        if item.strip()
+    ]
     jobs = [
         {
             "asset": asset,
             "timeframe": timeframe,
+            "lanes": lanes,
+            "independent_timeframes": independent_timeframes,
             "args": {
                 "data_dir": str(args.data_dir),
                 "phase2a_dir": str(args.phase2a_dir),
@@ -310,6 +335,8 @@ def main() -> int:
             print(f"{result['asset']:<5} {result['timeframe']:<4} {result['status']}", flush=True)
             results.append(result)
 
+    done = [row for row in results if row.get("status") in {"OK", "SKIP_DONE"}]
+    missing_or_blocked = [row for row in results if row.get("status") not in {"OK", "SKIP_DONE"}]
     args.out_dir.mkdir(parents=True, exist_ok=True)
     write_json(
         args.out_dir / "contract_phase2a_forward_dual_summary.json",
@@ -319,6 +346,11 @@ def main() -> int:
             "workers": args.workers,
             "assets": assets,
             "timeframes": timeframes,
+            "lanes": lanes,
+            "independent_timeframes": independent_timeframes,
+            "done_count": len(done),
+            "missing_or_blocked_count": len(missing_or_blocked),
+            "missing_or_blocked": missing_or_blocked,
             "results": results,
         },
     )
