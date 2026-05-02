@@ -19,7 +19,7 @@ PID_FILE="$LOG_DIR/contract_phase2a_forward_dual_${HOST}.pid"
 mkdir -p "$LOG_DIR" "$OUT_DIR"
 
 if [[ "$GIT_SYNC" == "1" ]] && git -C "$ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  git -C "$ROOT" pull --ff-only >/dev/null 2>&1 || true
+  git -C "$ROOT" pull --ff-only origin main >/dev/null 2>&1 || true
 fi
 
 complete=1
