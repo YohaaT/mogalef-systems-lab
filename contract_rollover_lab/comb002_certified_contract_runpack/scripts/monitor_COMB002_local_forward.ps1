@@ -12,11 +12,15 @@ $OutDir = Join-Path $Root "outputs\contract_phase2a_forward_dual"
 $AnnualOut = Join-Path $Root "outputs\annual_pf\COMB002_forward_best_candidates_annual_pf.csv"
 $Runner = Join-Path $Root "scripts\run_COMB002_contract_phase2a_forward_dual.py"
 $AnnualRunner = Join-Path $Root "scripts\annual_pf_from_forward_results.py"
+$FinalizeRunner = Join-Path $Root "scripts\finalize_COMB002_15m_independent_phase5_7.py"
 $RunLog = Join-Path $LogDir "contract_phase3_4_local_all_independent_from_phase1.log"
 $RunErr = Join-Path $LogDir "contract_phase3_4_local_all_independent_from_phase1.err.log"
+$FinalizeLog = Join-Path $LogDir "finalize_COMB002_15m_independent_phase5_7.log"
+$FinalizeErr = Join-Path $LogDir "finalize_COMB002_15m_independent_phase5_7.err.log"
 $AnnualLog = Join-Path $LogDir "annual_pf_local.log"
 $AnnualErr = Join-Path $LogDir "annual_pf_local.err.log"
 $PidFile = Join-Path $LogDir "contract_phase3_4_local_all_independent_from_phase1.pid"
+$FinalizeOut = Join-Path $Root "outputs\independent_phase5_7\COMB002_15m_independent_from_phase1_phase5_7_summary.json"
 
 New-Item -ItemType Directory -Force -Path $LogDir, $OutDir | Out-Null
 
@@ -33,6 +37,14 @@ function Get-AnnualPfProcess {
         Where-Object {
             $_.Name -match "^(py|python)\.exe$" -and
             $_.CommandLine -like "*annual_pf_from_forward_results.py*"
+        }
+}
+
+function Get-FinalizeProcess {
+    Get-CimInstance Win32_Process |
+        Where-Object {
+            $_.Name -match "^(py|python)\.exe$" -and
+            $_.CommandLine -like "*finalize_COMB002_15m_independent_phase5_7.py*"
         }
 }
 
@@ -81,6 +93,13 @@ if (-not (Test-IndependentPhase4Complete)) {
     $proc = Start-Process -FilePath "py" -ArgumentList $args -WorkingDirectory $Root -RedirectStandardOutput $RunLog -RedirectStandardError $RunErr -WindowStyle Hidden -PassThru
     $proc.Id | Set-Content -Path $PidFile
     "$(Get-Date -Format s) started runner pid=$($proc.Id)" | Add-Content -Path $RunLog
+    exit 0
+}
+
+if ((-not (Test-Path $FinalizeOut)) -and -not (Get-FinalizeProcess)) {
+    $args = @("-3", "`"$FinalizeRunner`"", "--timeframe", "15m", "--assets", $Assets)
+    $proc = Start-Process -FilePath "py" -ArgumentList $args -WorkingDirectory $Root -RedirectStandardOutput $FinalizeLog -RedirectStandardError $FinalizeErr -WindowStyle Hidden -PassThru
+    "$(Get-Date -Format s) started finalize phase5/6/7 pid=$($proc.Id)" | Add-Content -Path $FinalizeLog
     exit 0
 }
 

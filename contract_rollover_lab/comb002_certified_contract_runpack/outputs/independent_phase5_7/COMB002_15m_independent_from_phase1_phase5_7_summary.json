@@ -1,0 +1,2704 @@
+{
+  "phase": "independent_phase5_6_7",
+  "results": [
+    {
+      "asset": "ES",
+      "timeframe": "15m",
+      "lane": "independent_from_phase1",
+      "source_phase": "phase2b",
+      "source_file": "outputs\\contract_phase2a_forward_dual\\ES\\15m\\independent_from_phase2a\\COMB002_contract_ES_15m_friday_to_expiry_week_monday_label_left_phase2b_from_phase1_atr_results.csv",
+      "train_contracts": [
+        "03-17",
+        "06-17",
+        "09-17",
+        "12-17",
+        "03-18",
+        "06-18",
+        "09-18",
+        "12-18",
+        "03-19",
+        "06-19",
+        "09-19",
+        "12-19",
+        "03-20",
+        "06-20",
+        "09-20",
+        "12-20",
+        "03-21",
+        "06-21",
+        "09-21",
+        "12-21",
+        "03-22",
+        "06-22",
+        "09-22",
+        "12-22",
+        "03-23",
+        "06-23",
+        "09-23",
+        "12-23"
+      ],
+      "holdout_contracts": [
+        "03-24",
+        "06-24",
+        "09-24",
+        "12-24",
+        "03-25",
+        "06-25",
+        "09-25",
+        "12-25"
+      ],
+      "candidate": {
+        "asset": "ES",
+        "timeframe": "15m",
+        "smooth_h": "2",
+        "smooth_b": "2",
+        "dist_max_h": "200.0",
+        "dist_max_l": "200.0",
+        "phase1_horario": "asiatico",
+        "phase1_filtro": "no_mardi",
+        "timezone": "Europe/Madrid",
+        "windows_hhmm": [
+          [
+            2300,
+            2400
+          ],
+          [
+            0,
+            800
+          ]
+        ],
+        "blocked_weekdays": [
+          1
+        ],
+        "atr_min": "0.0",
+        "atr_max": "50.0",
+        "scalp_coef": "3.0",
+        "timescan": "15",
+        "superstop_quality": "2",
+        "superstop_coef_volat": "3.0",
+        "base_idx": "0",
+        "pfs": "[0.7602, 1.1473, 1.5237, 1.2221, 1.3685]",
+        "trades": "[86, 109, 84, 137, 143]",
+        "min_pf": "0.7602",
+        "max_pf": "1.5237",
+        "mean_pf": "1.2044",
+        "cv": "0.2384",
+        "min_trades": "84",
+        "passes_filters": "False",
+        "reject_reason": "min_pf=0.760 < 1.0"
+      },
+      "phase5_train": {
+        "trades": 559,
+        "profit_factor": 1.291687,
+        "equity_points": 409.767857,
+        "win_rate": 0.486583,
+        "max_drawdown": 75.866071,
+        "avg_win": 6.671284,
+        "avg_loss": -5.053314,
+        "side_counts": {
+          "SHORT": 316,
+          "LONG": 243
+        },
+        "exit_reason_breakdown": {
+          "timescan": 261,
+          "target": 113,
+          "stop": 172,
+          "opposite_signal": 13
+        }
+      },
+      "phase6_holdout": {
+        "trades": 170,
+        "profit_factor": 0.812985,
+        "equity_points": -108.330357,
+        "win_rate": 0.423529,
+        "max_drawdown": 219.875,
+        "avg_win": 6.540675,
+        "avg_loss": -6.097462,
+        "side_counts": {
+          "SHORT": 105,
+          "LONG": 65
+        },
+        "exit_reason_breakdown": {
+          "timescan": 62,
+          "target": 34,
+          "stop": 63,
+          "opposite_signal": 11
+        }
+      },
+      "phase7_full_history": {
+        "trades": 729,
+        "profit_factor": 1.151928,
+        "equity_points": 301.4375,
+        "win_rate": 0.471879,
+        "max_drawdown": 219.875,
+        "avg_win": 6.643947,
+        "avg_loss": -5.31925,
+        "side_counts": {
+          "SHORT": 421,
+          "LONG": 308
+        },
+        "exit_reason_breakdown": {
+          "timescan": 323,
+          "target": 147,
+          "stop": 235,
+          "opposite_signal": 24
+        }
+      },
+      "phase7_by_year": {
+        "2017": {
+          "trades": 71,
+          "profit_factor": 0.778707,
+          "equity_points": -13.696429,
+          "win_rate": 0.366197,
+          "max_drawdown": 22.357143,
+          "avg_win": 1.853709,
+          "avg_loss": -1.509582,
+          "side_counts": {
+            "SHORT": 39,
+            "LONG": 32
+          },
+          "exit_reason_breakdown": {
+            "timescan": 36,
+            "target": 9,
+            "stop": 24,
+            "opposite_signal": 2
+          }
+        },
+        "2018": {
+          "trades": 67,
+          "profit_factor": 0.818152,
+          "equity_points": -24.401786,
+          "win_rate": 0.447761,
+          "max_drawdown": 50.883929,
+          "avg_win": 3.659524,
+          "avg_loss": -3.833929,
+          "side_counts": {
+            "SHORT": 44,
+            "LONG": 23
+          },
+          "exit_reason_breakdown": {
+            "timescan": 38,
+            "stop": 21,
+            "target": 8
+          }
+        },
+        "2019": {
+          "trades": 75,
+          "profit_factor": 1.528874,
+          "equity_points": 55.767857,
+          "win_rate": 0.52,
+          "max_drawdown": 12.25,
+          "avg_win": 4.1337,
+          "avg_loss": -3.012755,
+          "side_counts": {
+            "SHORT": 44,
+            "LONG": 31
+          },
+          "exit_reason_breakdown": {
+            "target": 13,
+            "timescan": 42,
+            "stop": 18,
+            "opposite_signal": 2
+          }
+        },
+        "2020": {
+          "trades": 70,
+          "profit_factor": 1.570459,
+          "equity_points": 182.348214,
+          "win_rate": 0.485714,
+          "max_drawdown": 57.098214,
+          "avg_win": 14.764706,
+          "avg_loss": -9.401523,
+          "side_counts": {
+            "SHORT": 48,
+            "LONG": 22
+          },
+          "exit_reason_breakdown": {
+            "timescan": 30,
+            "stop": 22,
+            "target": 18
+          }
+        },
+        "2021": {
+          "trades": 104,
+          "profit_factor": 1.226542,
+          "equity_points": 67.580357,
+          "win_rate": 0.5,
+          "max_drawdown": 69.321429,
+          "avg_win": 7.036401,
+          "avg_loss": -5.736779,
+          "side_counts": {
+            "SHORT": 62,
+            "LONG": 42
+          },
+          "exit_reason_breakdown": {
+            "stop": 33,
+            "timescan": 46,
+            "target": 23,
+            "opposite_signal": 2
+          }
+        },
+        "2022": {
+          "trades": 84,
+          "profit_factor": 1.479607,
+          "equity_points": 136.696429,
+          "win_rate": 0.547619,
+          "max_drawdown": 38.0625,
+          "avg_win": 9.167702,
+          "avg_loss": -7.50047,
+          "side_counts": {
+            "LONG": 44,
+            "SHORT": 40
+          },
+          "exit_reason_breakdown": {
+            "stop": 24,
+            "timescan": 37,
+            "target": 20,
+            "opposite_signal": 3
+          }
+        },
+        "2023": {
+          "trades": 92,
+          "profit_factor": 1.01426,
+          "equity_points": 2.964286,
+          "win_rate": 0.51087,
+          "max_drawdown": 45.008929,
+          "avg_win": 4.485942,
+          "avg_loss": -4.619444,
+          "side_counts": {
+            "LONG": 50,
+            "SHORT": 42
+          },
+          "exit_reason_breakdown": {
+            "timescan": 33,
+            "stop": 32,
+            "target": 23,
+            "opposite_signal": 4
+          }
+        },
+        "2024": {
+          "trades": 85,
+          "profit_factor": 1.148909,
+          "equity_points": 26.928571,
+          "win_rate": 0.423529,
+          "max_drawdown": 30.4375,
+          "avg_win": 5.771329,
+          "avg_loss": -3.931289,
+          "side_counts": {
+            "LONG": 32,
+            "SHORT": 53
+          },
+          "exit_reason_breakdown": {
+            "stop": 31,
+            "opposite_signal": 8,
+            "timescan": 27,
+            "target": 19
+          }
+        },
+        "2025": {
+          "trades": 81,
+          "profit_factor": 0.660362,
+          "equity_points": -132.75,
+          "win_rate": 0.419753,
+          "max_drawdown": 211.008929,
+          "avg_win": 7.591387,
+          "avg_loss": -8.316109,
+          "side_counts": {
+            "SHORT": 49,
+            "LONG": 32
+          },
+          "exit_reason_breakdown": {
+            "timescan": 34,
+            "stop": 30,
+            "target": 14,
+            "opposite_signal": 3
+          }
+        }
+      }
+    },
+    {
+      "asset": "ES",
+      "timeframe": "15m",
+      "lane": "independent_from_phase1",
+      "source_phase": "phase3",
+      "source_file": "outputs\\contract_phase2a_forward_dual\\ES\\15m\\independent_from_phase2a\\COMB002_contract_ES_15m_friday_to_expiry_week_monday_label_left_phase3_from_phase1_exits_results.csv",
+      "train_contracts": [
+        "03-17",
+        "06-17",
+        "09-17",
+        "12-17",
+        "03-18",
+        "06-18",
+        "09-18",
+        "12-18",
+        "03-19",
+        "06-19",
+        "09-19",
+        "12-19",
+        "03-20",
+        "06-20",
+        "09-20",
+        "12-20",
+        "03-21",
+        "06-21",
+        "09-21",
+        "12-21",
+        "03-22",
+        "06-22",
+        "09-22",
+        "12-22",
+        "03-23",
+        "06-23",
+        "09-23",
+        "12-23"
+      ],
+      "holdout_contracts": [
+        "03-24",
+        "06-24",
+        "09-24",
+        "12-24",
+        "03-25",
+        "06-25",
+        "09-25",
+        "12-25"
+      ],
+      "candidate": {
+        "asset": "ES",
+        "timeframe": "15m",
+        "smooth_h": "2",
+        "smooth_b": "2",
+        "dist_max_h": "200.0",
+        "dist_max_l": "200.0",
+        "phase1_horario": "asiatico",
+        "phase1_filtro": "no_mardi",
+        "timezone": "Europe/Madrid",
+        "windows_hhmm": [
+          [
+            2300,
+            2400
+          ],
+          [
+            0,
+            800
+          ]
+        ],
+        "blocked_weekdays": [
+          1
+        ],
+        "atr_min": "0.0",
+        "atr_max": "500.0",
+        "scalp_coef": "3.5",
+        "timescan": "30",
+        "superstop_quality": "2",
+        "superstop_coef_volat": "3.0",
+        "base_idx": "0",
+        "pfs": "[0.8139, 1.2702, 1.6261, 0.873, 1.2769]",
+        "trades": "[84, 106, 84, 134, 135]",
+        "min_pf": "0.8139",
+        "max_pf": "1.6261",
+        "mean_pf": "1.172",
+        "cv": "0.2844",
+        "min_trades": "84",
+        "passes_filters": "False",
+        "reject_reason": "min_pf=0.814 < 1.0"
+      },
+      "phase5_train": {
+        "trades": 543,
+        "profit_factor": 1.182499,
+        "equity_points": 339.919643,
+        "win_rate": 0.432781,
+        "max_drawdown": 226.491071,
+        "avg_win": 9.37234,
+        "avg_loss": -6.106821,
+        "side_counts": {
+          "SHORT": 309,
+          "LONG": 234
+        },
+        "exit_reason_breakdown": {
+          "stop": 261,
+          "target": 143,
+          "timescan": 118,
+          "opposite_signal": 21
+        }
+      },
+      "phase6_holdout": {
+        "trades": 163,
+        "profit_factor": 0.794461,
+        "equity_points": -154.0,
+        "win_rate": 0.380368,
+        "max_drawdown": 261.607143,
+        "avg_win": 9.600806,
+        "avg_loss": -7.645408,
+        "side_counts": {
+          "SHORT": 100,
+          "LONG": 63
+        },
+        "exit_reason_breakdown": {
+          "timescan": 24,
+          "target": 37,
+          "stop": 87,
+          "opposite_signal": 15
+        }
+      },
+      "phase7_full_history": {
+        "trades": 706,
+        "profit_factor": 1.071184,
+        "equity_points": 185.919643,
+        "win_rate": 0.42068,
+        "max_drawdown": 320.785714,
+        "avg_win": 9.420034,
+        "avg_loss": -6.480969,
+        "side_counts": {
+          "SHORT": 409,
+          "LONG": 297
+        },
+        "exit_reason_breakdown": {
+          "stop": 348,
+          "target": 180,
+          "timescan": 142,
+          "opposite_signal": 36
+        }
+      },
+      "phase7_by_year": {
+        "2017": {
+          "trades": 69,
+          "profit_factor": 0.828873,
+          "equity_points": -15.071429,
+          "win_rate": 0.362319,
+          "max_drawdown": 18.973214,
+          "avg_win": 2.92,
+          "avg_loss": -2.001623,
+          "side_counts": {
+            "SHORT": 39,
+            "LONG": 30
+          },
+          "exit_reason_breakdown": {
+            "stop": 38,
+            "target": 15,
+            "timescan": 13,
+            "opposite_signal": 3
+          }
+        },
+        "2018": {
+          "trades": 66,
+          "profit_factor": 1.185807,
+          "equity_points": 30.741071,
+          "win_rate": 0.409091,
+          "max_drawdown": 63.973214,
+          "avg_win": 7.266204,
+          "avg_loss": -4.242216,
+          "side_counts": {
+            "SHORT": 43,
+            "LONG": 23
+          },
+          "exit_reason_breakdown": {
+            "stop": 30,
+            "timescan": 21,
+            "target": 15
+          }
+        },
+        "2019": {
+          "trades": 73,
+          "profit_factor": 1.099267,
+          "equity_points": 16.446429,
+          "win_rate": 0.39726,
+          "max_drawdown": 49.366071,
+          "avg_win": 6.280172,
+          "avg_loss": -3.765422,
+          "side_counts": {
+            "SHORT": 43,
+            "LONG": 30
+          },
+          "exit_reason_breakdown": {
+            "target": 16,
+            "timescan": 21,
+            "stop": 33,
+            "opposite_signal": 3
+          }
+        },
+        "2020": {
+          "trades": 70,
+          "profit_factor": 1.721706,
+          "equity_points": 268.223214,
+          "win_rate": 0.485714,
+          "max_drawdown": 82.383929,
+          "avg_win": 18.819853,
+          "avg_loss": -10.930935,
+          "side_counts": {
+            "SHORT": 48,
+            "LONG": 22
+          },
+          "exit_reason_breakdown": {
+            "stop": 32,
+            "timescan": 14,
+            "target": 24
+          }
+        },
+        "2021": {
+          "trades": 102,
+          "profit_factor": 1.013351,
+          "equity_points": 5.276786,
+          "win_rate": 0.45098,
+          "max_drawdown": 141.5,
+          "avg_win": 8.706522,
+          "avg_loss": -7.057557,
+          "side_counts": {
+            "SHORT": 60,
+            "LONG": 42
+          },
+          "exit_reason_breakdown": {
+            "stop": 50,
+            "timescan": 22,
+            "target": 27,
+            "opposite_signal": 3
+          }
+        },
+        "2022": {
+          "trades": 79,
+          "profit_factor": 1.04806,
+          "equity_points": 20.830357,
+          "win_rate": 0.43038,
+          "max_drawdown": 126.642857,
+          "avg_win": 13.360294,
+          "avg_loss": -9.631548,
+          "side_counts": {
+            "LONG": 41,
+            "SHORT": 38
+          },
+          "exit_reason_breakdown": {
+            "stop": 40,
+            "timescan": 13,
+            "target": 19,
+            "opposite_signal": 7
+          }
+        },
+        "2023": {
+          "trades": 88,
+          "profit_factor": 1.041285,
+          "equity_points": 10.348214,
+          "win_rate": 0.465909,
+          "max_drawdown": 61.508929,
+          "avg_win": 6.365854,
+          "avg_loss": -5.57004,
+          "side_counts": {
+            "LONG": 47,
+            "SHORT": 41
+          },
+          "exit_reason_breakdown": {
+            "stop": 40,
+            "target": 28,
+            "timescan": 15,
+            "opposite_signal": 5
+          }
+        },
+        "2024": {
+          "trades": 83,
+          "profit_factor": 0.983714,
+          "equity_points": -3.803571,
+          "win_rate": 0.385542,
+          "max_drawdown": 38.223214,
+          "avg_win": 7.179688,
+          "avg_loss": -4.766399,
+          "side_counts": {
+            "LONG": 31,
+            "SHORT": 52
+          },
+          "exit_reason_breakdown": {
+            "stop": 43,
+            "opposite_signal": 9,
+            "target": 19,
+            "timescan": 12
+          }
+        },
+        "2025": {
+          "trades": 76,
+          "profit_factor": 0.710566,
+          "equity_points": -147.071429,
+          "win_rate": 0.381579,
+          "max_drawdown": 238.1875,
+          "avg_win": 12.450431,
+          "avg_loss": -10.81136,
+          "side_counts": {
+            "SHORT": 45,
+            "LONG": 31
+          },
+          "exit_reason_breakdown": {
+            "stop": 42,
+            "timescan": 11,
+            "target": 17,
+            "opposite_signal": 6
+          }
+        }
+      }
+    },
+    {
+      "asset": "ES",
+      "timeframe": "15m",
+      "lane": "independent_from_phase1",
+      "source_phase": "phase4",
+      "source_file": "outputs\\contract_phase2a_forward_dual\\ES\\15m\\independent_from_phase2a\\COMB002_contract_ES_15m_friday_to_expiry_week_monday_label_left_phase4_from_phase1_stops_results.csv",
+      "train_contracts": [
+        "03-17",
+        "06-17",
+        "09-17",
+        "12-17",
+        "03-18",
+        "06-18",
+        "09-18",
+        "12-18",
+        "03-19",
+        "06-19",
+        "09-19",
+        "12-19",
+        "03-20",
+        "06-20",
+        "09-20",
+        "12-20",
+        "03-21",
+        "06-21",
+        "09-21",
+        "12-21",
+        "03-22",
+        "06-22",
+        "09-22",
+        "12-22",
+        "03-23",
+        "06-23",
+        "09-23",
+        "12-23"
+      ],
+      "holdout_contracts": [
+        "03-24",
+        "06-24",
+        "09-24",
+        "12-24",
+        "03-25",
+        "06-25",
+        "09-25",
+        "12-25"
+      ],
+      "candidate": {
+        "asset": "ES",
+        "timeframe": "15m",
+        "smooth_h": "2",
+        "smooth_b": "2",
+        "dist_max_h": "200.0",
+        "dist_max_l": "200.0",
+        "phase1_horario": "asiatico",
+        "phase1_filtro": "no_mardi",
+        "timezone": "Europe/Madrid",
+        "windows_hhmm": [
+          [
+            2300,
+            2400
+          ],
+          [
+            0,
+            800
+          ]
+        ],
+        "blocked_weekdays": [
+          1
+        ],
+        "atr_min": "0.0",
+        "atr_max": "500.0",
+        "scalp_coef": "3.0",
+        "timescan": "15",
+        "superstop_quality": "1",
+        "superstop_coef_volat": "3.0",
+        "base_idx": "0",
+        "pfs": "[0.7602, 1.1473, 1.5237, 1.2221, 1.3685]",
+        "trades": "[86, 109, 84, 137, 143]",
+        "min_pf": "0.7602",
+        "max_pf": "1.5237",
+        "mean_pf": "1.2044",
+        "cv": "0.2384",
+        "min_trades": "84",
+        "passes_filters": "False",
+        "reject_reason": "min_pf=0.760 < 1.0"
+      },
+      "phase5_train": {
+        "trades": 559,
+        "profit_factor": 1.291687,
+        "equity_points": 409.767857,
+        "win_rate": 0.486583,
+        "max_drawdown": 75.866071,
+        "avg_win": 6.671284,
+        "avg_loss": -5.053314,
+        "side_counts": {
+          "SHORT": 316,
+          "LONG": 243
+        },
+        "exit_reason_breakdown": {
+          "timescan": 261,
+          "target": 113,
+          "stop": 172,
+          "opposite_signal": 13
+        }
+      },
+      "phase6_holdout": {
+        "trades": 170,
+        "profit_factor": 0.812985,
+        "equity_points": -108.330357,
+        "win_rate": 0.423529,
+        "max_drawdown": 219.875,
+        "avg_win": 6.540675,
+        "avg_loss": -6.097462,
+        "side_counts": {
+          "SHORT": 105,
+          "LONG": 65
+        },
+        "exit_reason_breakdown": {
+          "timescan": 62,
+          "target": 34,
+          "stop": 63,
+          "opposite_signal": 11
+        }
+      },
+      "phase7_full_history": {
+        "trades": 729,
+        "profit_factor": 1.151928,
+        "equity_points": 301.4375,
+        "win_rate": 0.471879,
+        "max_drawdown": 219.875,
+        "avg_win": 6.643947,
+        "avg_loss": -5.31925,
+        "side_counts": {
+          "SHORT": 421,
+          "LONG": 308
+        },
+        "exit_reason_breakdown": {
+          "timescan": 323,
+          "target": 147,
+          "stop": 235,
+          "opposite_signal": 24
+        }
+      },
+      "phase7_by_year": {
+        "2017": {
+          "trades": 71,
+          "profit_factor": 0.778707,
+          "equity_points": -13.696429,
+          "win_rate": 0.366197,
+          "max_drawdown": 22.357143,
+          "avg_win": 1.853709,
+          "avg_loss": -1.509582,
+          "side_counts": {
+            "SHORT": 39,
+            "LONG": 32
+          },
+          "exit_reason_breakdown": {
+            "timescan": 36,
+            "target": 9,
+            "stop": 24,
+            "opposite_signal": 2
+          }
+        },
+        "2018": {
+          "trades": 67,
+          "profit_factor": 0.818152,
+          "equity_points": -24.401786,
+          "win_rate": 0.447761,
+          "max_drawdown": 50.883929,
+          "avg_win": 3.659524,
+          "avg_loss": -3.833929,
+          "side_counts": {
+            "SHORT": 44,
+            "LONG": 23
+          },
+          "exit_reason_breakdown": {
+            "timescan": 38,
+            "stop": 21,
+            "target": 8
+          }
+        },
+        "2019": {
+          "trades": 75,
+          "profit_factor": 1.528874,
+          "equity_points": 55.767857,
+          "win_rate": 0.52,
+          "max_drawdown": 12.25,
+          "avg_win": 4.1337,
+          "avg_loss": -3.012755,
+          "side_counts": {
+            "SHORT": 44,
+            "LONG": 31
+          },
+          "exit_reason_breakdown": {
+            "target": 13,
+            "timescan": 42,
+            "stop": 18,
+            "opposite_signal": 2
+          }
+        },
+        "2020": {
+          "trades": 70,
+          "profit_factor": 1.570459,
+          "equity_points": 182.348214,
+          "win_rate": 0.485714,
+          "max_drawdown": 57.098214,
+          "avg_win": 14.764706,
+          "avg_loss": -9.401523,
+          "side_counts": {
+            "SHORT": 48,
+            "LONG": 22
+          },
+          "exit_reason_breakdown": {
+            "timescan": 30,
+            "stop": 22,
+            "target": 18
+          }
+        },
+        "2021": {
+          "trades": 104,
+          "profit_factor": 1.226542,
+          "equity_points": 67.580357,
+          "win_rate": 0.5,
+          "max_drawdown": 69.321429,
+          "avg_win": 7.036401,
+          "avg_loss": -5.736779,
+          "side_counts": {
+            "SHORT": 62,
+            "LONG": 42
+          },
+          "exit_reason_breakdown": {
+            "stop": 33,
+            "timescan": 46,
+            "target": 23,
+            "opposite_signal": 2
+          }
+        },
+        "2022": {
+          "trades": 84,
+          "profit_factor": 1.479607,
+          "equity_points": 136.696429,
+          "win_rate": 0.547619,
+          "max_drawdown": 38.0625,
+          "avg_win": 9.167702,
+          "avg_loss": -7.50047,
+          "side_counts": {
+            "LONG": 44,
+            "SHORT": 40
+          },
+          "exit_reason_breakdown": {
+            "stop": 24,
+            "timescan": 37,
+            "target": 20,
+            "opposite_signal": 3
+          }
+        },
+        "2023": {
+          "trades": 92,
+          "profit_factor": 1.01426,
+          "equity_points": 2.964286,
+          "win_rate": 0.51087,
+          "max_drawdown": 45.008929,
+          "avg_win": 4.485942,
+          "avg_loss": -4.619444,
+          "side_counts": {
+            "LONG": 50,
+            "SHORT": 42
+          },
+          "exit_reason_breakdown": {
+            "timescan": 33,
+            "stop": 32,
+            "target": 23,
+            "opposite_signal": 4
+          }
+        },
+        "2024": {
+          "trades": 85,
+          "profit_factor": 1.148909,
+          "equity_points": 26.928571,
+          "win_rate": 0.423529,
+          "max_drawdown": 30.4375,
+          "avg_win": 5.771329,
+          "avg_loss": -3.931289,
+          "side_counts": {
+            "LONG": 32,
+            "SHORT": 53
+          },
+          "exit_reason_breakdown": {
+            "stop": 31,
+            "opposite_signal": 8,
+            "timescan": 27,
+            "target": 19
+          }
+        },
+        "2025": {
+          "trades": 81,
+          "profit_factor": 0.660362,
+          "equity_points": -132.75,
+          "win_rate": 0.419753,
+          "max_drawdown": 211.008929,
+          "avg_win": 7.591387,
+          "avg_loss": -8.316109,
+          "side_counts": {
+            "SHORT": 49,
+            "LONG": 32
+          },
+          "exit_reason_breakdown": {
+            "timescan": 34,
+            "stop": 30,
+            "target": 14,
+            "opposite_signal": 3
+          }
+        }
+      }
+    },
+    {
+      "asset": "FDAX",
+      "timeframe": "15m",
+      "lane": "independent_from_phase1",
+      "source_phase": "phase2b",
+      "source_file": "outputs\\contract_phase2a_forward_dual\\FDAX\\15m\\independent_from_phase2a\\COMB002_contract_FDAX_15m_friday_to_expiry_week_monday_label_left_phase2b_from_phase1_atr_results.csv",
+      "train_contracts": [
+        "03-17",
+        "06-17",
+        "09-17",
+        "12-17",
+        "03-18",
+        "06-18",
+        "09-18",
+        "12-18",
+        "03-19",
+        "06-19",
+        "09-19",
+        "12-19",
+        "03-20",
+        "06-20",
+        "09-20",
+        "12-20",
+        "03-21",
+        "06-21",
+        "09-21",
+        "12-21",
+        "03-22",
+        "06-22",
+        "09-22",
+        "12-22",
+        "03-23",
+        "06-23",
+        "09-23",
+        "12-23"
+      ],
+      "holdout_contracts": [
+        "03-24",
+        "06-24",
+        "09-24",
+        "12-24",
+        "03-25",
+        "06-25",
+        "09-25",
+        "12-25"
+      ],
+      "candidate": {
+        "asset": "FDAX",
+        "timeframe": "15m",
+        "smooth_h": "2",
+        "smooth_b": "2",
+        "dist_max_h": "200.0",
+        "dist_max_l": "200.0",
+        "phase1_horario": "asiatico",
+        "phase1_filtro": "no_lundi",
+        "timezone": "Europe/Madrid",
+        "windows_hhmm": [
+          [
+            2300,
+            2400
+          ],
+          [
+            0,
+            800
+          ]
+        ],
+        "blocked_weekdays": [
+          0
+        ],
+        "atr_min": "5.0",
+        "atr_max": "100.0",
+        "scalp_coef": "3.0",
+        "timescan": "15",
+        "superstop_quality": "2",
+        "superstop_coef_volat": "3.0",
+        "base_idx": "0",
+        "pfs": "[0.0, 0.8687, 0.9146, 1.7991, 1.2645]",
+        "trades": "[0, 45, 88, 120, 116]",
+        "min_pf": "0.0",
+        "max_pf": "1.7991",
+        "mean_pf": "0.9694",
+        "cv": "0.6781",
+        "min_trades": "0",
+        "passes_filters": "False",
+        "reject_reason": "min_pf=0.000 < 1.0"
+      },
+      "phase5_train": {
+        "trades": 369,
+        "profit_factor": 1.260405,
+        "equity_points": 1195.928571,
+        "win_rate": 0.460705,
+        "max_drawdown": 333.071429,
+        "avg_win": 34.05,
+        "avg_loss": -23.431487,
+        "side_counts": {
+          "SHORT": 212,
+          "LONG": 157
+        },
+        "exit_reason_breakdown": {
+          "stop": 131,
+          "timescan": 114,
+          "target": 104,
+          "opposite_signal": 20
+        }
+      },
+      "phase6_holdout": {
+        "trades": 166,
+        "profit_factor": 1.154609,
+        "equity_points": 343.678571,
+        "win_rate": 0.475904,
+        "max_drawdown": 233.75,
+        "avg_win": 32.488246,
+        "avg_loss": -25.847591,
+        "side_counts": {
+          "SHORT": 104,
+          "LONG": 62
+        },
+        "exit_reason_breakdown": {
+          "stop": 71,
+          "target": 48,
+          "timescan": 43,
+          "opposite_signal": 4
+        }
+      },
+      "phase7_full_history": {
+        "trades": 535,
+        "profit_factor": 1.225899,
+        "equity_points": 1539.607143,
+        "win_rate": 0.465421,
+        "max_drawdown": 333.071429,
+        "avg_win": 33.554504,
+        "avg_loss": -24.168313,
+        "side_counts": {
+          "SHORT": 316,
+          "LONG": 219
+        },
+        "exit_reason_breakdown": {
+          "stop": 202,
+          "timescan": 157,
+          "target": 152,
+          "opposite_signal": 24
+        }
+      },
+      "phase7_by_year": {
+        "2018": {
+          "trades": 4,
+          "profit_factor": 0.01072,
+          "equity_points": -92.285714,
+          "win_rate": 0.25,
+          "max_drawdown": 93.285714,
+          "avg_win": 1.0,
+          "avg_loss": -31.095238,
+          "side_counts": {
+            "SHORT": 3,
+            "LONG": 1
+          },
+          "exit_reason_breakdown": {
+            "stop": 3,
+            "timescan": 1
+          }
+        },
+        "2019": {
+          "trades": 56,
+          "profit_factor": 0.962645,
+          "equity_points": -22.035714,
+          "win_rate": 0.375,
+          "max_drawdown": 198.5,
+          "avg_win": 27.040816,
+          "avg_loss": -17.34979,
+          "side_counts": {
+            "SHORT": 36,
+            "LONG": 20
+          },
+          "exit_reason_breakdown": {
+            "target": 14,
+            "stop": 25,
+            "timescan": 14,
+            "opposite_signal": 3
+          }
+        },
+        "2020": {
+          "trades": 76,
+          "profit_factor": 1.009651,
+          "equity_points": 13.357143,
+          "win_rate": 0.434211,
+          "max_drawdown": 333.071429,
+          "avg_win": 42.34632,
+          "avg_loss": -32.187708,
+          "side_counts": {
+            "SHORT": 44,
+            "LONG": 32
+          },
+          "exit_reason_breakdown": {
+            "timescan": 31,
+            "stop": 27,
+            "target": 14,
+            "opposite_signal": 4
+          }
+        },
+        "2021": {
+          "trades": 75,
+          "profit_factor": 1.363092,
+          "equity_points": 281.785714,
+          "win_rate": 0.48,
+          "max_drawdown": 144.428571,
+          "avg_win": 29.384921,
+          "avg_loss": -20.422932,
+          "side_counts": {
+            "SHORT": 40,
+            "LONG": 35
+          },
+          "exit_reason_breakdown": {
+            "opposite_signal": 3,
+            "timescan": 24,
+            "stop": 27,
+            "target": 21
+          }
+        },
+        "2022": {
+          "trades": 80,
+          "profit_factor": 1.674809,
+          "equity_points": 730.142857,
+          "win_rate": 0.4875,
+          "max_drawdown": 189.5,
+          "avg_win": 46.465201,
+          "avg_loss": -26.390244,
+          "side_counts": {
+            "SHORT": 49,
+            "LONG": 31
+          },
+          "exit_reason_breakdown": {
+            "timescan": 21,
+            "stop": 28,
+            "target": 27,
+            "opposite_signal": 4
+          }
+        },
+        "2023": {
+          "trades": 81,
+          "profit_factor": 1.424897,
+          "equity_points": 295.0,
+          "win_rate": 0.506173,
+          "max_drawdown": 246.321429,
+          "avg_win": 24.12892,
+          "avg_loss": -17.802198,
+          "side_counts": {
+            "SHORT": 43,
+            "LONG": 38
+          },
+          "exit_reason_breakdown": {
+            "target": 29,
+            "timescan": 24,
+            "stop": 22,
+            "opposite_signal": 6
+          }
+        },
+        "2024": {
+          "trades": 75,
+          "profit_factor": 1.024957,
+          "equity_points": 21.785714,
+          "win_rate": 0.44,
+          "max_drawdown": 190.678571,
+          "avg_win": 27.112554,
+          "avg_loss": -21.290941,
+          "side_counts": {
+            "SHORT": 46,
+            "LONG": 29
+          },
+          "exit_reason_breakdown": {
+            "timescan": 22,
+            "stop": 33,
+            "target": 20
+          }
+        },
+        "2025": {
+          "trades": 88,
+          "profit_factor": 1.235732,
+          "equity_points": 311.857143,
+          "win_rate": 0.511364,
+          "max_drawdown": 233.75,
+          "avg_win": 36.328571,
+          "avg_loss": -30.765781,
+          "side_counts": {
+            "SHORT": 55,
+            "LONG": 33
+          },
+          "exit_reason_breakdown": {
+            "stop": 37,
+            "opposite_signal": 4,
+            "timescan": 20,
+            "target": 27
+          }
+        }
+      }
+    },
+    {
+      "asset": "FDAX",
+      "timeframe": "15m",
+      "lane": "independent_from_phase1",
+      "source_phase": "phase3",
+      "source_file": "outputs\\contract_phase2a_forward_dual\\FDAX\\15m\\independent_from_phase2a\\COMB002_contract_FDAX_15m_friday_to_expiry_week_monday_label_left_phase3_from_phase1_exits_results.csv",
+      "train_contracts": [
+        "03-17",
+        "06-17",
+        "09-17",
+        "12-17",
+        "03-18",
+        "06-18",
+        "09-18",
+        "12-18",
+        "03-19",
+        "06-19",
+        "09-19",
+        "12-19",
+        "03-20",
+        "06-20",
+        "09-20",
+        "12-20",
+        "03-21",
+        "06-21",
+        "09-21",
+        "12-21",
+        "03-22",
+        "06-22",
+        "09-22",
+        "12-22",
+        "03-23",
+        "06-23",
+        "09-23",
+        "12-23"
+      ],
+      "holdout_contracts": [
+        "03-24",
+        "06-24",
+        "09-24",
+        "12-24",
+        "03-25",
+        "06-25",
+        "09-25",
+        "12-25"
+      ],
+      "candidate": {
+        "asset": "FDAX",
+        "timeframe": "15m",
+        "smooth_h": "2",
+        "smooth_b": "2",
+        "dist_max_h": "200.0",
+        "dist_max_l": "200.0",
+        "phase1_horario": "asiatico",
+        "phase1_filtro": "no_lundi",
+        "timezone": "Europe/Madrid",
+        "windows_hhmm": [
+          [
+            2300,
+            2400
+          ],
+          [
+            0,
+            800
+          ]
+        ],
+        "blocked_weekdays": [
+          0
+        ],
+        "atr_min": "0.0",
+        "atr_max": "500.0",
+        "scalp_coef": "4.0",
+        "timescan": "10",
+        "superstop_quality": "2",
+        "superstop_coef_volat": "3.0",
+        "base_idx": "0",
+        "pfs": "[0.0, 1.227, 1.3573, 1.5622, 1.2418]",
+        "trades": "[0, 49, 90, 125, 124]",
+        "min_pf": "0.0",
+        "max_pf": "1.5622",
+        "mean_pf": "1.0777",
+        "cv": "0.5727",
+        "min_trades": "0",
+        "passes_filters": "False",
+        "reject_reason": "min_pf=0.000 < 1.0"
+      },
+      "phase5_train": {
+        "trades": 388,
+        "profit_factor": 1.38363,
+        "equity_points": 1678.392857,
+        "win_rate": 0.456186,
+        "max_drawdown": 250.25,
+        "avg_win": 34.200161,
+        "avg_loss": -21.5519,
+        "side_counts": {
+          "SHORT": 222,
+          "LONG": 166
+        },
+        "exit_reason_breakdown": {
+          "stop": 128,
+          "timescan": 179,
+          "target": 69,
+          "opposite_signal": 12
+        }
+      },
+      "phase6_holdout": {
+        "trades": 170,
+        "profit_factor": 1.199158,
+        "equity_points": 415.535714,
+        "win_rate": 0.452941,
+        "max_drawdown": 277.214286,
+        "avg_win": 32.493506,
+        "avg_loss": -23.182937,
+        "side_counts": {
+          "SHORT": 105,
+          "LONG": 65
+        },
+        "exit_reason_breakdown": {
+          "stop": 65,
+          "timescan": 71,
+          "target": 32,
+          "opposite_signal": 2
+        }
+      },
+      "phase7_full_history": {
+        "trades": 558,
+        "profit_factor": 1.324062,
+        "equity_points": 2093.928571,
+        "win_rate": 0.455197,
+        "max_drawdown": 277.214286,
+        "avg_win": 33.68279,
+        "avg_loss": -22.052901,
+        "side_counts": {
+          "SHORT": 327,
+          "LONG": 231
+        },
+        "exit_reason_breakdown": {
+          "stop": 193,
+          "timescan": 250,
+          "target": 101,
+          "opposite_signal": 14
+        }
+      },
+      "phase7_by_year": {
+        "2018": {
+          "trades": 4,
+          "profit_factor": 0.0,
+          "equity_points": -94.607143,
+          "win_rate": 0.0,
+          "max_drawdown": 94.607143,
+          "avg_win": 0.0,
+          "avg_loss": -23.651786,
+          "side_counts": {
+            "SHORT": 3,
+            "LONG": 1
+          },
+          "exit_reason_breakdown": {
+            "stop": 2,
+            "timescan": 2
+          }
+        },
+        "2019": {
+          "trades": 61,
+          "profit_factor": 1.430022,
+          "equity_points": 202.678571,
+          "win_rate": 0.344262,
+          "max_drawdown": 141.035714,
+          "avg_win": 32.095238,
+          "avg_loss": -12.738417,
+          "side_counts": {
+            "SHORT": 38,
+            "LONG": 23
+          },
+          "exit_reason_breakdown": {
+            "target": 11,
+            "timescan": 25,
+            "stop": 22,
+            "opposite_signal": 3
+          }
+        },
+        "2020": {
+          "trades": 77,
+          "profit_factor": 1.49876,
+          "equity_points": 509.821429,
+          "win_rate": 0.493506,
+          "max_drawdown": 241.642857,
+          "avg_win": 40.315789,
+          "avg_loss": -26.899436,
+          "side_counts": {
+            "SHORT": 45,
+            "LONG": 32
+          },
+          "exit_reason_breakdown": {
+            "timescan": 44,
+            "stop": 21,
+            "target": 8,
+            "opposite_signal": 4
+          }
+        },
+        "2021": {
+          "trades": 78,
+          "profit_factor": 1.175269,
+          "equity_points": 143.357143,
+          "win_rate": 0.461538,
+          "max_drawdown": 193.035714,
+          "avg_win": 26.702381,
+          "avg_loss": -19.949477,
+          "side_counts": {
+            "SHORT": 41,
+            "LONG": 37
+          },
+          "exit_reason_breakdown": {
+            "timescan": 43,
+            "stop": 26,
+            "target": 8,
+            "opposite_signal": 1
+          }
+        },
+        "2022": {
+          "trades": 83,
+          "profit_factor": 1.506825,
+          "equity_points": 640.464286,
+          "win_rate": 0.493976,
+          "max_drawdown": 176.75,
+          "avg_win": 46.442509,
+          "avg_loss": -30.087585,
+          "side_counts": {
+            "SHORT": 49,
+            "LONG": 34
+          },
+          "exit_reason_breakdown": {
+            "timescan": 30,
+            "stop": 31,
+            "target": 20,
+            "opposite_signal": 2
+          }
+        },
+        "2023": {
+          "trades": 88,
+          "profit_factor": 1.300047,
+          "equity_points": 226.642857,
+          "win_rate": 0.465909,
+          "max_drawdown": 232.214286,
+          "avg_win": 23.95122,
+          "avg_loss": -17.167208,
+          "side_counts": {
+            "SHORT": 49,
+            "LONG": 39
+          },
+          "exit_reason_breakdown": {
+            "target": 22,
+            "timescan": 37,
+            "stop": 27,
+            "opposite_signal": 2
+          }
+        },
+        "2024": {
+          "trades": 77,
+          "profit_factor": 1.184905,
+          "equity_points": 132.821429,
+          "win_rate": 0.467532,
+          "max_drawdown": 152.357143,
+          "avg_win": 23.642857,
+          "avg_loss": -17.958036,
+          "side_counts": {
+            "SHORT": 47,
+            "LONG": 30
+          },
+          "exit_reason_breakdown": {
+            "timescan": 35,
+            "stop": 28,
+            "target": 14
+          }
+        },
+        "2025": {
+          "trades": 90,
+          "profit_factor": 1.252445,
+          "equity_points": 332.75,
+          "win_rate": 0.455556,
+          "max_drawdown": 277.214286,
+          "avg_win": 40.264808,
+          "avg_loss": -28.044833,
+          "side_counts": {
+            "SHORT": 55,
+            "LONG": 35
+          },
+          "exit_reason_breakdown": {
+            "stop": 36,
+            "timescan": 34,
+            "target": 18,
+            "opposite_signal": 2
+          }
+        }
+      }
+    },
+    {
+      "asset": "FDAX",
+      "timeframe": "15m",
+      "lane": "independent_from_phase1",
+      "source_phase": "phase4",
+      "source_file": "outputs\\contract_phase2a_forward_dual\\FDAX\\15m\\independent_from_phase2a\\COMB002_contract_FDAX_15m_friday_to_expiry_week_monday_label_left_phase4_from_phase1_stops_results.csv",
+      "train_contracts": [
+        "03-17",
+        "06-17",
+        "09-17",
+        "12-17",
+        "03-18",
+        "06-18",
+        "09-18",
+        "12-18",
+        "03-19",
+        "06-19",
+        "09-19",
+        "12-19",
+        "03-20",
+        "06-20",
+        "09-20",
+        "12-20",
+        "03-21",
+        "06-21",
+        "09-21",
+        "12-21",
+        "03-22",
+        "06-22",
+        "09-22",
+        "12-22",
+        "03-23",
+        "06-23",
+        "09-23",
+        "12-23"
+      ],
+      "holdout_contracts": [
+        "03-24",
+        "06-24",
+        "09-24",
+        "12-24",
+        "03-25",
+        "06-25",
+        "09-25",
+        "12-25"
+      ],
+      "candidate": {
+        "asset": "FDAX",
+        "timeframe": "15m",
+        "smooth_h": "2",
+        "smooth_b": "2",
+        "dist_max_h": "200.0",
+        "dist_max_l": "200.0",
+        "phase1_horario": "asiatico",
+        "phase1_filtro": "no_lundi",
+        "timezone": "Europe/Madrid",
+        "windows_hhmm": [
+          [
+            2300,
+            2400
+          ],
+          [
+            0,
+            800
+          ]
+        ],
+        "blocked_weekdays": [
+          0
+        ],
+        "atr_min": "0.0",
+        "atr_max": "500.0",
+        "scalp_coef": "3.0",
+        "timescan": "15",
+        "superstop_quality": "1",
+        "superstop_coef_volat": "1.5",
+        "base_idx": "0",
+        "pfs": "[0.0, 0.9421, 0.8612, 1.5593, 1.1123]",
+        "trades": "[0, 48, 91, 124, 124]",
+        "min_pf": "0.0",
+        "max_pf": "1.5593",
+        "mean_pf": "0.895",
+        "cv": "0.6353",
+        "min_trades": "0",
+        "passes_filters": "False",
+        "reject_reason": "min_pf=0.000 < 1.0"
+      },
+      "phase5_train": {
+        "trades": 387,
+        "profit_factor": 1.161721,
+        "equity_points": 708.321429,
+        "win_rate": 0.369509,
+        "max_drawdown": 332.160714,
+        "avg_win": 35.581918,
+        "avg_loss": -18.098731,
+        "side_counts": {
+          "SHORT": 222,
+          "LONG": 165
+        },
+        "exit_reason_breakdown": {
+          "stop": 202,
+          "target": 93,
+          "timescan": 76,
+          "opposite_signal": 16
+        }
+      },
+      "phase6_holdout": {
+        "trades": 170,
+        "profit_factor": 1.192932,
+        "equity_points": 356.232143,
+        "win_rate": 0.388235,
+        "max_drawdown": 249.5,
+        "avg_win": 33.373377,
+        "avg_loss": -17.926318,
+        "side_counts": {
+          "SHORT": 107,
+          "LONG": 63
+        },
+        "exit_reason_breakdown": {
+          "stop": 93,
+          "target": 41,
+          "timescan": 32,
+          "opposite_signal": 4
+        }
+      },
+      "phase7_full_history": {
+        "trades": 557,
+        "profit_factor": 1.170977,
+        "equity_points": 1064.553571,
+        "win_rate": 0.375224,
+        "max_drawdown": 332.160714,
+        "avg_win": 34.884484,
+        "avg_loss": -18.047257,
+        "side_counts": {
+          "SHORT": 329,
+          "LONG": 228
+        },
+        "exit_reason_breakdown": {
+          "stop": 295,
+          "target": 134,
+          "timescan": 108,
+          "opposite_signal": 20
+        }
+      },
+      "phase7_by_year": {
+        "2018": {
+          "trades": 4,
+          "profit_factor": 0.0,
+          "equity_points": -72.303571,
+          "win_rate": 0.0,
+          "max_drawdown": 72.303571,
+          "avg_win": 0.0,
+          "avg_loss": -18.075893,
+          "side_counts": {
+            "SHORT": 3,
+            "LONG": 1
+          },
+          "exit_reason_breakdown": {
+            "stop": 4
+          }
+        },
+        "2019": {
+          "trades": 62,
+          "profit_factor": 1.142254,
+          "equity_points": 67.410714,
+          "win_rate": 0.290323,
+          "max_drawdown": 141.964286,
+          "avg_win": 30.071429,
+          "avg_loss": -11.020349,
+          "side_counts": {
+            "SHORT": 39,
+            "LONG": 23
+          },
+          "exit_reason_breakdown": {
+            "target": 13,
+            "stop": 37,
+            "timescan": 11,
+            "opposite_signal": 1
+          }
+        },
+        "2020": {
+          "trades": 76,
+          "profit_factor": 0.919704,
+          "equity_points": -100.196429,
+          "win_rate": 0.328947,
+          "max_drawdown": 316.910714,
+          "avg_win": 45.905714,
+          "avg_loss": -24.467437,
+          "side_counts": {
+            "SHORT": 44,
+            "LONG": 32
+          },
+          "exit_reason_breakdown": {
+            "stop": 40,
+            "timescan": 20,
+            "target": 12,
+            "opposite_signal": 4
+          }
+        },
+        "2021": {
+          "trades": 78,
+          "profit_factor": 1.097172,
+          "equity_points": 77.982143,
+          "win_rate": 0.384615,
+          "max_drawdown": 165.982143,
+          "avg_win": 29.35,
+          "avg_loss": -16.719122,
+          "side_counts": {
+            "SHORT": 42,
+            "LONG": 36
+          },
+          "exit_reason_breakdown": {
+            "opposite_signal": 2,
+            "timescan": 16,
+            "stop": 42,
+            "target": 18
+          }
+        },
+        "2022": {
+          "trades": 83,
+          "profit_factor": 1.510003,
+          "equity_points": 555.357143,
+          "win_rate": 0.409639,
+          "max_drawdown": 137.142857,
+          "avg_win": 48.361345,
+          "avg_loss": -22.223032,
+          "side_counts": {
+            "SHORT": 50,
+            "LONG": 33
+          },
+          "exit_reason_breakdown": {
+            "stop": 40,
+            "timescan": 15,
+            "target": 24,
+            "opposite_signal": 4
+          }
+        },
+        "2023": {
+          "trades": 87,
+          "profit_factor": 1.27324,
+          "equity_points": 195.625,
+          "win_rate": 0.425287,
+          "max_drawdown": 332.160714,
+          "avg_win": 24.637066,
+          "avg_loss": -14.611152,
+          "side_counts": {
+            "SHORT": 47,
+            "LONG": 40
+          },
+          "exit_reason_breakdown": {
+            "target": 27,
+            "timescan": 15,
+            "stop": 40,
+            "opposite_signal": 5
+          }
+        },
+        "2024": {
+          "trades": 78,
+          "profit_factor": 0.927782,
+          "equity_points": -54.232143,
+          "win_rate": 0.333333,
+          "max_drawdown": 239.5,
+          "avg_win": 26.796703,
+          "avg_loss": -14.72444,
+          "side_counts": {
+            "SHORT": 48,
+            "LONG": 30
+          },
+          "exit_reason_breakdown": {
+            "stop": 47,
+            "target": 16,
+            "timescan": 15
+          }
+        },
+        "2025": {
+          "trades": 89,
+          "profit_factor": 1.367719,
+          "equity_points": 394.910714,
+          "win_rate": 0.438202,
+          "max_drawdown": 204.785714,
+          "avg_win": 37.663004,
+          "avg_loss": -21.478929,
+          "side_counts": {
+            "SHORT": 56,
+            "LONG": 33
+          },
+          "exit_reason_breakdown": {
+            "stop": 45,
+            "opposite_signal": 4,
+            "timescan": 16,
+            "target": 24
+          }
+        }
+      }
+    },
+    {
+      "asset": "NQ",
+      "timeframe": "15m",
+      "lane": "independent_from_phase1",
+      "source_phase": "phase2b",
+      "source_file": "outputs\\contract_phase2a_forward_dual\\NQ\\15m\\independent_from_phase2a\\COMB002_contract_NQ_15m_friday_to_expiry_week_monday_label_left_phase2b_from_phase1_atr_results.csv",
+      "train_contracts": [
+        "03-17",
+        "06-17",
+        "09-17",
+        "12-17",
+        "03-18",
+        "06-18",
+        "09-18",
+        "12-18",
+        "03-19",
+        "06-19",
+        "09-19",
+        "12-19",
+        "03-20",
+        "06-20",
+        "09-20",
+        "12-20",
+        "03-21",
+        "06-21",
+        "09-21",
+        "12-21",
+        "03-22",
+        "06-22",
+        "09-22",
+        "12-22",
+        "03-23"
+      ],
+      "holdout_contracts": [
+        "06-23",
+        "09-23",
+        "12-23",
+        "03-24",
+        "06-24",
+        "09-24",
+        "12-24"
+      ],
+      "candidate": {
+        "asset": "NQ",
+        "timeframe": "15m",
+        "smooth_h": "2",
+        "smooth_b": "2",
+        "dist_max_h": "200.0",
+        "dist_max_l": "200.0",
+        "phase1_horario": "madrid_1400_2145",
+        "phase1_filtro": "no_lundi",
+        "timezone": "Europe/Madrid",
+        "windows_hhmm": [
+          [
+            1400,
+            2200
+          ]
+        ],
+        "blocked_weekdays": [
+          0
+        ],
+        "atr_min": "0.0",
+        "atr_max": "200.0",
+        "scalp_coef": "3.0",
+        "timescan": "15",
+        "superstop_quality": "2",
+        "superstop_coef_volat": "3.0",
+        "base_idx": "0",
+        "pfs": "[1.3627, 0.8953, 1.0018, 1.6724, 1.8059]",
+        "trades": "[150, 165, 129, 129, 137]",
+        "min_pf": "0.8953",
+        "max_pf": "1.8059",
+        "mean_pf": "1.3476",
+        "cv": "0.2968",
+        "min_trades": "129",
+        "passes_filters": "False",
+        "reject_reason": "min_pf=0.895 < 1.0"
+      },
+      "phase5_train": {
+        "trades": 710,
+        "profit_factor": 1.396342,
+        "equity_points": 4915.660714,
+        "win_rate": 0.497183,
+        "max_drawdown": 840.5,
+        "avg_win": 49.060148,
+        "avg_loss": -35.134763,
+        "side_counts": {
+          "SHORT": 393,
+          "LONG": 317
+        },
+        "exit_reason_breakdown": {
+          "stop": 217,
+          "target": 207,
+          "timescan": 246,
+          "opposite_signal": 40
+        }
+      },
+      "phase6_holdout": {
+        "trades": 206,
+        "profit_factor": 0.85506,
+        "equity_points": -889.107143,
+        "win_rate": 0.456311,
+        "max_drawdown": 1490.035714,
+        "avg_win": 55.800152,
+        "avg_loss": -54.770727,
+        "side_counts": {
+          "LONG": 98,
+          "SHORT": 108
+        },
+        "exit_reason_breakdown": {
+          "target": 39,
+          "timescan": 87,
+          "stop": 73,
+          "opposite_signal": 7
+        }
+      },
+      "phase7_full_history": {
+        "trades": 916,
+        "profit_factor": 1.217218,
+        "equity_points": 4026.553571,
+        "win_rate": 0.487991,
+        "max_drawdown": 1490.035714,
+        "avg_win": 50.477509,
+        "avg_loss": -39.864286,
+        "side_counts": {
+          "SHORT": 501,
+          "LONG": 415
+        },
+        "exit_reason_breakdown": {
+          "stop": 290,
+          "target": 246,
+          "timescan": 333,
+          "opposite_signal": 47
+        }
+      },
+      "phase7_by_year": {
+        "2017": {
+          "trades": 127,
+          "profit_factor": 1.268183,
+          "equity_points": 146.107143,
+          "win_rate": 0.503937,
+          "max_drawdown": 62.419643,
+          "avg_win": 10.79548,
+          "avg_loss": -8.787154,
+          "side_counts": {
+            "SHORT": 69,
+            "LONG": 58
+          },
+          "exit_reason_breakdown": {
+            "stop": 37,
+            "target": 32,
+            "timescan": 52,
+            "opposite_signal": 6
+          }
+        },
+        "2018": {
+          "trades": 135,
+          "profit_factor": 0.98821,
+          "equity_points": -25.6875,
+          "win_rate": 0.474074,
+          "max_drawdown": 739.535714,
+          "avg_win": 33.642857,
+          "avg_loss": -31.126148,
+          "side_counts": {
+            "SHORT": 68,
+            "LONG": 67
+          },
+          "exit_reason_breakdown": {
+            "stop": 46,
+            "target": 37,
+            "timescan": 46,
+            "opposite_signal": 6
+          }
+        },
+        "2019": {
+          "trades": 116,
+          "profit_factor": 1.097265,
+          "equity_points": 129.5625,
+          "win_rate": 0.465517,
+          "max_drawdown": 368.116071,
+          "avg_win": 27.06713,
+          "avg_loss": -21.83709,
+          "side_counts": {
+            "SHORT": 80,
+            "LONG": 36
+          },
+          "exit_reason_breakdown": {
+            "stop": 48,
+            "timescan": 31,
+            "target": 34,
+            "opposite_signal": 3
+          }
+        },
+        "2020": {
+          "trades": 96,
+          "profit_factor": 1.006018,
+          "equity_points": 14.982143,
+          "win_rate": 0.416667,
+          "max_drawdown": 468.5625,
+          "avg_win": 62.608929,
+          "avg_loss": -44.453125,
+          "side_counts": {
+            "SHORT": 52,
+            "LONG": 44
+          },
+          "exit_reason_breakdown": {
+            "stop": 33,
+            "timescan": 30,
+            "target": 23,
+            "opposite_signal": 10
+          }
+        },
+        "2021": {
+          "trades": 105,
+          "profit_factor": 1.816473,
+          "equity_points": 1559.696429,
+          "win_rate": 0.552381,
+          "max_drawdown": 435.875,
+          "avg_win": 59.827278,
+          "avg_loss": -41.52795,
+          "side_counts": {
+            "SHORT": 60,
+            "LONG": 45
+          },
+          "exit_reason_breakdown": {
+            "target": 33,
+            "timescan": 39,
+            "stop": 25,
+            "opposite_signal": 8
+          }
+        },
+        "2022": {
+          "trades": 109,
+          "profit_factor": 1.984261,
+          "equity_points": 2991.758929,
+          "win_rate": 0.559633,
+          "max_drawdown": 354.803571,
+          "avg_win": 98.874707,
+          "avg_loss": -63.324963,
+          "side_counts": {
+            "LONG": 56,
+            "SHORT": 53
+          },
+          "exit_reason_breakdown": {
+            "stop": 20,
+            "timescan": 40,
+            "target": 42,
+            "opposite_signal": 7
+          }
+        },
+        "2023": {
+          "trades": 115,
+          "profit_factor": 1.054892,
+          "equity_points": 170.598214,
+          "win_rate": 0.486957,
+          "max_drawdown": 735.571429,
+          "avg_win": 58.544324,
+          "avg_loss": -52.675999,
+          "side_counts": {
+            "SHORT": 59,
+            "LONG": 56
+          },
+          "exit_reason_breakdown": {
+            "target": 25,
+            "timescan": 50,
+            "stop": 37,
+            "opposite_signal": 3
+          }
+        },
+        "2024": {
+          "trades": 113,
+          "profit_factor": 0.755859,
+          "equity_points": -960.464286,
+          "win_rate": 0.442478,
+          "max_drawdown": 1490.035714,
+          "avg_win": 59.471786,
+          "avg_loss": -62.445295,
+          "side_counts": {
+            "LONG": 53,
+            "SHORT": 60
+          },
+          "exit_reason_breakdown": {
+            "timescan": 45,
+            "stop": 44,
+            "target": 20,
+            "opposite_signal": 4
+          }
+        }
+      }
+    },
+    {
+      "asset": "NQ",
+      "timeframe": "15m",
+      "lane": "independent_from_phase1",
+      "source_phase": "phase3",
+      "source_file": "outputs\\contract_phase2a_forward_dual\\NQ\\15m\\independent_from_phase2a\\COMB002_contract_NQ_15m_friday_to_expiry_week_monday_label_left_phase3_from_phase1_exits_results.csv",
+      "train_contracts": [
+        "03-17",
+        "06-17",
+        "09-17",
+        "12-17",
+        "03-18",
+        "06-18",
+        "09-18",
+        "12-18",
+        "03-19",
+        "06-19",
+        "09-19",
+        "12-19",
+        "03-20",
+        "06-20",
+        "09-20",
+        "12-20",
+        "03-21",
+        "06-21",
+        "09-21",
+        "12-21",
+        "03-22",
+        "06-22",
+        "09-22",
+        "12-22",
+        "03-23"
+      ],
+      "holdout_contracts": [
+        "06-23",
+        "09-23",
+        "12-23",
+        "03-24",
+        "06-24",
+        "09-24",
+        "12-24"
+      ],
+      "candidate": {
+        "asset": "NQ",
+        "timeframe": "15m",
+        "smooth_h": "2",
+        "smooth_b": "2",
+        "dist_max_h": "200.0",
+        "dist_max_l": "200.0",
+        "phase1_horario": "madrid_1400_2145",
+        "phase1_filtro": "no_lundi",
+        "timezone": "Europe/Madrid",
+        "windows_hhmm": [
+          [
+            1400,
+            2200
+          ]
+        ],
+        "blocked_weekdays": [
+          0
+        ],
+        "atr_min": "0.0",
+        "atr_max": "500.0",
+        "scalp_coef": "4.0",
+        "timescan": "15",
+        "superstop_quality": "2",
+        "superstop_coef_volat": "3.0",
+        "base_idx": "0",
+        "pfs": "[1.4723, 0.9815, 1.0104, 1.5697, 1.381]",
+        "trades": "[150, 165, 127, 128, 135]",
+        "min_pf": "0.9815",
+        "max_pf": "1.5697",
+        "mean_pf": "1.283",
+        "cv": "0.2109",
+        "min_trades": "127",
+        "passes_filters": "False",
+        "reject_reason": "min_pf=0.982 < 1.0"
+      },
+      "phase5_train": {
+        "trades": 705,
+        "profit_factor": 1.271746,
+        "equity_points": 3561.098214,
+        "win_rate": 0.462411,
+        "max_drawdown": 659.526786,
+        "avg_win": 51.121494,
+        "avg_loss": -35.038794,
+        "side_counts": {
+          "SHORT": 393,
+          "LONG": 312
+        },
+        "exit_reason_breakdown": {
+          "stop": 228,
+          "target": 138,
+          "timescan": 294,
+          "opposite_signal": 45
+        }
+      },
+      "phase6_holdout": {
+        "trades": 204,
+        "profit_factor": 0.938111,
+        "equity_points": -381.919643,
+        "win_rate": 0.446078,
+        "max_drawdown": 1417.321429,
+        "avg_win": 63.616562,
+        "avg_loss": -54.610857,
+        "side_counts": {
+          "LONG": 97,
+          "SHORT": 107
+        },
+        "exit_reason_breakdown": {
+          "target": 28,
+          "timescan": 94,
+          "stop": 74,
+          "opposite_signal": 8
+        }
+      },
+      "phase7_full_history": {
+        "trades": 909,
+        "profit_factor": 1.164933,
+        "equity_points": 3179.178571,
+        "win_rate": 0.458746,
+        "max_drawdown": 1417.321429,
+        "avg_win": 53.848236,
+        "avg_loss": -39.580155,
+        "side_counts": {
+          "SHORT": 500,
+          "LONG": 409
+        },
+        "exit_reason_breakdown": {
+          "stop": 302,
+          "target": 166,
+          "timescan": 388,
+          "opposite_signal": 53
+        }
+      },
+      "phase7_by_year": {
+        "2017": {
+          "trades": 127,
+          "profit_factor": 1.35196,
+          "equity_points": 196.375,
+          "win_rate": 0.480315,
+          "max_drawdown": 59.321429,
+          "avg_win": 12.365925,
+          "avg_loss": -8.583791,
+          "side_counts": {
+            "SHORT": 69,
+            "LONG": 58
+          },
+          "exit_reason_breakdown": {
+            "stop": 38,
+            "target": 26,
+            "timescan": 57,
+            "opposite_signal": 6
+          }
+        },
+        "2018": {
+          "trades": 135,
+          "profit_factor": 1.074636,
+          "equity_points": 164.339286,
+          "win_rate": 0.466667,
+          "max_drawdown": 659.526786,
+          "avg_win": 37.558957,
+          "avg_loss": -31.012324,
+          "side_counts": {
+            "SHORT": 68,
+            "LONG": 67
+          },
+          "exit_reason_breakdown": {
+            "stop": 47,
+            "target": 25,
+            "timescan": 57,
+            "opposite_signal": 6
+          }
+        },
+        "2019": {
+          "trades": 115,
+          "profit_factor": 1.159054,
+          "equity_points": 212.1875,
+          "win_rate": 0.452174,
+          "max_drawdown": 337.848214,
+          "avg_win": 29.735577,
+          "avg_loss": -21.517137,
+          "side_counts": {
+            "SHORT": 80,
+            "LONG": 35
+          },
+          "exit_reason_breakdown": {
+            "stop": 48,
+            "timescan": 37,
+            "target": 26,
+            "opposite_signal": 4
+          }
+        },
+        "2020": {
+          "trades": 95,
+          "profit_factor": 0.869849,
+          "equity_points": -345.044643,
+          "win_rate": 0.357895,
+          "max_drawdown": 525.535714,
+          "avg_win": 67.82563,
+          "avg_loss": -44.185268,
+          "side_counts": {
+            "SHORT": 52,
+            "LONG": 43
+          },
+          "exit_reason_breakdown": {
+            "stop": 34,
+            "timescan": 36,
+            "target": 14,
+            "opposite_signal": 11
+          }
+        },
+        "2021": {
+          "trades": 104,
+          "profit_factor": 1.810957,
+          "equity_points": 1606.839286,
+          "win_rate": 0.519231,
+          "max_drawdown": 435.875,
+          "avg_win": 66.449074,
+          "avg_loss": -40.436953,
+          "side_counts": {
+            "SHORT": 60,
+            "LONG": 44
+          },
+          "exit_reason_breakdown": {
+            "target": 22,
+            "timescan": 46,
+            "stop": 27,
+            "opposite_signal": 9
+          }
+        },
+        "2022": {
+          "trades": 108,
+          "profit_factor": 1.515755,
+          "equity_points": 1763.035714,
+          "win_rate": 0.481481,
+          "max_drawdown": 527.098214,
+          "avg_win": 99.64217,
+          "avg_loss": -61.042092,
+          "side_counts": {
+            "LONG": 55,
+            "SHORT": 53
+          },
+          "exit_reason_breakdown": {
+            "stop": 25,
+            "timescan": 53,
+            "target": 22,
+            "opposite_signal": 8
+          }
+        },
+        "2023": {
+          "trades": 112,
+          "profit_factor": 1.052524,
+          "equity_points": 166.392857,
+          "win_rate": 0.464286,
+          "max_drawdown": 736.125,
+          "avg_win": 64.122253,
+          "avg_loss": -52.799405,
+          "side_counts": {
+            "SHORT": 58,
+            "LONG": 54
+          },
+          "exit_reason_breakdown": {
+            "opposite_signal": 5,
+            "stop": 39,
+            "timescan": 53,
+            "target": 15
+          }
+        },
+        "2024": {
+          "trades": 113,
+          "profit_factor": 0.852391,
+          "equity_points": -584.946429,
+          "win_rate": 0.433628,
+          "max_drawdown": 1417.321429,
+          "avg_win": 68.93586,
+          "avg_loss": -61.918806,
+          "side_counts": {
+            "LONG": 53,
+            "SHORT": 60
+          },
+          "exit_reason_breakdown": {
+            "timescan": 49,
+            "stop": 44,
+            "target": 16,
+            "opposite_signal": 4
+          }
+        }
+      }
+    },
+    {
+      "asset": "NQ",
+      "timeframe": "15m",
+      "lane": "independent_from_phase1",
+      "source_phase": "phase4",
+      "source_file": "outputs\\contract_phase2a_forward_dual\\NQ\\15m\\independent_from_phase2a\\COMB002_contract_NQ_15m_friday_to_expiry_week_monday_label_left_phase4_from_phase1_stops_results.csv",
+      "train_contracts": [
+        "03-17",
+        "06-17",
+        "09-17",
+        "12-17",
+        "03-18",
+        "06-18",
+        "09-18",
+        "12-18",
+        "03-19",
+        "06-19",
+        "09-19",
+        "12-19",
+        "03-20",
+        "06-20",
+        "09-20",
+        "12-20",
+        "03-21",
+        "06-21",
+        "09-21",
+        "12-21",
+        "03-22",
+        "06-22",
+        "09-22",
+        "12-22",
+        "03-23"
+      ],
+      "holdout_contracts": [
+        "06-23",
+        "09-23",
+        "12-23",
+        "03-24",
+        "06-24",
+        "09-24",
+        "12-24"
+      ],
+      "candidate": {
+        "asset": "NQ",
+        "timeframe": "15m",
+        "smooth_h": "2",
+        "smooth_b": "2",
+        "dist_max_h": "200.0",
+        "dist_max_l": "200.0",
+        "phase1_horario": "madrid_1400_2145",
+        "phase1_filtro": "no_lundi",
+        "timezone": "Europe/Madrid",
+        "windows_hhmm": [
+          [
+            1400,
+            2200
+          ]
+        ],
+        "blocked_weekdays": [
+          0
+        ],
+        "atr_min": "0.0",
+        "atr_max": "500.0",
+        "scalp_coef": "3.0",
+        "timescan": "15",
+        "superstop_quality": "1",
+        "superstop_coef_volat": "2.0",
+        "base_idx": "0",
+        "pfs": "[1.3485, 0.9026, 1.0138, 1.7747, 1.6446]",
+        "trades": "[152, 168, 132, 129, 138]",
+        "min_pf": "0.9026",
+        "max_pf": "1.7747",
+        "mean_pf": "1.3368",
+        "cv": "0.2847",
+        "min_trades": "129",
+        "passes_filters": "False",
+        "reject_reason": "min_pf=0.903 < 1.0"
+      },
+      "phase5_train": {
+        "trades": 719,
+        "profit_factor": 1.375297,
+        "equity_points": 4537.732143,
+        "win_rate": 0.461752,
+        "max_drawdown": 788.892857,
+        "avg_win": 50.086704,
+        "avg_loss": -31.487119,
+        "side_counts": {
+          "SHORT": 397,
+          "LONG": 322
+        },
+        "exit_reason_breakdown": {
+          "stop": 286,
+          "target": 192,
+          "timescan": 203,
+          "opposite_signal": 38
+        }
+      },
+      "phase6_holdout": {
+        "trades": 206,
+        "profit_factor": 0.870658,
+        "equity_points": -731.017857,
+        "win_rate": 0.432039,
+        "max_drawdown": 1558.053571,
+        "avg_win": 55.289928,
+        "avg_loss": -48.306166,
+        "side_counts": {
+          "LONG": 98,
+          "SHORT": 108
+        },
+        "exit_reason_breakdown": {
+          "target": 37,
+          "stop": 91,
+          "opposite_signal": 7,
+          "timescan": 71
+        }
+      },
+      "phase7_full_history": {
+        "trades": 925,
+        "profit_factor": 1.214549,
+        "equity_points": 3806.714286,
+        "win_rate": 0.455135,
+        "max_drawdown": 1558.053571,
+        "avg_win": 51.186673,
+        "avg_loss": -35.41492,
+        "side_counts": {
+          "SHORT": 505,
+          "LONG": 420
+        },
+        "exit_reason_breakdown": {
+          "stop": 377,
+          "target": 229,
+          "timescan": 274,
+          "opposite_signal": 45
+        }
+      },
+      "phase7_by_year": {
+        "2017": {
+          "trades": 128,
+          "profit_factor": 1.20617,
+          "equity_points": 112.767857,
+          "win_rate": 0.46875,
+          "max_drawdown": 78.785714,
+          "avg_win": 10.995536,
+          "avg_loss": -8.043592,
+          "side_counts": {
+            "SHORT": 70,
+            "LONG": 58
+          },
+          "exit_reason_breakdown": {
+            "stop": 53,
+            "target": 30,
+            "timescan": 39,
+            "opposite_signal": 6
+          }
+        },
+        "2018": {
+          "trades": 139,
+          "profit_factor": 1.006225,
+          "equity_points": 12.964286,
+          "win_rate": 0.431655,
+          "max_drawdown": 741.017857,
+          "avg_win": 34.927381,
+          "avg_loss": -26.701007,
+          "side_counts": {
+            "SHORT": 69,
+            "LONG": 70
+          },
+          "exit_reason_breakdown": {
+            "stop": 64,
+            "target": 35,
+            "timescan": 36,
+            "opposite_signal": 4
+          }
+        },
+        "2019": {
+          "trades": 116,
+          "profit_factor": 1.12605,
+          "equity_points": 148.660714,
+          "win_rate": 0.422414,
+          "max_drawdown": 345.125,
+          "avg_win": 27.10277,
+          "avg_loss": -17.869318,
+          "side_counts": {
+            "SHORT": 80,
+            "LONG": 36
+          },
+          "exit_reason_breakdown": {
+            "stop": 57,
+            "timescan": 26,
+            "target": 30,
+            "opposite_signal": 3
+          }
+        },
+        "2020": {
+          "trades": 99,
+          "profit_factor": 1.049836,
+          "equity_points": 115.839286,
+          "win_rate": 0.383838,
+          "max_drawdown": 424.857143,
+          "avg_win": 64.216635,
+          "avg_loss": -38.104801,
+          "side_counts": {
+            "SHORT": 54,
+            "LONG": 45
+          },
+          "exit_reason_breakdown": {
+            "stop": 39,
+            "timescan": 29,
+            "target": 21,
+            "opposite_signal": 10
+          }
+        },
+        "2021": {
+          "trades": 105,
+          "profit_factor": 1.897504,
+          "equity_points": 1609.160714,
+          "win_rate": 0.533333,
+          "max_drawdown": 342.75,
+          "avg_win": 60.751594,
+          "avg_loss": -37.352679,
+          "side_counts": {
+            "SHORT": 60,
+            "LONG": 45
+          },
+          "exit_reason_breakdown": {
+            "target": 32,
+            "timescan": 34,
+            "stop": 31,
+            "opposite_signal": 8
+          }
+        },
+        "2022": {
+          "trades": 110,
+          "profit_factor": 1.711122,
+          "equity_points": 2387.910714,
+          "win_rate": 0.527273,
+          "max_drawdown": 423.160714,
+          "avg_win": 99.066502,
+          "avg_loss": -64.575893,
+          "side_counts": {
+            "LONG": 57,
+            "SHORT": 53
+          },
+          "exit_reason_breakdown": {
+            "stop": 32,
+            "target": 39,
+            "timescan": 32,
+            "opposite_signal": 7
+          }
+        },
+        "2023": {
+          "trades": 115,
+          "profit_factor": 1.19908,
+          "equity_points": 536.071429,
+          "win_rate": 0.478261,
+          "max_drawdown": 583.214286,
+          "avg_win": 58.705844,
+          "avg_loss": -44.879167,
+          "side_counts": {
+            "SHORT": 59,
+            "LONG": 56
+          },
+          "exit_reason_breakdown": {
+            "target": 24,
+            "timescan": 44,
+            "stop": 44,
+            "opposite_signal": 3
+          }
+        },
+        "2024": {
+          "trades": 113,
+          "profit_factor": 0.703476,
+          "equity_points": -1116.660714,
+          "win_rate": 0.39823,
+          "max_drawdown": 1462.660714,
+          "avg_win": 58.870635,
+          "avg_loss": -55.379989,
+          "side_counts": {
+            "LONG": 53,
+            "SHORT": 60
+          },
+          "exit_reason_breakdown": {
+            "timescan": 34,
+            "stop": 57,
+            "target": 18,
+            "opposite_signal": 4
+          }
+        }
+      }
+    }
+  ]
+}
