@@ -75,7 +75,26 @@ def load_phase2a_top(phase2a_dir: Path, asset: str, timeframe: str, stem: str) -
     if not json_path.exists():
         raise FileNotFoundError(f"Missing Phase 2A results: {json_path}")
     payload = json.loads(json_path.read_text(encoding="utf-8"))
-    return payload.get("top", [])
+    top = payload.get("top", [])
+    if top:
+        return top
+
+    # Independent lanes must not be blocked by a failed Phase 2A gate. When no
+    # strict Phase 2A candidate passed, continue from the best scored rows and
+    # keep the fallback explicit in downstream artifacts.
+    fallback = list(payload.get("results", []))
+    fallback.sort(
+        key=lambda row: (
+            float(row.get("min_pf", 0.0)),
+            -float(row.get("cv", 999.0)),
+            float(row.get("mean_pf", 0.0)),
+            int(row.get("min_trades", 0)),
+        ),
+        reverse=True,
+    )
+    for row in fallback[:5]:
+        row["phase2a_fallback_from_failed_gate"] = True
+    return fallback[:5]
 
 
 def params_from_row(row: dict) -> Comb002ImpulseParams:
