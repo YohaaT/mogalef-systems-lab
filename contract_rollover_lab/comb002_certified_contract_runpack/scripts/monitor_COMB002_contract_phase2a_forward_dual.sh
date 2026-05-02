@@ -35,7 +35,7 @@ for tf in ${TIMEFRAMES//,/ }; do
   for asset in ${ASSETS//,/ }; do
     stem="COMB002_contract_${asset}_${tf}_friday_to_expiry_week_monday_label_left"
     acc="$OUT_DIR/$asset/$tf/accumulated/${stem}_phase5_accumulated_validation.json"
-    ind="$OUT_DIR/$asset/$tf/independent_from_phase2a/${stem}_phase4_from_phase2a_stops_top_params.json"
+    ind="$OUT_DIR/$asset/$tf/independent_from_phase2a/${stem}_phase4_from_phase1_stops_top_params.json"
     if lane_enabled accumulated && [[ ! -f "$acc" ]]; then
       complete=0
       break 2

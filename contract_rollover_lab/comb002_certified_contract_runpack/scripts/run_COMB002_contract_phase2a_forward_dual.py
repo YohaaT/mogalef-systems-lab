@@ -70,31 +70,38 @@ def select_top(rows: list[dict], n: int = 5) -> list[dict]:
     return passed[:n]
 
 
-def load_phase2a_top(phase2a_dir: Path, asset: str, timeframe: str, stem: str) -> list[dict]:
+def load_phase2a_payload(phase2a_dir: Path, asset: str, timeframe: str, stem: str) -> dict:
     json_path = phase2a_dir / asset / timeframe / f"{stem}_phase2a_signal_madrid_results.json"
     if not json_path.exists():
         raise FileNotFoundError(f"Missing Phase 2A results: {json_path}")
-    payload = json.loads(json_path.read_text(encoding="utf-8"))
-    top = payload.get("top", [])
-    if top:
-        return top
+    return json.loads(json_path.read_text(encoding="utf-8"))
 
-    # Independent lanes must not be blocked by a failed Phase 2A gate. When no
-    # strict Phase 2A candidate passed, continue from the best scored rows and
-    # keep the fallback explicit in downstream artifacts.
-    fallback = list(payload.get("results", []))
-    fallback.sort(
-        key=lambda row: (
-            float(row.get("min_pf", 0.0)),
-            -float(row.get("cv", 999.0)),
-            float(row.get("mean_pf", 0.0)),
-            int(row.get("min_trades", 0)),
-        ),
-        reverse=True,
-    )
-    for row in fallback[:5]:
-        row["phase2a_fallback_from_failed_gate"] = True
-    return fallback[:5]
+
+def load_phase2a_top(phase2a_dir: Path, asset: str, timeframe: str, stem: str) -> list[dict]:
+    return load_phase2a_payload(phase2a_dir, asset, timeframe, stem).get("top", [])
+
+
+def load_phase1_base(phase2a_dir: Path, asset: str, timeframe: str, stem: str) -> list[dict]:
+    payload = load_phase2a_payload(phase2a_dir, asset, timeframe, stem)
+    phase1_choice = payload.get("phase1_choice", {})
+    context_rows = payload.get("results", [])
+    context = context_rows[0] if context_rows else {}
+    return [
+        {
+            "asset": asset,
+            "timeframe": timeframe,
+            "smooth_h": 2,
+            "smooth_b": 2,
+            "dist_max_h": 200,
+            "dist_max_l": 200,
+            "phase1_horario": phase1_choice.get("best_horario", context.get("phase1_horario")),
+            "phase1_filtro": phase1_choice.get("best_filtro", context.get("phase1_filtro")),
+            "timezone": context.get("timezone", "Europe/Madrid"),
+            "windows_hhmm": context.get("windows_hhmm", []),
+            "blocked_weekdays": context.get("blocked_weekdays", []),
+            "base_source": "phase1_choice_baseline_params",
+        }
+    ]
 
 
 def params_from_row(row: dict) -> Comb002ImpulseParams:
@@ -224,13 +231,13 @@ def run_one(job: dict) -> dict:
     stem = f"COMB002_contract_{asset}_{timeframe}_{args.roll_rule}_label_{args.bar_label}"
 
     accumulated_done = out_dir / "accumulated" / f"{stem}_phase5_accumulated_validation.json"
-    independent_done = out_dir / "independent_from_phase2a" / f"{stem}_phase4_from_phase2a_stops_top_params.json"
+    independent_done = out_dir / "independent_from_phase2a" / f"{stem}_phase4_from_phase1_stops_top_params.json"
     if end_phase == "phase2b":
         accumulated_done = out_dir / "accumulated" / f"{stem}_phase2b_accumulated_atr_top_params.json"
-        independent_done = out_dir / "independent_from_phase2a" / f"{stem}_phase2b_from_phase2a_atr_top_params.json"
+        independent_done = out_dir / "independent_from_phase2a" / f"{stem}_phase2b_from_phase1_atr_top_params.json"
     elif end_phase == "phase3":
         accumulated_done = out_dir / "accumulated" / f"{stem}_phase3_accumulated_exits_top_params.json"
-        independent_done = out_dir / "independent_from_phase2a" / f"{stem}_phase3_from_phase2a_exits_top_params.json"
+        independent_done = out_dir / "independent_from_phase2a" / f"{stem}_phase3_from_phase1_exits_top_params.json"
     if (not run_accumulated or accumulated_done.exists()) and (not run_independent or independent_done.exists()):
         return {"asset": asset, "timeframe": timeframe, "status": "SKIP_DONE"}
 
@@ -244,8 +251,11 @@ def run_one(job: dict) -> dict:
     holdout = dataset.subset(holdout_contracts)
 
     phase2a_top = load_phase2a_top(args.phase2a_dir, asset, timeframe, stem)
-    if not phase2a_top:
-        return {"asset": asset, "timeframe": timeframe, "status": "SKIP_NO_PHASE2A_PASS"}
+    phase1_base = load_phase1_base(args.phase2a_dir, asset, timeframe, stem)
+    if run_accumulated and not phase2a_top:
+        run_accumulated = False
+    if not run_accumulated and not run_independent:
+        return {"asset": asset, "timeframe": timeframe, "status": "SKIP_NO_WORK"}
 
     acc_dir = out_dir / "accumulated"
     independent_dir = out_dir / "independent_from_phase2a"
@@ -260,6 +270,7 @@ def run_one(job: dict) -> dict:
             "train_contracts": train_contracts,
             "holdout_contracts": holdout_contracts,
             "phase2a_top": phase2a_top,
+            "phase1_base_for_independent": phase1_base,
         },
     )
 
@@ -286,11 +297,11 @@ def run_one(job: dict) -> dict:
     ind_p3_top: list[dict] = []
     ind_p4_top: list[dict] = []
     if run_independent:
-        ind_p2b_top = write_grid(independent_dir, stem, "phase2b_from_phase2a_atr", grid_atr(phase2a_top, train))
+        ind_p2b_top = write_grid(independent_dir, stem, "phase2b_from_phase1_atr", grid_atr(phase1_base, train))
         if end_phase in {"phase3", "phase4"}:
-            ind_p3_top = write_grid(independent_dir, stem, "phase3_from_phase2a_exits", grid_exits(phase2a_top, train))
+            ind_p3_top = write_grid(independent_dir, stem, "phase3_from_phase1_exits", grid_exits(phase1_base, train))
         if end_phase == "phase4":
-            ind_p4_top = write_grid(independent_dir, stem, "phase4_from_phase2a_stops", grid_stops(phase2a_top, train))
+            ind_p4_top = write_grid(independent_dir, stem, "phase4_from_phase1_stops", grid_stops(phase1_base, train))
 
     return {
         "asset": asset,
